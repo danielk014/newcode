@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight } from 'lucide-react';
+import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
@@ -105,10 +106,16 @@ const Index = () => {
               PitchArchitect
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
             AI-powered YouTube script writer that analyzes reference scripts and generates 
             compelling content using proven psychological tactics
           </p>
+          <Link to="/tactics">
+            <Button variant="outline" className="mb-4">
+              <BookOpen className="w-4 h-4 mr-2" />
+              View Tactics Library
+            </Button>
+          </Link>
         </div>
 
         {/* Progress Steps */}
