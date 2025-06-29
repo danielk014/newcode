@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -52,11 +51,12 @@ const generateDynamicApproach = (format: string, topic: string) => {
   return formatApproaches[Math.floor(Math.random() * formatApproaches.length)];
 };
 
-// Dynamic word count variations
+// Fixed word count variations - ensures minimum target is met
 const getWordCountVariation = (targetWords: number) => {
-  const variations = [-150, -100, -50, 0, 50, 100, 150];
+  // Only allow positive variations or small negative ones that don't go below target
+  const variations = [0, 25, 50, 75, 100, 150, 200, 250, 300];
   const variation = variations[Math.floor(Math.random() * variations.length)];
-  return Math.max(800, targetWords + variation);
+  return targetWords + variation; // Always at least target or higher
 };
 
 // Dynamic opening styles
@@ -119,7 +119,7 @@ serve(async (req) => {
 
 SESSION: ${sessionId}
 CREATIVE MISSION: ${dynamicApproach}
-TARGET WORDS: Exactly ${dynamicWordCount} words
+TARGET WORDS: Write EXACTLY ${dynamicWordCount} words - this is CRITICAL. Count carefully and ensure you meet this exact requirement.
 OPENING STYLE: ${openingStyle}
 VOICE MATCHING: ${voiceInstructions}
 
@@ -130,6 +130,7 @@ ABSOLUTE REQUIREMENTS:
 - Focus entirely on delivering valuable insights about "${topic}"
 - Create genuine engagement through authentic storytelling
 - End naturally with: "${callToAction}"
+- MUST be exactly ${dynamicWordCount} words - no less, no more
 
 FORBIDDEN ELEMENTS:
 - Any structured sections like "HOOK", "MAIN CONTENT", etc.
@@ -138,7 +139,7 @@ FORBIDDEN ELEMENTS:
 - Predictable phrase patterns
 - Formulaic structures
 
-WRITE ONLY THE SCRIPT - no formatting, no sections, no analysis. Just pure, natural, conversational content that flows like natural speech.`;
+WRITE ONLY THE SCRIPT - no formatting, no sections, no analysis. Just pure, natural, conversational content that flows like natural speech and is EXACTLY ${dynamicWordCount} words.`;
 
     // Dynamic user prompt with randomization
     const randomSeed = Math.random().toString(36).substring(7);
@@ -151,16 +152,18 @@ Approach: ${dynamicApproach}
 Context: ${description || 'No additional context'}
 Audience: ${targetAudience}
 Duration: ${videoLength} minutes
-Word Count: EXACTLY ${dynamicWordCount} words
+Word Count: EXACTLY ${dynamicWordCount} words (CRITICAL - must meet this exactly)
 Call to Action: ${callToAction}
 Seed: ${randomSeed}
 
 Write a completely original script that sounds exactly like the reference voice but covers "${topic}" in a fresh, engaging way. Make it conversational and natural - like you're talking to a friend who's interested in learning about this topic.
 
+IMPORTANT: The script MUST be exactly ${dynamicWordCount} words. Count carefully as you write.
+
 Start now with the content:`;
 
     console.log(`Generating unique script with dynamic approach: ${dynamicApproach}`);
-    console.log(`Dynamic word count: ${dynamicWordCount}`);
+    console.log(`Dynamic word count: ${dynamicWordCount} (minimum target: ${targetWordCount})`);
     console.log(`Session ID: ${sessionId}`);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -197,12 +200,16 @@ Start now with the content:`;
     const actualWordCount = generatedScript.trim().split(/\s+/).length;
     const wordCountAccuracy = Math.abs(dynamicWordCount - actualWordCount);
     
+    // Check if script meets minimum target
+    const meetsMinimum = actualWordCount >= targetWordCount;
+    
     // Check for uniqueness indicators
     const topicMentions = (generatedScript.toLowerCase().match(new RegExp(topic.toLowerCase(), 'g')) || []).length;
     const uniquenessScore = Math.min(100, (topicMentions * 10) + (actualWordCount / 10));
 
     console.log(`Dynamic script generated:`);
-    console.log(`Words: ${actualWordCount}/${dynamicWordCount} (diff: ${wordCountAccuracy})`);
+    console.log(`Words: ${actualWordCount}/${dynamicWordCount} (target minimum: ${targetWordCount})`);
+    console.log(`Meets minimum target: ${meetsMinimum}`);
     console.log(`Approach: ${dynamicApproach}`);
     console.log(`Topic mentions: ${topicMentions}`);
     console.log(`Uniqueness score: ${uniquenessScore}`);
@@ -214,6 +221,8 @@ Start now with the content:`;
         metrics: {
           wordCount: actualWordCount,
           targetWordCount: dynamicWordCount,
+          minimumTarget: targetWordCount,
+          meetsMinimum: meetsMinimum,
           wordCountAccuracy: wordCountAccuracy,
           topicRelevance: topicMentions,
           formatUsed: format,
@@ -221,7 +230,7 @@ Start now with the content:`;
           approach: dynamicApproach,
           sessionId: sessionId
         },
-        message: `Unique script created using "${dynamicApproach}" approach: ${actualWordCount} words, ${topicMentions} topic references`
+        message: `Unique script created using "${dynamicApproach}" approach: ${actualWordCount} words (${meetsMinimum ? 'meets' : 'below'} minimum ${targetWordCount}), ${topicMentions} topic references`
       }),
       { 
         headers: { 
