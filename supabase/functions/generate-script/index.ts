@@ -21,100 +21,116 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Enhanced system prompt that focuses on actual content creation
-    const systemPrompt = `You are an expert YouTube script writer who creates content that actually addresses the specific topic requested. You understand that successful scripts must:
+    // Enhanced system prompt focused on authentic style replication
+    const systemPrompt = `You are a master scriptwriter who specializes in analyzing and replicating the exact writing style, voice, and psychological tactics of successful content creators.
 
-1. ACTUALLY DISCUSS THE TOPIC - Never use generic placeholder language
-2. Match the tone, style, and delivery of the reference scripts provided
-3. Create topic-specific hooks, examples, and content
-4. Use the actual subject matter throughout the script
-5. Incorporate psychological triggers naturally within the topic context
-6. Generate content that sounds like a real person talking about the real topic
+Your job is to:
+1. DEEPLY ANALYZE the reference scripts to understand their unique writing DNA
+2. EXTRACT their specific voice, tone, pacing, and delivery patterns
+3. IDENTIFY their psychological tactics and how they implement them
+4. CREATE a new script that sounds like it was written by the SAME PERSON
+5. Make the content 100% about the actual topic - never use generic frameworks
 
-CRITICAL RULES:
-- NEVER use generic phrases like "framework" or "system" unless the topic specifically calls for it
-- NEVER use placeholder text or generic language that could apply to any topic
-- ALWAYS create content that is 100% specific to the requested topic
-- Match the writing style, tone, and delivery patterns from the reference scripts
-- The script must actually educate or inform about the specific topic requested
-- Word count MUST meet or exceed the target requirement`;
+CRITICAL ANALYSIS REQUIREMENTS:
+- Study how they start sentences and paragraphs
+- Notice their rhythm and pacing patterns
+- Identify their specific vocabulary and phrase choices
+- Understand their storytelling approach and examples
+- Extract their unique psychological hooks and triggers
+- Analyze how they build tension and release it
+- Notice their transition phrases and connecting words
+- Study their call-to-action style and urgency creation
 
-    // Analyze reference scripts for style patterns
-    const scriptAnalysis = scripts.length > 0 ? `
-**REFERENCE SCRIPT ANALYSIS:**
-You have ${scripts.length} reference scripts to learn from. Study these carefully:
+SCRIPT CREATION RULES:
+- The script must sound like the SAME AUTHOR wrote it
+- Every word must relate to the specific topic requested
+- Use their exact tone, pacing, and delivery style
+- Implement their psychological tactics in the same way they do
+- Match their energy level and personality
+- Use similar sentence structures and paragraph lengths
+- Include topic-specific facts, insights, and examples
+- NO GENERIC BUSINESS FRAMEWORKS unless that's their style`;
+
+    const userPrompt = `I need you to write a script about "${topic}" that perfectly matches the writing style of these reference scripts.
+
+**TOPIC:** ${topic}
+${description ? `**CONTEXT:** ${description}` : ''}
+**TARGET AUDIENCE:** ${targetAudience}
+**VIDEO LENGTH:** ${videoLength} minutes
+**CALL TO ACTION:** ${callToAction}
+${format ? `**FORMAT STYLE:** ${format}` : ''}
+**MINIMUM WORD COUNT:** ${targetWordCount || 1400} words
+
+**REFERENCE SCRIPTS TO ANALYZE AND REPLICATE:**
 
 ${scripts.map((script, index) => `
-**Reference Script ${index + 1}:**
+==========================================
+REFERENCE SCRIPT ${index + 1}:
+==========================================
 ${script}
 
----
 `).join('')}
 
-**CRITICAL ANALYSIS INSTRUCTIONS:**
-1. Extract the exact writing style, tone, and personality from these scripts
-2. Note how they introduce topics, build tension, and deliver information
-3. Identify their specific language patterns, sentence structures, and transitions
-4. See how they use hooks, stories, and examples
-5. Notice their pacing and rhythm
-6. Observe how they handle the topic-specific content (not generic frameworks)
-7. Copy their authentic voice and delivery method
-` : '';
+**ANALYSIS INSTRUCTIONS:**
 
-    const userPrompt = `Create a YouTube script about "${topic}" that matches the style and delivery of the reference scripts provided.
+First, analyze these scripts deeply:
 
-**TOPIC REQUIREMENTS:**
-- The script MUST be specifically about: ${topic}
-- ${description ? `Additional context: ${description}` : ''}
-- Target audience: ${targetAudience}
-- Video length: ${videoLength} minutes
-- Call to action: ${callToAction}
-- ${format ? `Format style: ${format}` : ''}
-- **MINIMUM ${targetWordCount || 1400} words required**
+1. **VOICE & TONE ANALYSIS:**
+   - What's their personality? (casual/formal, energetic/calm, friendly/authoritative)
+   - How do they speak to their audience? (like a friend, teacher, expert, rebel)
+   - What's their energy level and pacing?
 
-${scriptAnalysis}
+2. **STRUCTURAL PATTERNS:**
+   - How do they open their content?
+   - How do they transition between ideas?
+   - How do they build and release tension?
+   - How do they close and create urgency?
+
+3. **LANGUAGE DNA:**
+   - What specific words and phrases do they repeat?
+   - What's their sentence length preference?
+   - How do they use questions, statements, and exclamations?
+   - What metaphors or analogies do they prefer?
+
+4. **PSYCHOLOGICAL TACTICS:**
+   - How do they create curiosity and intrigue?
+   - How do they build credibility and authority?
+   - How do they create emotional connection?
+   - How do they handle objections and skepticism?
+   - How do they create urgency and scarcity?
+
+5. **CONTENT APPROACH:**
+   - How do they present information and insights?
+   - How do they use stories and examples?
+   - How do they explain complex concepts?
+   - How do they make their content memorable?
 
 **SCRIPT CREATION REQUIREMENTS:**
 
-1. **TOPIC FOCUS**: Every sentence must relate directly to "${topic}". NO generic business/framework language unless the topic specifically calls for it.
+Now create a script about "${topic}" that:
 
-2. **STYLE MATCHING**: Write in the exact same style, tone, and personality as the reference scripts. Copy their:
-   - Hook patterns and opening style
-   - Way of explaining concepts
-   - Storytelling approach
-   - Language patterns and vocabulary
-   - Pacing and rhythm
-   - How they build curiosity and engagement
+✅ SOUNDS IDENTICAL to the reference scripts in voice and tone
+✅ USES THE SAME structural patterns and pacing
+✅ IMPLEMENTS their psychological tactics in their specific style
+✅ CONTAINS 100% topic-specific content about "${topic}"
+✅ INCLUDES real insights, facts, or perspectives about the topic
+✅ REACHES the ${targetWordCount || 1400} word minimum
+✅ FEELS like the same person wrote it
 
-3. **CONTENT SPECIFICITY**: 
-   - Use real facts, statistics, or insights about the actual topic
-   - Create topic-specific examples and scenarios
-   - Address real concerns or questions people have about this topic
-   - Provide actual value related to the subject matter
+**STRUCTURE:** Use their natural flow, but ensure these elements:
+- **HOOK:** Match their opening style but make it about "${topic}"
+- **BODY:** Follow their content development pattern with topic-specific insights
+- **CLOSE:** Use their closing style with the specified call-to-action
 
-4. **WORD COUNT**: The script MUST contain at least ${targetWordCount || 1400} words. If your initial draft is shorter:
-   - Add more topic-specific examples and case studies
-   - Include additional insights and perspectives on the topic
-   - Expand on key points with more detail and explanation
-   - Add relevant stories or anecdotes related to the topic
+**QUALITY CHECK:**
+- Does this sound like the same person who wrote the reference scripts?
+- Is every sentence about "${topic}" specifically?
+- Are the psychological tactics implemented in their unique style?
+- Would someone familiar with the reference scripts believe this is authentic?
 
-5. **STRUCTURE**: Follow this format but fill it with topic-specific content:
+Write the script now, making it indistinguishable from their authentic work while being completely focused on "${topic}".`;
 
-**VIRAL HOOK (0-3s)**
-[Topic-specific attention-grabbing opener that directly relates to "${topic}"]
-
-**PROMISE & SETUP (3-15s)**
-[Clear value about what they'll learn regarding "${topic}"]
-
-**MAIN CONTENT (15s-${Math.round(videoLength * 0.8)}m)**
-[Deep dive into "${topic}" with specific insights, examples, and information - EXPAND THIS HEAVILY]
-
-**PAYOFF & CTA (${Math.round(videoLength * 0.8)}m-${videoLength}m)**
-[Conclusion about "${topic}" and specific call to action]
-
-Remember: This must be a real script about "${topic}" written in the style of your reference scripts, not a generic template with the topic name plugged in. Make it authentic, informative, and genuinely valuable.`;
-
-    console.log('Calling Claude API for topic-specific script generation...');
+    console.log('Calling Claude API with enhanced style analysis and replication...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -126,7 +142,7 @@ Remember: This must be a real script about "${topic}" written in the style of yo
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        temperature: 0.7,
+        temperature: 0.8,
         system: systemPrompt,
         messages: [
           {
@@ -144,7 +160,7 @@ Remember: This must be a real script about "${topic}" written in the style of yo
     }
 
     const data = await response.json();
-    console.log('Topic-specific script generated successfully');
+    console.log('Enhanced style-matching script generated successfully');
     
     const generatedScript = data.content[0].text;
     
@@ -152,9 +168,14 @@ Remember: This must be a real script about "${topic}" written in the style of yo
     const wordCount = generatedScript.trim().split(/\s+/).length;
     console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount || 1400}`);
 
-    // Basic check to ensure the script actually discusses the topic
-    const topicMentions = (generatedScript.toLowerCase().match(new RegExp(topic.toLowerCase().split(' ').join('|'), 'g')) || []).length;
-    console.log(`Topic mentions in script: ${topicMentions}`);
+    // Enhanced topic relevance check
+    const topicWords = topic.toLowerCase().split(' ').filter(word => word.length > 2);
+    const scriptLower = generatedScript.toLowerCase();
+    const topicMentions = topicWords.reduce((count, word) => {
+      return count + (scriptLower.split(word).length - 1);
+    }, 0);
+    
+    console.log(`Topic relevance score: ${topicMentions} mentions across ${topicWords.length} key words`);
 
     return new Response(
       JSON.stringify({ 
@@ -162,7 +183,7 @@ Remember: This must be a real script about "${topic}" written in the style of yo
         success: true,
         wordCount: wordCount,
         topicRelevance: topicMentions,
-        message: "Enhanced script generation with topic-specific content and style matching"
+        message: "Enhanced script generation with deep style analysis and authentic replication"
       }),
       { 
         headers: { 
