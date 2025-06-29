@@ -16,6 +16,7 @@ import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
+import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 
 interface ScriptInput {
   script1: string;
@@ -34,6 +35,7 @@ const Index = () => {
     targetLength: 1400,
     callToAction: ''
   });
+  const [selectedFormat, setSelectedFormat] = useState<string>('');
   const [analysis, setAnalysis] = useState<any>(null);
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -78,16 +80,17 @@ const Index = () => {
     setIsGenerating(true);
     
     try {
-      console.log('Generating script with Claude AI...');
+      console.log('Generating viral script with enhanced tactics...');
       
       const { data, error } = await supabase.functions.invoke('generate-script', {
         body: {
           topic: scriptInput.topic,
           targetAudience: 'YouTube viewers interested in ' + scriptInput.topic,
-          videoLength: Math.round(scriptInput.targetLength / 140), // Convert words to minutes
+          videoLength: Math.round(scriptInput.targetLength / 140),
           script1: scriptInput.script1,
           script2: scriptInput.script2,
-          callToAction: scriptInput.callToAction
+          callToAction: scriptInput.callToAction,
+          format: selectedFormat
         }
       });
 
@@ -100,27 +103,42 @@ const Index = () => {
         throw new Error(data.error || 'Failed to generate script');
       }
 
-      console.log('Script generated successfully');
+      console.log('Viral script generated successfully');
       setGeneratedScript(data.script);
       setCurrentStep(3);
       
     } catch (error) {
       console.error('Error generating script:', error);
-      // Fallback to mock script if API fails
-      const mockScript = `**HOOK (0-15s)**
-"Stop scrolling! If you've been struggling with ${scriptInput.topic.toLowerCase()}, what I'm about to show you will completely change your approach to this challenge."
+      // Enhanced fallback script with viral tactics
+      const mockScript = `**VIRAL HOOK (0-3s)**
+"Stop scrolling! What I'm about to show you about ${scriptInput.topic.toLowerCase()} will completely change how you think about this forever."
 
-**PROBLEM SETUP (15-45s)**
-"I know exactly how frustrating it feels when you've tried everything, watched countless tutorials, but still feel stuck. You're not alone - 89% of people give up within the first month because they're missing this one crucial element."
+**PROMISE & SETUP (3-15s)**
+"By the end of this video, you'll have the exact blueprint that took my student from zero to hero in just 30 days. But first, let me show you why everything you've been told is wrong."
 
-**SOLUTION INTRODUCTION (45s-2m)**
-"After helping over 10,000 students achieve breakthrough results, I've discovered a simple framework that eliminates the guesswork. This isn't another complicated system - it's the exact method that took my worst student from zero to expert in just 30 days."
+**MAIN CONTENT (15s-4m)**
+"Here's the thing nobody talks about - 97% of people fail at ${scriptInput.topic.toLowerCase()} because they're missing this one crucial element.
 
-**VALUE DELIVERY (2-4m)**
-"Here's what makes this different: First, we eliminate the overwhelm by focusing on just three core principles. Second, you'll see results in your first week, not months. And third, this works even if you've failed at this before."
+But wait, it gets worse...
 
-**CALL TO ACTION (4-5m)**
-"Ready to transform your approach to ${scriptInput.topic.toLowerCase()}? ${scriptInput.callToAction}. But here's the thing - I'm only sharing this with the first 100 people who take action today. Don't let this opportunity slip by like all the others."`;
+Most 'experts' are actually keeping you stuck on purpose. Here's why: [reveals counterintuitive insight]
+
+Now here's the crazy part - when I discovered this simple framework, everything changed. Let me break it down:
+
+Step 1: [Specific actionable step]
+Step 2: [Build on previous step]  
+Step 3: [Advanced technique]
+
+Just like my student Sarah, who used this exact system to [specific result]. She went from struggling for months to seeing results in her first week.
+
+The secret? It's not about working harder - it's about working smarter."
+
+**PAYOFF & CTA (4-5m)**
+"Look, I've given you the foundation, but this is just the beginning. ${scriptInput.callToAction}. 
+
+But here's the thing - I'm only sharing the advanced version with the first 100 people who take action today. Don't let this opportunity pass you by like all the others.
+
+Your transformation starts now. What are you waiting for?"`;
 
       setGeneratedScript(mockScript);
       setCurrentStep(3);
@@ -143,14 +161,16 @@ const Index = () => {
               PitchArchitect
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
-            AI-powered YouTube script writer that analyzes reference scripts and generates 
-            compelling content using proven psychological tactics
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-2">
+            AI-powered YouTube script writer using proven viral tactics from successful creators
+          </p>
+          <p className="text-sm text-gray-500 mb-6">
+            Enhanced with DanielKCI's proven strategies • Give people what they want • Viral formats that work
           </p>
           <Link to="/tactics">
             <Button variant="outline" className="mb-4">
               <BookOpen className="w-4 h-4 mr-2" />
-              View Tactics Library
+              View Enhanced Tactics Library
             </Button>
           </Link>
         </div>
@@ -192,16 +212,27 @@ const Index = () => {
                   Input Your Reference Scripts
                 </CardTitle>
                 <CardDescription>
-                  Provide two high-performing scripts and your video details to get started
+                  Provide two high-performing scripts and your video details. We'll analyze viral tactics and generate content that gives people what they want.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Format Selection */}
+                <div className="mb-6">
+                  <ViralFormatSelector 
+                    selectedFormat={selectedFormat}
+                    onFormatSelect={setSelectedFormat}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Script Inputs */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="script1" className="text-sm font-medium">Reference Script #1</Label>
                     <Textarea
                       id="script1"
-                      placeholder="Paste your first reference script here..."
+                      placeholder="Paste your first high-performing script here..."
                       className="min-h-[200px] resize-none"
                       value={scriptInput.script1}
                       onChange={(e) => setScriptInput({...scriptInput, script1: e.target.value})}
@@ -211,7 +242,7 @@ const Index = () => {
                     <Label htmlFor="script2" className="text-sm font-medium">Reference Script #2</Label>
                     <Textarea
                       id="script2"
-                      placeholder="Paste your second reference script here..."
+                      placeholder="Paste your second high-performing script here..."
                       className="min-h-[200px] resize-none"
                       value={scriptInput.script2}
                       onChange={(e) => setScriptInput({...scriptInput, script2: e.target.value})}
@@ -221,12 +252,13 @@ const Index = () => {
 
                 <Separator />
 
+                {/* Video Details */}
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
                     <Input
                       id="topic"
-                      placeholder="e.g., How to learn Spanish fast"
+                      placeholder="e.g., How to make money online"
                       value={scriptInput.topic}
                       onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
                     />
@@ -245,7 +277,7 @@ const Index = () => {
                     <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
                     <Input
                       id="cta"
-                      placeholder="Download my free guide"
+                      placeholder="Subscribe to my course"
                       value={scriptInput.callToAction}
                       onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
                     />
@@ -261,12 +293,12 @@ const Index = () => {
                     {isAnalyzing ? (
                       <>
                         <Brain className="w-5 h-5 mr-2 animate-pulse" />
-                        Analyzing Scripts...
+                        Analyzing Viral Tactics...
                       </>
                     ) : (
                       <>
                         <Brain className="w-5 h-5 mr-2" />
-                        Analyze Scripts
+                        Analyze for Viral Tactics
                       </>
                     )}
                   </Button>
@@ -322,23 +354,23 @@ const Index = () => {
           <div className="mt-16 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Target className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Deep Analysis</h3>
+              <h3 className="font-semibold mb-2">Viral Tactics Analysis</h3>
               <p className="text-sm text-gray-600">
-                Identifies 20+ psychological tactics in your reference scripts
+                Identifies 25+ proven psychological tactics used by successful creators
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <BarChart3 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Smart Generation</h3>
+              <h3 className="font-semibold mb-2">Format-Based Generation</h3>
               <p className="text-sm text-gray-600">
-                Creates original scripts using proven engagement techniques
+                Uses proven formats that have worked since ancient times
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Lightbulb className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Tactic Mapping</h3>
+              <h3 className="font-semibold mb-2">Algorithm Optimization</h3>
               <p className="text-sm text-gray-600">
-                Shows exactly where each psychological principle is applied
+                Collaborates with platform algorithms for maximum reach
               </p>
             </Card>
           </div>

@@ -14,64 +14,94 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, targetAudience, videoLength, script1, script2, callToAction } = await req.json();
+    const { topic, targetAudience, videoLength, script1, script2, callToAction, format } = await req.json();
     
     const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
     if (!claudeApiKey) {
       throw new Error('Claude API key not configured');
     }
 
-    // Create a comprehensive prompt that incorporates the reference scripts
-    const systemPrompt = `You are an expert YouTube script writer who specializes in creating engaging, high-converting scripts. You analyze successful reference scripts to understand their psychological tactics and structure, then create new scripts that incorporate these proven techniques while being completely original.
+    // Enhanced system prompt based on DanielKCI's proven tactics
+    const systemPrompt = `You are an expert YouTube script writer who uses proven viral content strategies. You understand that successful content follows these core principles:
 
-Key principles:
-1. Use proven psychological tactics like pattern interrupts, curiosity gaps, social proof, scarcity, authority, and future pacing
-2. Structure scripts for maximum engagement and retention
-3. Include clear calls-to-action that drive viewer behavior
-4. Write in a conversational, engaging tone
-5. Use storytelling elements to maintain interest`;
+1. GIVE PEOPLE WHAT THEY WANT - Don't force creativity, adapt proven formats
+2. PROVEN FORMAT + UNIQUE TWIST = VIRAL CONTENT
+3. Hook viewers in first 3 seconds, keep them curious throughout
+4. Use psychological triggers that have worked for centuries
+5. Structure for algorithm optimization and maximum retention
 
-    const userPrompt = `Please create a compelling YouTube script based on the following information:
+Key Viral Strategies:
+- Start with climax/result first (grab immediate attention)
+- Create information gaps that viewers MUST fill
+- Use micro-hooks every 15-30 seconds
+- Build greed/desire triggers (financial freedom, status, improvement)
+- Integrate soft-sell monetization naturally
+- Optimize for watch time and engagement
+- Use pattern interrupts to reset attention
+- End with strong, specific call-to-action
 
-**Topic:** ${topic}
-**Target Audience:** ${targetAudience}
-**Video Length:** ${videoLength} minutes
-**Call to Action:** ${callToAction}
+Format Types:
+- Competition Format (proven since Roman times)
+- Transformation Journey (before/after)
+- Teaching Format (authority building)
+- Success Story Format (social proof)
+- Trend Jack Format (rapid response)
 
-**Reference Scripts for Analysis:**
+Write scripts that collaborate with the algorithm, not fight it.`;
+
+    const userPrompt = `Create a viral YouTube script using proven psychological tactics and format structures.
+
+**Content Details:**
+Topic: ${topic}
+Target Audience: ${targetAudience}
+Video Length: ${videoLength} minutes
+Call to Action: ${callToAction}
+${format ? `Preferred Format: ${format}` : ''}
+
+**Reference Scripts for Tactic Analysis:**
 Reference Script 1:
 ${script1}
 
 Reference Script 2:
 ${script2}
 
-**Instructions:**
-1. Analyze the psychological tactics used in the reference scripts
-2. Create a new, original script that incorporates the most effective techniques
-3. Structure the script with clear sections: Hook, Problem/Pain Point, Solution, Value Delivery, and Call-to-Action
-4. Aim for approximately ${Math.round(videoLength * 140)} words (140 words per minute)
-5. Include specific timestamps for each section
-6. Make the script engaging, conversational, and action-oriented
+**Script Requirements:**
+1. HOOK (0-3 seconds): Use information gap, climax first, or bold statement
+2. PROMISE (3-15 seconds): Clear value proposition - "By the end you'll..."
+3. PAYOFF (Main Content): 
+   - Micro-hooks every 15-30 seconds
+   - Pattern interrupts for attention reset
+   - Build desire/greed triggers
+   - Use proven format structure
+   - Soft-sell integration if monetization opportunity exists
+4. CALL TO ACTION (Final 10 seconds): Specific, actionable direction
 
-**Format the output as follows:**
-**HOOK (0-15s)**
-[Compelling opening that grabs attention]
+**Psychological Tactics to Incorporate:**
+- Information gaps and curiosity loops
+- Success stories and social proof
+- Dream selling and future pacing
+- Authority building and credibility
+- Engagement optimization for algorithm
+- Watch time maximization techniques
 
-**PROBLEM SETUP (15-45s)**
-[Identify and amplify the pain point]
+**Word Count:** Approximately ${Math.round(videoLength * 140)} words (140 words per minute)
 
-**SOLUTION INTRODUCTION (45s-2m)**
-[Present your solution with authority]
+**Format Structure:**
+**VIRAL HOOK (0-3s)**
+[Attention-grabbing opener - climax first, information gap, or bold statement]
 
-**VALUE DELIVERY (2-4m)**
-[Provide valuable content and build credibility]
+**PROMISE & SETUP (3-15s)**
+[Clear value proposition and expectations]
 
-**CALL TO ACTION (4-5m)**
-[Clear, compelling call to action]
+**MAIN CONTENT (15s-${Math.round(videoLength * 0.8)}m)**
+[Structured content with micro-hooks, pattern interrupts, and value delivery]
 
-Create a script that feels natural and engaging while incorporating proven psychological principles from the reference materials.`;
+**PAYOFF & CTA (${Math.round(videoLength * 0.8)}m-${videoLength}m)**
+[Deliver on promise, recap value, strong call to action]
 
-    console.log('Calling Claude API with topic:', topic);
+Create a script that gives people what they want while building your authority and driving specific action.`;
+
+    console.log('Calling Claude API with enhanced viral tactics...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -81,7 +111,7 @@ Create a script that feels natural and engaging while incorporating proven psych
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
         temperature: 0.7,
         system: systemPrompt,
@@ -101,14 +131,15 @@ Create a script that feels natural and engaging while incorporating proven psych
     }
 
     const data = await response.json();
-    console.log('Claude API Response received');
+    console.log('Enhanced viral script generated successfully');
     
     const generatedScript = data.content[0].text;
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
-        success: true 
+        success: true,
+        tactics_used: "Enhanced with DanielKCI proven viral strategies"
       }),
       { 
         headers: { 
