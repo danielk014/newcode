@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, targetAudience, videoLength, script1, script2, callToAction, format } = await req.json();
+    const { topic, targetAudience, videoLength, scripts, callToAction, format, targetWordCount } = await req.json();
     
     const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
     if (!claudeApiKey) {
@@ -29,6 +29,7 @@ serve(async (req) => {
 3. Hook viewers in first 3 seconds, keep them curious throughout
 4. Use psychological triggers that have worked for centuries
 5. Structure for algorithm optimization and maximum retention
+6. ALWAYS meet or exceed the target word count - this is critical for proper video length
 
 Key Viral Strategies:
 - Start with climax/result first (grab immediate attention)
@@ -39,6 +40,7 @@ Key Viral Strategies:
 - Optimize for watch time and engagement
 - Use pattern interrupts to reset attention
 - End with strong, specific call-to-action
+- MINIMUM word count requirement must be met or exceeded
 
 Format Types:
 - Competition Format (proven since Roman times)
@@ -49,6 +51,28 @@ Format Types:
 
 Write scripts that collaborate with the algorithm, not fight it.`;
 
+    // Analyze the provided scripts to extract patterns
+    const scriptAnalysis = scripts.length > 0 ? `
+
+**SCRIPT ANALYSIS:**
+You have been provided with ${scripts.length} reference scripts to analyze and learn from:
+
+${scripts.map((script, index) => `
+**Reference Script ${index + 1}:**
+${script}
+
+---
+`).join('')}
+
+**CRITICAL INSTRUCTIONS:**
+1. Analyze the writing style, hooks, transitions, and tactics used in these reference scripts
+2. Identify the psychological triggers and persuasion techniques employed
+3. Note the structure and pacing patterns
+4. Adapt these proven elements to the new topic while maintaining what makes them effective
+5. The generated script MUST be at least ${targetWordCount || 1400} words to meet the target video length
+6. If the script falls short of the word count, expand the content with additional value, examples, stories, or detailed explanations
+` : '';
+
     const userPrompt = `Create a viral YouTube script using proven psychological tactics and format structures.
 
 **Content Details:**
@@ -57,13 +81,9 @@ Target Audience: ${targetAudience}
 Video Length: ${videoLength} minutes
 Call to Action: ${callToAction}
 ${format ? `Preferred Format: ${format}` : ''}
+**MINIMUM Word Count Required: ${targetWordCount || 1400} words**
 
-**Reference Scripts for Tactic Analysis:**
-Reference Script 1:
-${script1}
-
-Reference Script 2:
-${script2}
+${scriptAnalysis}
 
 **Script Requirements:**
 1. HOOK (0-3 seconds): Use information gap, climax first, or bold statement
@@ -76,6 +96,16 @@ ${script2}
    - Soft-sell integration if monetization opportunity exists
 4. CALL TO ACTION (Final 10 seconds): Specific, actionable direction
 
+**CRITICAL WORD COUNT REQUIREMENT:**
+- The script MUST contain at least ${targetWordCount || 1400} words
+- If your initial draft is shorter, expand it with:
+  - Additional examples and case studies
+  - More detailed explanations
+  - Personal stories or student success stories
+  - Deeper dives into concepts
+  - Additional psychological triggers
+  - More comprehensive value delivery
+
 **Psychological Tactics to Incorporate:**
 - Information gaps and curiosity loops
 - Success stories and social proof
@@ -83,8 +113,6 @@ ${script2}
 - Authority building and credibility
 - Engagement optimization for algorithm
 - Watch time maximization techniques
-
-**Word Count:** Approximately ${Math.round(videoLength * 140)} words (140 words per minute)
 
 **Format Structure:**
 **VIRAL HOOK (0-3s)**
@@ -94,14 +122,14 @@ ${script2}
 [Clear value proposition and expectations]
 
 **MAIN CONTENT (15s-${Math.round(videoLength * 0.8)}m)**
-[Structured content with micro-hooks, pattern interrupts, and value delivery]
+[Structured content with micro-hooks, pattern interrupts, and value delivery - EXPAND THIS SECTION TO MEET WORD COUNT]
 
 **PAYOFF & CTA (${Math.round(videoLength * 0.8)}m-${videoLength}m)**
 [Deliver on promise, recap value, strong call to action]
 
-Create a script that gives people what they want while building your authority and driving specific action.`;
+Create a script that gives people what they want while building your authority and driving specific action. Remember: The script must be comprehensive and detailed to meet the minimum ${targetWordCount || 1400} word requirement.`;
 
-    console.log('Calling Claude API with enhanced viral tactics...');
+    console.log('Calling Claude API with enhanced viral tactics and script analysis...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -112,7 +140,7 @@ Create a script that gives people what they want while building your authority a
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 6000, // Increased for longer scripts
         temperature: 0.7,
         system: systemPrompt,
         messages: [
@@ -134,12 +162,17 @@ Create a script that gives people what they want while building your authority a
     console.log('Enhanced viral script generated successfully');
     
     const generatedScript = data.content[0].text;
+    
+    // Verify word count and expand if necessary
+    const wordCount = generatedScript.trim().split(/\s+/).length;
+    console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount || 1400}`);
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
         success: true,
-        tactics_used: "Enhanced with DanielKCI proven viral strategies"
+        wordCount: wordCount,
+        tactics_used: "Enhanced with DanielKCI proven viral strategies and script analysis"
       }),
       { 
         headers: { 

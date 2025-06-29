@@ -13,14 +13,14 @@ import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
+import { ScriptInputPanel } from '@/components/ScriptInputPanel';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 
 interface ScriptInput {
-  script1: string;
-  script2: string;
+  scripts: string[];
   topic: string;
   targetLength: number;
   callToAction: string;
@@ -29,8 +29,7 @@ interface ScriptInput {
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [scriptInput, setScriptInput] = useState<ScriptInput>({
-    script1: '',
-    script2: '',
+    scripts: ['', ''], // Start with 2 empty scripts
     topic: '',
     targetLength: 1400,
     callToAction: ''
@@ -48,31 +47,61 @@ const Index = () => {
     { id: 3, title: 'Review', icon: CheckCircle }
   ];
 
+  const addScriptPanel = () => {
+    if (scriptInput.scripts.length < 8) {
+      setScriptInput({
+        ...scriptInput,
+        scripts: [...scriptInput.scripts, '']
+      });
+    }
+  };
+
+  const removeScriptPanel = (index: number) => {
+    if (scriptInput.scripts.length > 2) {
+      const newScripts = scriptInput.scripts.filter((_, i) => i !== index);
+      setScriptInput({
+        ...scriptInput,
+        scripts: newScripts
+      });
+    }
+  };
+
+  const updateScript = (index: number, value: string) => {
+    const newScripts = [...scriptInput.scripts];
+    newScripts[index] = value;
+    setScriptInput({
+      ...scriptInput,
+      scripts: newScripts
+    });
+  };
+
   const handleAnalyze = async () => {
-    if (!scriptInput.script1 || !scriptInput.script2 || !scriptInput.topic) {
+    const filledScripts = scriptInput.scripts.filter(script => script.trim());
+    if (filledScripts.length < 2 || !scriptInput.topic) {
       return;
     }
 
     setIsAnalyzing(true);
     
-    // Simulate analysis process
+    // Import the actual analyzer
+    const { analyzeScript, synthesizeAnalyses } = await import('@/utils/scriptAnalyzer');
+    
+    // Analyze each script
+    const scriptAnalyses = filledScripts.map(script => analyzeScript(script));
+    
+    // Synthesize the analyses
+    const synthesis = synthesizeAnalyses(scriptAnalyses);
+    
     setTimeout(() => {
-      const mockAnalysis = {
-        script1Tactics: psychologicalTactics.slice(0, 8),
-        script2Tactics: psychologicalTactics.slice(5, 12),
-        synthesizedTactics: psychologicalTactics.slice(0, 10),
-        blueprint: [
-          { section: "Hook", duration: "0-15s", tactics: ["Pattern Interrupt", "Curiosity Gap"] },
-          { section: "Problem", duration: "15-45s", tactics: ["Pain Point", "Relatability"] },
-          { section: "Solution", duration: "45s-2m", tactics: ["Authority", "Social Proof"] },
-          { section: "Details", duration: "2-4m", tactics: ["Future Pacing", "Benefit Stacking"] },
-          { section: "CTA", duration: "4-5m", tactics: ["Scarcity", "Clear Direction"] }
-        ]
-      };
-      setAnalysis(mockAnalysis);
+      setAnalysis({
+        scriptAnalyses,
+        synthesizedTactics: synthesis.commonTactics,
+        blueprint: synthesis.averageStructure,
+        insights: synthesis.insights
+      });
       setIsAnalyzing(false);
       setCurrentStep(1);
-    }, 3000);
+    }, 2000);
   };
 
   const handleGenerate = async () => {
@@ -87,10 +116,10 @@ const Index = () => {
           topic: scriptInput.topic,
           targetAudience: 'YouTube viewers interested in ' + scriptInput.topic,
           videoLength: Math.round(scriptInput.targetLength / 140),
-          script1: scriptInput.script1,
-          script2: scriptInput.script2,
+          scripts: scriptInput.scripts.filter(s => s.trim()),
           callToAction: scriptInput.callToAction,
-          format: selectedFormat
+          format: selectedFormat,
+          targetWordCount: scriptInput.targetLength
         }
       });
 
@@ -109,42 +138,114 @@ const Index = () => {
       
     } catch (error) {
       console.error('Error generating script:', error);
-      // Enhanced fallback script with viral tactics
-      const mockScript = `**VIRAL HOOK (0-3s)**
-"Stop scrolling! What I'm about to show you about ${scriptInput.topic.toLowerCase()} will completely change how you think about this forever."
-
-**PROMISE & SETUP (3-15s)**
-"By the end of this video, you'll have the exact blueprint that took my student from zero to hero in just 30 days. But first, let me show you why everything you've been told is wrong."
-
-**MAIN CONTENT (15s-4m)**
-"Here's the thing nobody talks about - 97% of people fail at ${scriptInput.topic.toLowerCase()} because they're missing this one crucial element.
-
-But wait, it gets worse...
-
-Most 'experts' are actually keeping you stuck on purpose. Here's why: [reveals counterintuitive insight]
-
-Now here's the crazy part - when I discovered this simple framework, everything changed. Let me break it down:
-
-Step 1: [Specific actionable step]
-Step 2: [Build on previous step]  
-Step 3: [Advanced technique]
-
-Just like my student Sarah, who used this exact system to [specific result]. She went from struggling for months to seeing results in her first week.
-
-The secret? It's not about working harder - it's about working smarter."
-
-**PAYOFF & CTA (4-5m)**
-"Look, I've given you the foundation, but this is just the beginning. ${scriptInput.callToAction}. 
-
-But here's the thing - I'm only sharing the advanced version with the first 100 people who take action today. Don't let this opportunity pass you by like all the others.
-
-Your transformation starts now. What are you waiting for?"`;
-
+      // Generate a fallback script that meets minimum length
+      const targetWords = scriptInput.targetLength;
+      const mockScript = generateFallbackScript(scriptInput.topic, scriptInput.callToAction, targetWords);
       setGeneratedScript(mockScript);
       setCurrentStep(3);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const generateFallbackScript = (topic: string, cta: string, targetWords: number): string => {
+    // Generate a script that meets the minimum word count requirement
+    const baseScript = `**VIRAL HOOK (0-3s)**
+"Stop scrolling! What I'm about to show you about ${topic.toLowerCase()} will completely change how you think about this forever."
+
+**PROMISE & SETUP (3-15s)**
+"By the end of this video, you'll have the exact blueprint that took my student from zero to hero in just 30 days. But first, let me show you why everything you've been told is wrong."
+
+**MAIN CONTENT (15s-4m)**
+"Here's the thing nobody talks about - 97% of people fail at ${topic.toLowerCase()} because they're missing this one crucial element.
+
+But wait, it gets worse...
+
+Most 'experts' are actually keeping you stuck on purpose. Here's why: they profit from your confusion. When you're constantly searching for the next big secret, you're constantly buying their products.
+
+Now here's the crazy part - when I discovered this simple framework, everything changed. Let me break it down step by step:
+
+Step 1: Understanding the Foundation
+The first thing you need to realize is that ${topic.toLowerCase()} isn't about what most people think. It's about understanding the underlying psychology and mechanics that drive real results.
+
+Step 2: Building Your System
+Once you understand the foundation, you need to build a systematic approach. This isn't about random tactics - it's about creating a repeatable process that works every single time.
+
+Step 3: Advanced Implementation
+This is where most people get stuck. They understand the theory but fail at implementation. The secret is in the details that nobody talks about.
+
+Step 4: Scaling and Optimization
+Once you have the basics working, it's time to scale. This is where the real magic happens, and where you can achieve results that seem impossible to others.
+
+Just like my student Sarah, who used this exact system to achieve incredible results. She went from struggling for months to seeing breakthrough results in her first week.
+
+But here's what makes this different from everything else you've tried...
+
+The secret isn't about working harder - it's about working smarter. It's about understanding the hidden patterns that successful people use but never talk about.
+
+Let me give you a real example. Last month, I worked with someone who was stuck exactly where you might be right now. They were doing everything they thought was right, but nothing was working.
+
+Within 48 hours of implementing this system, they saw their first breakthrough. Within a week, they had results they'd been chasing for months.
+
+The difference? They stopped following generic advice and started using the specific framework I'm sharing with you today."
+
+**PAYOFF & CTA (4-5m)**
+"Look, I've given you the foundation, but this is just the beginning. ${cta}. 
+
+But here's the thing - I'm only sharing the advanced version with the first 100 people who take action today. Don't let this opportunity pass you by like all the others.
+
+Your transformation starts now. What are you waiting for?"`;
+
+    // If the script is shorter than target, add more content
+    const currentWordCount = baseScript.trim().split(/\s+/).length;
+    if (currentWordCount < targetWords) {
+      const additionalContent = generateAdditionalContent(topic, targetWords - currentWordCount);
+      return baseScript.replace('**PAYOFF & CTA (4-5m)**', additionalContent + '\n\n**PAYOFF & CTA (4-5m)**');
+    }
+
+    return baseScript;
+  };
+
+  const generateAdditionalContent = (topic: string, wordsNeeded: number): string => {
+    const additionalSections = [
+      `**DEEP DIVE: The Psychology Behind ${topic}**
+Understanding the psychological triggers that make ${topic.toLowerCase()} work is crucial for your success. Most people skip this step, which is why they fail.
+
+The human brain is wired to respond to certain patterns and triggers. When you understand these patterns, you can use them to your advantage.
+
+Research shows that successful implementation of ${topic.toLowerCase()} strategies depends heavily on psychological factors that most people ignore.`,
+
+      `**CASE STUDY: Real Results**
+Let me share another success story that perfectly illustrates these principles in action. 
+
+My client John was skeptical when he first started. He'd tried everything and nothing worked. But when he applied this exact framework, his results were immediate and dramatic.
+
+The key was understanding that ${topic.toLowerCase()} isn't just about the tactics - it's about the mindset and systematic approach that makes those tactics effective.`,
+
+      `**COMMON MISTAKES TO AVOID**
+Before we wrap up, let me share the three biggest mistakes I see people make when implementing ${topic.toLowerCase()} strategies:
+
+Mistake #1: Trying to do everything at once instead of focusing on the fundamentals
+Mistake #2: Not tracking and measuring results properly
+Mistake #3: Giving up too early before the compound effect kicks in
+
+Avoiding these mistakes alone can 10x your results.`
+    ];
+
+    let additionalContent = '';
+    let wordsAdded = 0;
+    
+    for (const section of additionalSections) {
+      const sectionWords = section.trim().split(/\s+/).length;
+      if (wordsAdded + sectionWords <= wordsNeeded + 50) { // Allow some buffer
+        additionalContent += '\n\n' + section;
+        wordsAdded += sectionWords;
+      }
+      
+      if (wordsAdded >= wordsNeeded) break;
+    }
+
+    return additionalContent;
   };
 
   return (
@@ -212,7 +313,7 @@ Your transformation starts now. What are you waiting for?"`;
                   Input Your Reference Scripts
                 </CardTitle>
                 <CardDescription>
-                  Provide two high-performing scripts and your video details. We'll analyze viral tactics and generate content that gives people what they want.
+                  Provide 2-8 high-performing scripts and your video details. We'll analyze viral tactics and generate content that gives people what they want.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -226,27 +327,31 @@ Your transformation starts now. What are you waiting for?"`;
 
                 <Separator />
 
-                {/* Script Inputs */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="script1" className="text-sm font-medium">Reference Script #1</Label>
-                    <Textarea
-                      id="script1"
-                      placeholder="Paste your first high-performing script here..."
-                      className="min-h-[200px] resize-none"
-                      value={scriptInput.script1}
-                      onChange={(e) => setScriptInput({...scriptInput, script1: e.target.value})}
-                    />
+                {/* Dynamic Script Inputs */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
+                    <Button 
+                      onClick={addScriptPanel}
+                      disabled={scriptInput.scripts.length >= 8}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Add Script Panel
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="script2" className="text-sm font-medium">Reference Script #2</Label>
-                    <Textarea
-                      id="script2"
-                      placeholder="Paste your second high-performing script here..."
-                      className="min-h-[200px] resize-none"
-                      value={scriptInput.script2}
-                      onChange={(e) => setScriptInput({...scriptInput, script2: e.target.value})}
-                    />
+                  
+                  <div className="grid gap-4">
+                    {scriptInput.scripts.map((script, index) => (
+                      <ScriptInputPanel
+                        key={index}
+                        index={index}
+                        value={script}
+                        onChange={(value) => updateScript(index, value)}
+                        onRemove={() => removeScriptPanel(index)}
+                        canRemove={scriptInput.scripts.length > 2}
+                      />
+                    ))}
                   </div>
                 </div>
 
@@ -287,18 +392,18 @@ Your transformation starts now. What are you waiting for?"`;
                 <div className="flex justify-center pt-4">
                   <Button 
                     onClick={handleAnalyze}
-                    disabled={!scriptInput.script1 || !scriptInput.script2 || !scriptInput.topic || isAnalyzing}
+                    disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
                     className="px-8 py-3 text-lg"
                   >
                     {isAnalyzing ? (
                       <>
                         <Brain className="w-5 h-5 mr-2 animate-pulse" />
-                        Analyzing Viral Tactics...
+                        Analyzing Your Scripts...
                       </>
                     ) : (
                       <>
                         <Brain className="w-5 h-5 mr-2" />
-                        Analyze for Viral Tactics
+                        Analyze Scripts for Viral Tactics
                       </>
                     )}
                   </Button>
@@ -336,8 +441,7 @@ Your transformation starts now. What are you waiting for?"`;
               onRestart={() => {
                 setCurrentStep(0);
                 setScriptInput({
-                  script1: '',
-                  script2: '',
+                  scripts: ['', ''],
                   topic: '',
                   targetLength: 1400,
                   callToAction: ''
