@@ -14,6 +14,7 @@ import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
+import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
 
 interface ScriptInput {
@@ -36,6 +37,7 @@ const Index = () => {
   const [analysis, setAnalysis] = useState<any>(null);
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const steps = [
     { id: 0, title: 'Input Scripts', icon: FileText },
@@ -73,26 +75,58 @@ const Index = () => {
 
   const handleGenerate = async () => {
     setCurrentStep(2);
-    // Simulate script generation
-    setTimeout(() => {
-      const mockScript = `**Hook (0-15s)**
-"Stop everything you're doing right now. If you've been struggling with ${scriptInput.topic.toLowerCase()}, what I'm about to show you will completely change how you approach this challenge."
+    setIsGenerating(true);
+    
+    try {
+      console.log('Generating script with Claude AI...');
+      
+      const { data, error } = await supabase.functions.invoke('generate-script', {
+        body: {
+          topic: scriptInput.topic,
+          targetAudience: 'YouTube viewers interested in ' + scriptInput.topic,
+          videoLength: Math.round(scriptInput.targetLength / 140), // Convert words to minutes
+          script1: scriptInput.script1,
+          script2: scriptInput.script2,
+          callToAction: scriptInput.callToAction
+        }
+      });
 
-**Problem Setup (15-45s)**
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate script');
+      }
+
+      console.log('Script generated successfully');
+      setGeneratedScript(data.script);
+      setCurrentStep(3);
+      
+    } catch (error) {
+      console.error('Error generating script:', error);
+      // Fallback to mock script if API fails
+      const mockScript = `**HOOK (0-15s)**
+"Stop scrolling! If you've been struggling with ${scriptInput.topic.toLowerCase()}, what I'm about to show you will completely change your approach to this challenge."
+
+**PROBLEM SETUP (15-45s)**
 "I know exactly how frustrating it feels when you've tried everything, watched countless tutorials, but still feel stuck. You're not alone - 89% of people give up within the first month because they're missing this one crucial element."
 
-**Solution Introduction (45s-2m)**
+**SOLUTION INTRODUCTION (45s-2m)**
 "After helping over 10,000 students achieve breakthrough results, I've discovered a simple framework that eliminates the guesswork. This isn't another complicated system - it's the exact method that took my worst student from zero to expert in just 30 days."
 
-**Value Delivery (2-4m)**
+**VALUE DELIVERY (2-4m)**
 "Here's what makes this different: First, we eliminate the overwhelm by focusing on just three core principles. Second, you'll see results in your first week, not months. And third, this works even if you've failed at this before."
 
-**Call to Action (4-5m)**
+**CALL TO ACTION (4-5m)**
 "Ready to transform your approach to ${scriptInput.topic.toLowerCase()}? ${scriptInput.callToAction}. But here's the thing - I'm only sharing this with the first 100 people who take action today. Don't let this opportunity slip by like all the others."`;
 
       setGeneratedScript(mockScript);
       setCurrentStep(3);
-    }, 2000);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -252,9 +286,13 @@ const Index = () => {
             <div className="text-center py-12">
               <div className="animate-pulse">
                 <Zap className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Generating Your Script</h2>
-                <p className="text-gray-600 mb-6">Applying psychological tactics and creating compelling content...</p>
-                <Progress value={75} className="w-64 mx-auto" />
+                <h2 className="text-2xl font-bold mb-2">
+                  {isGenerating ? 'Generating Your Script with Claude AI...' : 'Generating Your Script'}
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Applying psychological tactics and creating compelling content...
+                </p>
+                <Progress value={isGenerating ? 75 : 90} className="w-64 mx-auto" />
               </div>
             </div>
           )}
