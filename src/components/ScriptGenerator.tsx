@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye } from 'lucide-react';
 import { TacticMapper } from './TacticMapper';
 import { ScriptImprovement } from './ScriptImprovement';
 
@@ -17,7 +17,12 @@ interface ScriptGeneratorProps {
 export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactics, onRestart }) => {
   const [editedScript, setEditedScript] = useState(script);
   const [copied, setCopied] = useState(false);
-  const [improvedVersions, setImprovedVersions] = useState<Array<{script: string, improvement: string, timestamp: Date}>>([]);
+  const [improvedVersions, setImprovedVersions] = useState<Array<{
+    script: string; 
+    improvement: string; 
+    timestamp: Date;
+    changesSummary: string;
+  }>>([]);
   const [activeTab, setActiveTab] = useState("script");
 
   const copyToClipboard = () => {
@@ -35,11 +40,12 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     a.click();
   };
 
-  const handleImprovedScript = (improvedScript: string, improvementType: string) => {
+  const handleImprovedScript = (improvedScript: string, improvementType: string, changesSummary: string) => {
     const newImprovedVersion = {
       script: improvedScript,
       improvement: improvementType,
-      timestamp: new Date()
+      timestamp: new Date(),
+      changesSummary: changesSummary
     };
     setImprovedVersions(prev => [newImprovedVersion, ...prev]);
     setEditedScript(improvedScript);
@@ -214,18 +220,35 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                                 {version.timestamp.toLocaleString()}
                               </p>
                             </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => loadImprovedVersion(version)}
-                            >
-                              <ArrowLeft className="w-4 h-4 mr-1" />
-                              Load
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  alert(`Changes Made:\n\n${version.changesSummary}`);
+                                }}
+                                title="View what changed"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => loadImprovedVersion(version)}
+                              >
+                                <ArrowLeft className="w-4 h-4 mr-1" />
+                                Load
+                              </Button>
+                            </div>
                           </div>
-                          <Badge variant="secondary" className="text-xs">
-                            Version {improvedVersions.length - index}
-                          </Badge>
+                          <div className="mb-2">
+                            <Badge variant="secondary" className="text-xs">
+                              Version {improvedVersions.length - index}
+                            </Badge>
+                          </div>
+                          <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                            <strong>Changes:</strong> {version.changesSummary.substring(0, 100)}...
+                          </div>
                         </div>
                       ))}
                     </div>

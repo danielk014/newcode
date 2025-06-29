@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Lightbulb, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
+import { Lightbulb, Loader2, CheckCircle, ArrowRight, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ScriptImprovementProps {
   originalScript: string;
-  onImprovedScript: (improvedScript: string, improvement: string) => void;
+  onImprovedScript: (improvedScript: string, improvement: string, changesSummary: string) => void;
 }
 
 export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
@@ -18,6 +18,11 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
 }) => {
   const [isImproving, setIsImproving] = useState(false);
   const [currentImprovement, setCurrentImprovement] = useState<string>('');
+  const [lastImprovement, setLastImprovement] = useState<{
+    type: string;
+    changes: string;
+    preview: string;
+  } | null>(null);
 
   const improvements = [
     {
@@ -72,39 +77,75 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       }
 
       if (data.success) {
-        onImprovedScript(data.improvedScript, improvement.title);
+        // Extract the changes summary and preview
+        const changesSummary = extractChangesSummary(data.improvedScript, improvement.title);
+        const preview = extractPreview(data.improvedScript);
+        
+        setLastImprovement({
+          type: improvement.title,
+          changes: changesSummary,
+          preview: preview
+        });
+
+        onImprovedScript(data.improvedScript, improvement.title, changesSummary);
       }
     } catch (error) {
       console.error('Error improving script:', error);
       // Generate a simple improvement as fallback
       const improvedScript = applyBasicImprovement(originalScript, improvement);
-      onImprovedScript(improvedScript, improvement.title);
+      const changesSummary = `Applied ${improvement.title}: ${improvement.description}`;
+      
+      setLastImprovement({
+        type: improvement.title,
+        changes: changesSummary,
+        preview: improvedScript.substring(0, 200) + "..."
+      });
+
+      onImprovedScript(improvedScript, improvement.title, changesSummary);
     } finally {
       setIsImproving(false);
       setCurrentImprovement('');
     }
   };
 
+  const extractChangesSummary = (improvedScript: string, improvementType: string): string => {
+    // Extract content between [IMPROVED] tags
+    const improvedSections = improvedScript.match(/\*\*\[IMPROVED\]\*\*(.*?)(?=\*\*\[IMPROVED\]\*\*|$)/gs);
+    
+    if (improvedSections && improvedSections.length > 0) {
+      return `${improvementType} applied in ${improvedSections.length} section(s):\n\n${improvedSections.map((section, index) => 
+        `${index + 1}. ${section.replace(/\*\*\[IMPROVED\]\*\*/g, '').trim().substring(0, 150)}...`
+      ).join('\n\n')}`;
+    }
+    
+    return `${improvementType} has been applied throughout the script to enhance its effectiveness.`;
+  };
+
+  const extractPreview = (improvedScript: string): string => {
+    // Find the first [IMPROVED] section for preview
+    const firstImproved = improvedScript.match(/\*\*\[IMPROVED\]\*\*(.*?)(?=\n\n|\*\*\[IMPROVED\]\*\*|$)/s);
+    
+    if (firstImproved) {
+      return firstImproved[1].trim().substring(0, 300) + "...";
+    }
+    
+    return improvedScript.substring(0, 300) + "...";
+  };
+
   const applyBasicImprovement = (script: string, improvement: any): string => {
-    // Basic fallback improvements
+    // Basic fallback improvements with clear markers
     switch (improvement.title) {
       case "Strengthen the Hook":
-        return script.replace(
-          /^(.*?)$/m,
-          "**IMPROVED HOOK:** \"Did you know that 97% of people fail at this because they're missing one crucial element? What I'm about to show you will change everything.\"\n\n$1"
-        );
+        return `**[IMPROVED HOOK]**\n"Did you know that 97% of people fail at this because they're missing one crucial element? What I'm about to show you will change everything."\n\n${script}`;
       case "Add Personal Story":
         return script.replace(
           /(problem|challenge|issue)/i,
-          "$1\n\n**PERSONAL CONNECTION:** Just like when I first started, I made the exact same mistake that keeps most people stuck..."
+          `$1\n\n**[IMPROVED - PERSONAL STORY ADDED]**\nJust like when I first started, I made the exact same mistake that keeps most people stuck. I remember the frustration of trying everything and getting nowhere...`
         );
       case "Enhance CTA Urgency":
-        return script.replace(
-          /(call.to.action|cta)/i,
-          "$1\n\n**URGENT:** But here's the thing - I'm only sharing this with the first 100 people who take action TODAY. Don't let this opportunity pass you by."
-        );
+        return script + `\n\n**[IMPROVED CTA WITH URGENCY]**\nBut here's the thing - I'm only sharing this with the first 100 people who take action TODAY. This opportunity won't be available forever. Don't let this pass you by like all the others.`;
       default:
-        return `**IMPROVED VERSION:**\n${script}\n\n**Enhancement Applied:** ${improvement.description}`;
+        return `**[IMPROVED VERSION - ${improvement.title.toUpperCase()}]**\n${script}\n\n**Enhancement Applied:** ${improvement.description}`;
     }
   };
 
@@ -118,6 +159,40 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {/* Show last improvement result */}
+          {lastImprovement && (
+            <Card className="border-green-200 bg-green-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2 text-green-700">
+                  <CheckCircle className="w-4 h-4" />
+                  {lastImprovement.type} Applied Successfully
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-medium text-sm mb-1">What Changed:</h4>
+                    <p className="text-sm text-gray-700 whitespace-pre-line">{lastImprovement.changes}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-1">Preview of Changes:</h4>
+                    <div className="bg-white p-3 rounded border text-sm italic">
+                      "{lastImprovement.preview}"
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setLastImprovement(null)}
+                    className="text-xs"
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {improvements.map((improvement, index) => (
             <div key={index} className="p-4 border rounded-lg">
               <div className="flex items-center justify-between mb-2">
@@ -146,7 +221,10 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
                   </Button>
                 </div>
               </div>
-              <p className="text-sm text-gray-600">{improvement.description}</p>
+              <p className="text-sm text-gray-600 mb-2">{improvement.description}</p>
+              <p className="text-xs text-gray-500">
+                <strong>What this does:</strong> {improvement.instruction}
+              </p>
             </div>
           ))}
         </div>
