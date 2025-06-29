@@ -7,49 +7,79 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Format-specific structures with distinct approaches
-const formatStructures = {
+// Completely rewritten format approaches - no templates, just strategic guidance
+const formatApproaches = {
   "Competition Format": {
-    structure: "Challenge Setup → Contestants/Options → Stakes → Process → Tension → Winner → Lessons",
-    approach: "Competition-based tension, clear winner/loser dynamic, builds suspense through process",
-    lengthMultiplier: 1.2,
-    uniqueElements: ["challenger introduction", "stakes establishment", "process documentation", "tension building", "winner reveal", "lesson extraction"],
-    avoidWords: ["framework", "system", "blueprint", "secret", "experts", "step-by-step", "nobody talks about"]
+    essence: "Creates tension through contest/challenge dynamics, builds suspense toward winner reveal",
+    startingStyles: [
+      "immediate challenge introduction",
+      "stakes establishment upfront", 
+      "competitor comparison setup",
+      "challenge parameters reveal"
+    ],
+    narrativeFlow: "challenge presentation → participant introduction → process documentation → climax/resolution → takeaway",
+    avoidPhrases: ["stop scrolling", "here's the thing", "nobody talks about", "secret", "framework", "blueprint", "step-by-step"],
+    uniqueAngle: "competition/contest energy with clear winner/loser outcomes"
   },
   "Transformation Journey": {
-    structure: "Before State → Catalyst → Struggle → Breakthrough → After State → Replication",
-    approach: "Personal story-driven, emotional journey, concrete before/after evidence",
-    lengthMultiplier: 1.1,
-    uniqueElements: ["specific before situation", "catalyst moment", "struggle documentation", "breakthrough point", "after evidence", "replication guide"],
-    avoidWords: ["framework", "system", "blueprint", "secret", "experts", "step-by-step", "nobody talks about"]
+    essence: "Documents dramatic change over time, focuses on before/after contrast with emotional journey",
+    startingStyles: [
+      "dramatic before/after reveal",
+      "moment of decision story",
+      "rock bottom introduction",
+      "catalyst event description"
+    ],
+    narrativeFlow: "starting point → catalyst → struggle phase → breakthrough → new reality → lessons learned",
+    avoidPhrases: ["stop scrolling", "here's the thing", "nobody talks about", "secret", "framework", "blueprint"],
+    uniqueAngle: "personal transformation with specific, measurable change"
   },
   "Teaching Format": {
-    structure: "Problem → Solution Preview → Method → Examples → Advanced Tips → Practice",
-    approach: "Educational authority, practical instruction, multiple examples and applications",
-    lengthMultiplier: 1.3,
-    uniqueElements: ["problem identification", "solution preview", "method explanation", "real examples", "advanced applications", "practice opportunities"],
-    avoidWords: ["secret", "nobody talks about", "hidden", "blueprint", "framework", "stop scrolling"]
+    essence: "Educational authority sharing practical knowledge through instruction and examples",
+    startingStyles: [
+      "problem identification",
+      "counterintuitive insight",
+      "common mistake correction",
+      "skill demonstration"
+    ],
+    narrativeFlow: "problem awareness → solution preview → instruction → examples → advanced applications → practice",
+    avoidPhrases: ["stop scrolling", "nobody talks about", "secret", "hidden", "blueprint"],
+    uniqueAngle: "instructor authority with actionable learning outcomes"
   },
   "Trend Jack Format": {
-    structure: "Trend Hook → Context → Your Angle → Evidence → Implications → Action",
-    approach: "Timely, reactive, controversial takes, rapid response style",
-    lengthMultiplier: 0.9,
-    uniqueElements: ["trend reference", "context setting", "unique angle", "supporting evidence", "implications", "immediate action"],
-    avoidWords: ["framework", "system", "blueprint", "step-by-step", "secret", "nobody talks about"]
+    essence: "Rapid response to current events/trends with unique perspective and timely relevance",
+    startingStyles: [
+      "trend reference hook",
+      "contrarian take opening",
+      "breaking news angle",
+      "cultural moment capture"
+    ],
+    narrativeFlow: "trend acknowledgment → unique perspective → supporting evidence → implications → action items",
+    avoidPhrases: ["stop scrolling", "framework", "blueprint", "step-by-step", "secret", "nobody talks about"],
+    uniqueAngle: "timely relevance with fresh perspective on current topics"
   },
   "Success Story Format": {
-    structure: "Result First → Background → Challenge → Strategy → Implementation → Results → Blueprint",
-    approach: "Results-focused, credibility-building, proof-driven narrative",
-    lengthMultiplier: 1.1,
-    uniqueElements: ["concrete results", "background story", "specific challenge", "strategy used", "implementation details", "measurable outcomes", "replication method"],
-    avoidWords: ["secret", "nobody talks about", "hidden", "framework", "stop scrolling"]
+    essence: "Concrete results and proof-driven narrative showing specific achievements and methods",
+    startingStyles: [
+      "results announcement",
+      "achievement reveal",
+      "case study introduction",
+      "proof presentation"
+    ],
+    narrativeFlow: "results preview → background context → challenge faced → strategy employed → implementation → outcomes → replication method",
+    avoidPhrases: ["stop scrolling", "nobody talks about", "hidden", "secret", "framework"],
+    uniqueAngle: "credibility through concrete results and specific case studies"
   },
   "Documentary Format": {
-    structure: "Mystery/Question → Investigation → Evidence → Interviews → Revelations → Truth",
-    approach: "Investigative journalism style, multiple perspectives, evidence-based conclusions",
-    lengthMultiplier: 1.4,
-    uniqueElements: ["central mystery", "investigation process", "evidence gathering", "expert perspectives", "revelations", "truth conclusion"],
-    avoidWords: ["framework", "system", "blueprint", "secret", "step-by-step", "stop scrolling"]
+    essence: "Investigative deep-dive with multiple perspectives, evidence gathering, and comprehensive analysis",
+    startingStyles: [
+      "mystery question",
+      "investigation premise",
+      "unexplored angle",
+      "evidence preview"
+    ],
+    narrativeFlow: "central question → investigation setup → evidence gathering → expert insights → revelations → conclusions",
+    avoidPhrases: ["stop scrolling", "framework", "blueprint", "step-by-step", "secret"],
+    uniqueAngle: "investigative journalism approach with thorough research and multiple viewpoints"
   }
 };
 
@@ -66,93 +96,67 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Get format-specific structure
-    const formatInfo = formatStructures[format] || formatStructures["Teaching Format"];
-    const adjustedWordCount = Math.round(targetWordCount * formatInfo.lengthMultiplier);
+    const formatInfo = formatApproaches[format] || formatApproaches["Teaching Format"];
+    const adjustedWordCount = Math.round(targetWordCount * 1.1);
 
-    const systemPrompt = `You are an expert YouTube script writer who creates authentic, engaging content that follows specific viral formats. Your scripts must be completely unique and avoid generic templates.
+    // Completely different prompt approach - no templates, pure creative direction
+    const systemPrompt = `You are a master scriptwriter who creates completely unique, engaging content for each request. Your scripts are never templated or formulaic.
 
-CRITICAL REQUIREMENTS:
-1. WORD COUNT: Must be exactly ${adjustedWordCount} words (±25 words maximum)
-2. FORMAT ADHERENCE: Must follow ${format} structure precisely
-3. VOICE AUTHENTICITY: Must match the reference author's writing style exactly
-4. TOPIC FOCUS: 100% about "${topic}" with specific, actionable content
-5. UNIQUENESS: Every script must be completely different and original
+CRITICAL MISSION:
+- Create a 100% unique ${format} script about "${topic}"
+- EXACT word count: ${adjustedWordCount} words (strict requirement)
+- Capture the authentic voice from reference scripts
+- Follow ${format} essence without using any templates
 
-ABSOLUTELY BANNED PHRASES (NEVER USE):
-${formatInfo.avoidWords.map(word => `"${word}"`).join(', ')}
+ABSOLUTELY FORBIDDEN PHRASES (never use these):
+${formatInfo.avoidPhrases.map(phrase => `"${phrase}"`).join(', ')}
 
-FORMAT: ${format}
-- Structure: ${formatInfo.structure}
-- Approach: ${formatInfo.approach}
-- Required Elements: ${formatInfo.uniqueElements.join(', ')}
+FORMAT ESSENCE: ${formatInfo.essence}
+NARRATIVE APPROACH: ${formatInfo.narrativeFlow}
+UNIQUE ANGLE: ${formatInfo.uniqueAngle}
 
-VOICE ANALYSIS REQUIRED: Analyze the reference scripts to capture:
-- Their specific vocabulary and phrases
-- Sentence structure and rhythm
-- How they address their audience
-- Their emotional tone and energy
-- Transition styles between ideas
-- Storytelling approach and examples`;
+VOICE CAPTURE PROTOCOL:
+Analyze reference scripts for:
+- Their specific vocabulary choices
+- How they structure sentences  
+- Their rhythm and pacing
+- Emotional tone and energy
+- How they connect with audience
+- Their storytelling patterns
+
+CREATION REQUIREMENTS:
+- Start with one of these approaches: ${formatInfo.startingStyles.join(', ')}
+- Every sentence must sound authentically like the reference author
+- Focus 100% on "${topic}" with specific, valuable insights
+- Avoid any generic business language or templates
+- Create natural flow that feels conversational and engaging
+- Include specific examples and actionable content about "${topic}"
+- End with natural integration of: "${callToAction}"
+
+OUTPUT ONLY THE SCRIPT - no analysis, no explanation, no meta-commentary.`;
 
     const userPrompt = `REFERENCE SCRIPTS FOR VOICE ANALYSIS:
 
 ${scripts.map((script, index) => `
-=== REFERENCE SCRIPT ${index + 1} ===
+REFERENCE ${index + 1}:
 ${script}
 `).join('')}
 
-TASK: Create a completely original ${format} script about "${topic}"
+ASSIGNMENT: Write a completely original ${format} script about "${topic}"
 
 SPECIFICATIONS:
-- Topic: ${topic}
+- Topic Focus: ${topic}
 - Target Audience: ${targetAudience}
 - Video Length: ${videoLength} minutes
-- EXACT Word Count: ${adjustedWordCount} words
+- Word Count: EXACTLY ${adjustedWordCount} words
 - Call to Action: ${callToAction}
 - Format: ${format}
-${description ? `- Additional Context: ${description}` : ''}
+${description ? `- Context: ${description}` : ''}
 
-CREATION PROCESS:
+Write the script now - start immediately with the content. Make it sound exactly like the reference author would write it, but 100% unique and focused on "${topic}".`;
 
-1. **VOICE DNA EXTRACTION**
-Analyze the reference scripts to identify:
-- Their unique phrases and vocabulary
-- Sentence patterns and flow
-- How they connect with their audience
-- Their specific tone and energy
-- Storytelling techniques they use
-
-2. **FORMAT IMPLEMENTATION**
-Structure your script using the ${format} approach:
-
-${formatInfo.uniqueElements.map((element, index) => `
-**${element.toUpperCase()}** (~${Math.round(adjustedWordCount / formatInfo.uniqueElements.length)} words)
-- Must authentically sound like the reference author
-- Must advance the ${format} narrative structure
-- Must provide specific value about "${topic}"`).join('')}
-
-3. **CONTENT REQUIREMENTS**
-- Write EXACTLY ${adjustedWordCount} words of valuable content about "${topic}"
-- Use the author's authentic voice, not generic business language
-- Include specific examples, tactics, and actionable insights about "${topic}"
-- Follow ${format} structure without deviation
-- End with natural CTA incorporating "${callToAction}"
-- ZERO template language - every sentence must sound authentically theirs
-
-4. **QUALITY STANDARDS**
-✓ Uses their specific vocabulary and communication style
-✓ Matches their energy and personality
-✓ Follows ${format} structure exactly
-✓ Reaches ${adjustedWordCount} words with valuable content
-✓ 100% focused on "${topic}" with specific insights
-✓ Completely avoids all banned generic phrases
-✓ Sounds like something they would actually write
-
-Create a completely unique script that captures their authentic voice while following the ${format} structure. Begin immediately with the script - no analysis or explanation.`;
-
-    console.log(`Generating ${format} script with Claude API...`);
-    console.log(`Target word count: ${adjustedWordCount}`);
+    console.log(`Generating unique ${format} script with Claude...`);
+    console.log(`Target: ${adjustedWordCount} words`);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -164,7 +168,7 @@ Create a completely unique script that captures their authentic voice while foll
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 8000,
-        temperature: 0.8,
+        temperature: 0.9, // Higher temperature for more creativity
         system: systemPrompt,
         messages: [
           {
@@ -184,17 +188,12 @@ Create a completely unique script that captures their authentic voice while foll
     const data = await response.json();
     const generatedScript = data.content[0].text;
     
-    // Verify word count
+    // Verify uniqueness and quality
     const actualWordCount = generatedScript.trim().split(/\s+/).length;
-    const wordCountDifference = Math.abs(actualWordCount - adjustedWordCount);
-    const wordCountAccuracy = ((adjustedWordCount - wordCountDifference) / adjustedWordCount) * 100;
-
-    console.log(`${format} script generated successfully:`);
-    console.log(`Target: ${adjustedWordCount} words, Actual: ${actualWordCount} words`);
-    console.log(`Accuracy: ${wordCountAccuracy.toFixed(1)}%`);
+    const wordCountAccuracy = ((adjustedWordCount - Math.abs(actualWordCount - adjustedWordCount)) / adjustedWordCount) * 100;
 
     // Check for banned phrases
-    const bannedPhraseCount = formatInfo.avoidWords.reduce((count, phrase) => {
+    const bannedPhraseCount = formatInfo.avoidPhrases.reduce((count, phrase) => {
       return count + (generatedScript.toLowerCase().split(phrase.toLowerCase()).length - 1);
     }, 0);
 
@@ -205,13 +204,10 @@ Create a completely unique script that captures their authentic voice while foll
       return count + (scriptLower.split(word).length - 1);
     }, 0);
 
-    // Check format elements
-    const formatElementsFound = formatInfo.uniqueElements.filter(element => {
-      const keywords = element.toLowerCase().split(' ');
-      return keywords.some(keyword => scriptLower.includes(keyword));
-    }).length;
-
-    const formatAdherence = (formatElementsFound / formatInfo.uniqueElements.length) * 100;
+    console.log(`Unique ${format} script generated:`);
+    console.log(`Words: ${actualWordCount}/${adjustedWordCount} (${wordCountAccuracy.toFixed(1)}% accuracy)`);
+    console.log(`Banned phrases found: ${bannedPhraseCount}`);
+    console.log(`Topic mentions: ${topicMentions}`);
 
     return new Response(
       JSON.stringify({ 
@@ -221,14 +217,12 @@ Create a completely unique script that captures their authentic voice while foll
           wordCount: actualWordCount,
           targetWordCount: adjustedWordCount,
           wordCountAccuracy: wordCountAccuracy,
-          formatAdherence: formatAdherence,
           topicRelevance: topicMentions,
           bannedPhraseCount: bannedPhraseCount,
           formatUsed: format,
-          uniqueElementsFound: formatElementsFound,
-          totalUniqueElements: formatInfo.uniqueElements.length
+          uniquenessScore: Math.max(0, 100 - (bannedPhraseCount * 10))
         },
-        message: `${format} script generated with Claude: ${actualWordCount} words (${wordCountAccuracy.toFixed(1)}% accuracy), ${formatAdherence.toFixed(1)}% format adherence, ${bannedPhraseCount} banned phrases detected`
+        message: `Unique ${format} script created: ${actualWordCount} words, ${bannedPhraseCount} template phrases detected, ${topicMentions} topic references`
       }),
       { 
         headers: { 
