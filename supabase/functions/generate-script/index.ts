@@ -7,316 +7,292 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Advanced content tracking system
-const contentPatterns = new Map<string, Set<string>>();
-const semanticHashes = new Set<string>();
-const topicBannedPhrases = new Map<string, Set<string>>();
-const generationHistory = new Array<{
-  sessionId: string;
-  topic: string;
-  approach: string;
-  timestamp: number;
+// Enhanced tracking system with better uniqueness detection
+const sessionHistory = new Map<string, Array<{
   contentHash: string;
-}>();
+  wordCount: number;
+  timestamp: number;
+  approach: string;
+}>>();
 
-// Semantic similarity hash
-const generateSemanticHash = (content: string): string => {
-  const words = content.toLowerCase()
+const topicHistory = new Map<string, Set<string>>();
+
+// Generate truly unique content hash based on semantic meaning
+const generateContentHash = (content: string): string => {
+  // Extract semantic elements: key phrases, structure, and concepts
+  const sentences = content.toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 3)
+    .filter(word => word.length > 3);
+  
+  // Create semantic signature from meaningful words
+  const semanticWords = sentences
+    .filter(word => !['this', 'that', 'will', 'have', 'been', 'they', 'them', 'your', 'with', 'from'].includes(word))
+    .slice(0, 30)
     .sort();
   
-  const semanticSignature = words.slice(0, 50).join('|');
+  const signature = semanticWords.join('|');
   let hash = 0;
-  for (let i = 0; i < semanticSignature.length; i++) {
-    const char = semanticSignature.charCodeAt(i);
+  for (let i = 0; i < signature.length; i++) {
+    const char = signature.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
     hash = hash & hash;
   }
   return hash.toString(36);
 };
 
-// Advanced voice pattern analysis
-const analyzeVoiceFingerprint = (scripts: string[]) => {
-  const analysis = {
-    avgSentenceLength: 0,
-    sentenceLengthVariation: 0,
-    vocabularyComplexity: 0,
-    tonalMarkers: [],
-    structuralPatterns: [],
-    commonTransitions: [],
-    emotionalLanguage: [],
-    questionFrequency: 0,
-    exclamationFrequency: 0,
-    personalPronounUsage: 0,
-    technicalTermFrequency: 0
-  };
-
-  let totalSentences = 0;
-  let totalWords = 0;
-  let sentenceLengths: number[] = [];
-  const transitions = new Map<string, number>();
-  const vocabulary = new Set<string>();
-  let questions = 0;
-  let exclamations = 0;
-  let personalPronouns = 0;
-
-  const transitionWords = ['however', 'therefore', 'meanwhile', 'furthermore', 'consequently', 'nevertheless', 'moreover', 'additionally'];
-  const personalPronounWords = ['i', 'you', 'we', 'us', 'my', 'your', 'our'];
-
-  scripts.forEach(script => {
-    const sentences = script.split(/[.!?]+/).filter(s => s.trim());
-    totalSentences += sentences.length;
-    
-    questions += (script.match(/\?/g) || []).length;
-    exclamations += (script.match(/!/g) || []).length;
-    
-    sentences.forEach(sentence => {
-      const words = sentence.trim().toLowerCase().split(/\s+/);
-      const wordCount = words.length;
-      totalWords += wordCount;
-      sentenceLengths.push(wordCount);
-      
-      words.forEach(word => {
-        vocabulary.add(word);
-        if (personalPronounWords.includes(word)) personalPronouns++;
-        if (transitionWords.includes(word)) {
-          transitions.set(word, (transitions.get(word) || 0) + 1);
-        }
-      });
-    });
-  });
-
-  analysis.avgSentenceLength = Math.round(totalWords / totalSentences);
-  analysis.sentenceLengthVariation = Math.round(
-    Math.sqrt(sentenceLengths.reduce((sum, len) => sum + Math.pow(len - analysis.avgSentenceLength, 2), 0) / sentenceLengths.length)
-  );
-  analysis.vocabularyComplexity = vocabulary.size;
-  analysis.questionFrequency = questions / totalSentences;
-  analysis.exclamationFrequency = exclamations / totalSentences;
-  analysis.personalPronounUsage = personalPronouns / totalWords;
-  analysis.commonTransitions = Array.from(transitions.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
-    .map(([word]) => word);
-
-  return analysis;
+// Check if content is truly unique
+const isContentUnique = (content: string, topic: string, sessionId: string): boolean => {
+  const contentHash = generateContentHash(content);
+  
+  // Check against topic history
+  const topicHashes = topicHistory.get(topic.toLowerCase()) || new Set();
+  if (topicHashes.has(contentHash)) {
+    return false;
+  }
+  
+  // Check against session history
+  const sessionHistoryData = sessionHistory.get(sessionId) || [];
+  const isDuplicate = sessionHistoryData.some(entry => entry.contentHash === contentHash);
+  
+  // Store new content
+  topicHashes.add(contentHash);
+  topicHistory.set(topic.toLowerCase(), topicHashes);
+  
+  return !isDuplicate;
 };
 
-// Dynamic perspective generation based on topic analysis
-const generateDynamicApproach = (topic: string, targetAudience: string, sessionId: string, previousApproaches: string[]) => {
-  const topicKeywords = topic.toLowerCase().split(/\s+/);
-  const audienceContext = targetAudience?.toLowerCase() || 'general';
+// Generate truly dynamic approaches based on multiple factors
+const generateUniqueApproach = (topic: string, audience: string, sessionId: string, attemptNumber: number = 0): any => {
+  const sessionSeed = parseInt(sessionId.slice(-6), 16) + attemptNumber * 1000;
+  const topicWords = topic.toLowerCase().split(/\s+/);
   
-  // Topic-specific perspective generators
-  const perspectiveGenerators = {
-    business: [
-      `Reveal the hidden psychology behind why 95% fail at ${topic}`,
-      `Share the contrarian approach that successful people use for ${topic}`,
-      `Expose the industry lies about ${topic} that keep people stuck`,
-      `Tell the untold story of how ${topic} really works behind closed doors`
-    ],
-    health: [
-      `Share the unconventional ${topic} method that doctors don't discuss`,
-      `Reveal why traditional approaches to ${topic} fail most people`,
-      `Expose the surprising science behind ${topic} that changes everything`,
-      `Tell the personal transformation story through ${topic}`
-    ],
-    technology: [
-      `Demystify ${topic} by showing what experts don't want you to know`,
-      `Reveal the future of ${topic} that's already happening today`,
-      `Share the insider secrets of ${topic} that only pros know`,
-      `Expose the common ${topic} mistakes that cost people dearly`
-    ],
-    lifestyle: [
-      `Challenge everything you think you know about ${topic}`,
-      `Share the life-changing ${topic} approach that seems too simple`,
-      `Reveal the ${topic} secrets that transformed my entire life`,
-      `Expose why most ${topic} advice is completely backwards`
-    ]
-  };
-
-  // Determine topic category
-  let category = 'lifestyle';
-  if (topicKeywords.some(word => ['business', 'money', 'career', 'success', 'marketing', 'sales'].includes(word))) {
-    category = 'business';
-  } else if (topicKeywords.some(word => ['health', 'fitness', 'diet', 'wellness', 'mental'].includes(word))) {
-    category = 'health';
-  } else if (topicKeywords.some(word => ['tech', 'ai', 'software', 'digital', 'online'].includes(word))) {
-    category = 'technology';
-  }
-
-  const sessionSeed = parseInt(sessionId.slice(-4), 16) || Date.now();
-  const perspectives = perspectiveGenerators[category as keyof typeof perspectiveGenerators];
+  // Dynamic perspective generators that change based on attempt
+  const perspectives = [
+    `Reveal the counterintuitive truth about ${topic} that nobody talks about`,
+    `Share the insider methodology for ${topic} that only experts know`,
+    `Expose the hidden psychology behind successful ${topic} strategies`,
+    `Challenge conventional wisdom about ${topic} with surprising data`,
+    `Tell the untold story of how ${topic} really works behind the scenes`,
+    `Decode the secret patterns that make ${topic} actually effective`,
+    `Unveil the systematic approach to ${topic} that bypasses common failures`,
+    `Demonstrate the advanced ${topic} techniques that seem impossible`,
+    `Break down the mental models that separate ${topic} winners from losers`,
+    `Investigate why most ${topic} advice is completely backwards`
+  ];
   
-  // Avoid previously used approaches
-  const availablePerspectives = perspectives.filter(p => !previousApproaches.includes(p));
-  const selectedPerspective = availablePerspectives[sessionSeed % availablePerspectives.length] || perspectives[0];
-
-  // Generate unique angles based on audience and topic
-  const audienceAngles = {
-    beginner: `Start with the absolute basics but reveal advanced secrets early`,
-    intermediate: `Skip the basics and dive into the nuanced strategies`,
-    advanced: `Focus on optimization and little-known expert techniques`,
-    general: `Make complex concepts accessible while maintaining depth`
-  };
-
-  const audienceKey = Object.keys(audienceAngles).find(key => 
-    audienceContext.includes(key)
-  ) || 'general';
-
+  const narrativeStyles = [
+    'Documentary investigation style',
+    'Personal transformation journey',
+    'Scientific case study approach',
+    'Behind-the-scenes revelation',
+    'Step-by-step methodology breakdown',
+    'Contrarian analysis format',
+    'Expert interview synthesis',
+    'Historical pattern analysis',
+    'Psychology-focused explanation',
+    'System architecture reveal'
+  ];
+  
+  const emotionalTones = [
+    'Urgent and revelatory',
+    'Confident and authoritative',
+    'Curious and investigative',
+    'Passionate and energetic',
+    'Calm and systematic',
+    'Bold and challenging',
+    'Empathetic and supportive',
+    'Analytical and precise',
+    'Inspiring and motivational',
+    'Cautionary and wise'
+  ];
+  
+  const selectedPerspective = perspectives[sessionSeed % perspectives.length];
+  const selectedNarrative = narrativeStyles[(sessionSeed + attemptNumber) % narrativeStyles.length];
+  const selectedTone = emotionalTones[(sessionSeed * 2 + attemptNumber) % emotionalTones.length];
+  
   return {
     perspective: selectedPerspective,
-    angle: audienceAngles[audienceKey as keyof typeof audienceAngles],
-    narrativeStyle: generateNarrativeStyle(sessionSeed),
-    emotionalTone: generateEmotionalTone(sessionSeed, category)
+    narrativeStyle: selectedNarrative,
+    emotionalTone: selectedTone,
+    uniqueAngle: generateUniqueAngle(topic, sessionSeed, attemptNumber),
+    structuralApproach: generateStructuralApproach(sessionSeed, attemptNumber)
   };
 };
 
-// Generate narrative style
-const generateNarrativeStyle = (seed: number) => {
-  const styles = [
-    'First-person transformation story',
-    'Third-person case study analysis', 
-    'Observational documentary style',
-    'Interactive Q&A format',
-    'Problem-solution narrative',
-    'Before-and-after comparison',
-    'Step-by-step journey',
-    'Myth-busting revelation'
+const generateUniqueAngle = (topic: string, seed: number, attempt: number): string => {
+  const angles = [
+    `Focus on the unexpected obstacles that derail most ${topic} attempts`,
+    `Emphasize the timing and sequencing that makes ${topic} work`,
+    `Highlight the psychological barriers that prevent ${topic} success`,
+    `Concentrate on the environmental factors that influence ${topic} outcomes`,
+    `Examine the social dynamics that impact ${topic} effectiveness`,
+    `Analyze the systematic thinking required for ${topic} mastery`,
+    `Investigate the resource allocation strategies for ${topic}`,
+    `Explore the decision-making frameworks that optimize ${topic}`,
+    `Study the pattern recognition skills needed for ${topic}`,
+    `Understand the adaptation strategies for ${topic} challenges`
   ];
-  return styles[seed % styles.length];
+  
+  return angles[(seed + attempt * 3) % angles.length];
 };
 
-// Generate emotional tone
-const generateEmotionalTone = (seed: number, category: string) => {
-  const tones = {
-    business: ['Confident and authoritative', 'Urgent and motivating', 'Conspiratorial and revealing', 'Empowering and inspiring'],
-    health: ['Caring and supportive', 'Urgent and concerning', 'Hopeful and encouraging', 'Scientific and trustworthy'],
-    technology: ['Excited and innovative', 'Cautionary and wise', 'Curious and exploratory', 'Practical and grounded'],
-    lifestyle: ['Warm and relatable', 'Passionate and energetic', 'Calm and reflective', 'Bold and challenging']
+const generateStructuralApproach = (seed: number, attempt: number): string => {
+  const structures = [
+    'Problem → Root Cause → Solution → Implementation',
+    'Mystery → Investigation → Discovery → Application',
+    'Challenge → Analysis → Strategy → Execution',
+    'Question → Research → Insight → Action',
+    'Observation → Pattern → System → Results',
+    'Conflict → Understanding → Resolution → Transformation',
+    'Confusion → Clarity → Method → Success',
+    'Struggle → Breakthrough → Framework → Achievement',
+    'Failure → Learning → Improvement → Mastery',
+    'Doubt → Evidence → Conviction → Implementation'
+  ];
+  
+  return structures[(seed * 2 + attempt) % structures.length];
+};
+
+// Analyze voice patterns from reference scripts
+const analyzeVoicePatterns = (scripts: string[]): any => {
+  if (!scripts || scripts.length === 0) {
+    return {
+      avgSentenceLength: 15,
+      vocabularyComplexity: 'moderate',
+      questionFrequency: 0.1,
+      personalPronounUsage: 0.08,
+      transitionWords: ['however', 'therefore', 'but'],
+      emotionalIntensity: 'medium'
+    };
+  }
+  
+  let totalSentences = 0;
+  let totalWords = 0;
+  let questionCount = 0;
+  let personalPronounCount = 0;
+  const vocabulary = new Set<string>();
+  
+  scripts.forEach(script => {
+    const sentences = script.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    totalSentences += sentences.length;
+    questionCount += (script.match(/\?/g) || []).length;
+    
+    const words = script.toLowerCase().split(/\s+/);
+    totalWords += words.length;
+    
+    words.forEach(word => {
+      vocabulary.add(word);
+      if (['i', 'you', 'we', 'my', 'your', 'our'].includes(word)) {
+        personalPronounCount++;
+      }
+    });
+  });
+  
+  return {
+    avgSentenceLength: Math.round(totalWords / Math.max(totalSentences, 1)),
+    vocabularyComplexity: vocabulary.size > 200 ? 'high' : vocabulary.size > 100 ? 'moderate' : 'simple',
+    questionFrequency: questionCount / Math.max(totalSentences, 1),
+    personalPronounUsage: personalPronounCount / Math.max(totalWords, 1),
+    transitionWords: ['however', 'therefore', 'meanwhile', 'furthermore'],
+    emotionalIntensity: questionCount > totalSentences * 0.15 ? 'high' : 'medium'
   };
-  
-  const categoryTones = tones[category as keyof typeof tones] || tones.lifestyle;
-  return categoryTones[seed % categoryTones.length];
 };
 
-// Intelligent word count calculation
-const calculateOptimalWordCount = (baseTarget: number, topic: string, approach: any, voicePatterns: any): number => {
-  // Content density factors
-  const topicComplexity = topic.split(' ').length > 3 ? 1.15 : 1.0;
-  const narrativeComplexity = approach.narrativeStyle.includes('story') ? 1.2 : 1.0;
-  const voiceComplexity = voicePatterns.vocabularyComplexity > 100 ? 1.1 : 1.0;
+// Calculate target word count with strict minimum enforcement
+const calculateTargetWordCount = (requestedWords: number, approach: any, complexity: string): number => {
+  // Always ensure we meet or exceed the requested minimum
+  const baseTarget = Math.max(requestedWords, 1200); // Absolute minimum
   
-  // Ensure we always meet or exceed the base target
-  const multiplier = Math.max(1.0, topicComplexity * narrativeComplexity * voiceComplexity);
+  // Add complexity multipliers
+  const complexityMultiplier = approach.narrativeStyle.includes('investigation') ? 1.2 : 
+                              approach.narrativeStyle.includes('breakdown') ? 1.15 : 1.1;
   
-  return Math.max(baseTarget, Math.ceil(baseTarget * multiplier));
+  const finalTarget = Math.max(baseTarget, Math.ceil(baseTarget * complexityMultiplier));
+  
+  console.log(`Word count calculation: requested=${requestedWords}, base=${baseTarget}, final=${finalTarget}`);
+  return finalTarget;
 };
 
-// Anti-repetition system
-const checkContentUniqueness = (content: string, topic: string): { isUnique: boolean; similarity: number } => {
-  const semanticHash = generateSemanticHash(content);
-  
-  if (semanticHashes.has(semanticHash)) {
-    return { isUnique: false, similarity: 100 };
-  }
-  
-  // Check against topic-specific patterns
-  const topicPatterns = contentPatterns.get(topic) || new Set();
-  const contentSignature = content.substring(0, 200).toLowerCase();
-  
-  let maxSimilarity = 0;
-  for (const pattern of topicPatterns) {
-    const similarity = calculateSimilarity(contentSignature, pattern);
-    maxSimilarity = Math.max(maxSimilarity, similarity);
-  }
-  
-  // Store new patterns
-  topicPatterns.add(contentSignature);
-  contentPatterns.set(topic, topicPatterns);
-  semanticHashes.add(semanticHash);
-  
-  return { isUnique: maxSimilarity < 30, similarity: maxSimilarity };
-};
+// Build enhanced system prompt for maximum creativity
+const buildSystemPrompt = (approach: any, targetWords: number, voicePatterns: any): string => {
+  return `You are an elite content creator specializing in viral YouTube scripts. Your mission is to create completely original, engaging content that captures attention and drives action.
 
-// Simple similarity calculation
-const calculateSimilarity = (str1: string, str2: string): number => {
-  const words1 = new Set(str1.split(/\s+/));
-  const words2 = new Set(str2.split(/\s+/));
-  const intersection = new Set([...words1].filter(x => words2.has(x)));
-  const union = new Set([...words1, ...words2]);
-  return Math.round((intersection.size / union.size) * 100);
-};
-
-// Build advanced system prompt
-const buildAdvancedSystemPrompt = (approach: any, targetWords: number, voicePatterns: any, uniquenessContext: any) => {
-  return `You are an elite scriptwriter creating completely original content. This script must be fundamentally different from anything previously written.
-
-CREATIVE MISSION:
+CREATIVE MANDATE:
 - Perspective: ${approach.perspective}
-- Angle: ${approach.angle}
 - Narrative Style: ${approach.narrativeStyle}
 - Emotional Tone: ${approach.emotionalTone}
+- Unique Angle: ${approach.uniqueAngle}
+- Structure: ${approach.structuralApproach}
 
-VOICE FINGERPRINT MATCHING:
-- Target sentence length: ${voicePatterns.avgSentenceLength} ± ${voicePatterns.sentenceLengthVariation} words
-- Vocabulary complexity level: ${voicePatterns.vocabularyComplexity > 100 ? 'Advanced' : 'Moderate'}
+VOICE MATCHING REQUIREMENTS:
+- Average sentence length: ${voicePatterns.avgSentenceLength} words
+- Vocabulary complexity: ${voicePatterns.vocabularyComplexity}
 - Question frequency: ${Math.round(voicePatterns.questionFrequency * 100)}% of sentences
-- Personal pronoun usage: ${Math.round(voicePatterns.personalPronounUsage * 100)}% of words
-- Preferred transitions: ${voicePatterns.commonTransitions.join(', ')}
+- Personal engagement: ${Math.round(voicePatterns.personalPronounUsage * 100)}% personal pronouns
+- Emotional intensity: ${voicePatterns.emotionalIntensity}
 
-STRICT REQUIREMENTS:
-- Write EXACTLY ${targetWords} words (verify count before finishing)
-- Content uniqueness score must exceed 70%
-- Use the specified narrative style consistently
-- Match the emotional tone throughout
-- Create genuine value and insight
+CRITICAL REQUIREMENTS:
+1. Write EXACTLY ${targetWords} words (this is non-negotiable)
+2. Create completely original content - no templates or formulas
+3. Match the specified narrative style throughout
+4. Maintain the emotional tone consistently
+5. Provide genuine value and actionable insights
+6. End with a compelling call-to-action
 
 FORBIDDEN ELEMENTS:
 - Generic business clichés or buzzwords
-- Predictable opening hooks or transitions
-- Content patterns similar to previous generations
-- Template-based structures or formulas
-- Repetitive phrasing or concepts
+- Template-based structures
+- Predictable hooks or transitions
+- Repetitive content patterns
+- Filler content to reach word count
 
 SUCCESS CRITERIA:
-- Completely original perspective on the topic
-- Authentic voice matching the reference samples
-- Engaging narrative that holds attention
-- Actionable insights that provide real value
-- Perfect word count adherence`;
+- Exact word count achievement: ${targetWords} words
+- Completely unique perspective and approach
+- Authentic voice matching reference samples
+- Engaging narrative that maintains attention
+- Actionable value for the viewer
+
+Write the complete script now, ensuring every word serves a purpose and the total count is exactly ${targetWords} words.`;
 };
 
-// Enhanced user prompt
-const buildComprehensiveUserPrompt = (data: any, approach: any, targetWords: number, voicePatterns: any) => {
-  return `VOICE REFERENCE ANALYSIS:
-${data.scripts.map((script: string, index: number) => `\nSAMPLE ${index + 1} (${script.split(' ').length} words):\n${script.substring(0, 300)}...`).join('')}
+// Build comprehensive user prompt
+const buildUserPrompt = (data: any, approach: any, targetWords: number, voicePatterns: any): string => {
+  const scriptSamples = data.scripts && data.scripts.length > 0 
+    ? data.scripts.map((script: string, index: number) => 
+        `\nREFERENCE SCRIPT ${index + 1} (${script.split(' ').length} words):\n${script}`
+      ).join('')
+    : '\nNo reference scripts provided - create in your best style.';
+
+  return `${scriptSamples}
 
 CONTENT BRIEF:
 Topic: "${data.topic}"
-Target Audience: ${data.targetAudience || 'General audience'}
-Context: ${data.description || 'No additional context provided'}
+Target Audience: ${data.targetAudience || 'YouTube viewers'}
+Context: ${data.description || 'No additional context'}
 Call to Action: "${data.callToAction}"
-Required Word Count: EXACTLY ${targetWords} words
+REQUIRED WORD COUNT: EXACTLY ${targetWords} words
 
 CREATIVE DIRECTION:
-Perspective: ${approach.perspective}
-Narrative Approach: ${approach.narrativeStyle}
-Emotional Tone: ${approach.emotionalTone}
-Unique Angle: ${approach.angle}
+${approach.perspective}
 
-VOICE MATCHING REQUIREMENTS:
-- Match the conversational rhythm and flow of the reference samples
-- Use similar sentence structures and lengths (avg: ${voicePatterns.avgSentenceLength} words)
-- Incorporate the natural language patterns observed
-- Maintain the same level of vocabulary complexity
+Apply this narrative approach: ${approach.narrativeStyle}
+Maintain this emotional tone: ${approach.emotionalTone}
+Focus on this unique angle: ${approach.uniqueAngle}
+Follow this structure: ${approach.structuralApproach}
 
-UNIQUENESS MANDATE:
-This script must be completely original and unlike any content previously created. Avoid any formulaic approaches or template language. Create something that feels fresh, authentic, and genuinely valuable.
+VOICE MATCHING:
+Based on the reference scripts, match these patterns:
+- Sentence structure and rhythm
+- Vocabulary level and complexity
+- Question usage and engagement style
+- Personal connection approach
 
-Write the complete script now, ensuring it meets the exact word count requirement:`;
+UNIQUENESS REQUIREMENT:
+This script must be completely different from any previous content. Create something fresh, authentic, and valuable that provides a genuinely new perspective on the topic.
+
+Generate the complete ${targetWords}-word script now:`;
 };
 
 serve(async (req) => {
@@ -333,112 +309,110 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Generate unique session
+    // Generate unique session and tracking
     const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
+    let attemptNumber = 0;
+    let generatedScript = '';
+    let isUnique = false;
     
-    // Get previous approaches for this topic
-    const previousApproaches = generationHistory
-      .filter(h => h.topic === topic)
-      .map(h => h.approach);
+    // Voice analysis
+    const voicePatterns = analyzeVoicePatterns(scripts || []);
     
-    // Advanced analysis and generation
-    const voicePatterns = analyzeVoiceFingerprint(scripts);
-    const uniqueApproach = generateDynamicApproach(topic, targetAudience, sessionId, previousApproaches);
-    const targetWords = calculateOptimalWordCount(targetWordCount, topic, uniqueApproach, voicePatterns);
+    console.log(`Starting script generation for topic: ${topic}`);
+    console.log(`Requested word count: ${targetWordCount}`);
+    console.log(`Session ID: ${sessionId}`);
 
-    // Build advanced prompts
-    const systemPrompt = buildAdvancedSystemPrompt(uniqueApproach, targetWords, voicePatterns, { sessionId });
-    const userPrompt = buildComprehensiveUserPrompt(requestData, uniqueApproach, targetWords, voicePatterns);
+    // Generation loop with uniqueness checking
+    while (!isUnique && attemptNumber < 3) {
+      const uniqueApproach = generateUniqueApproach(topic, targetAudience, sessionId, attemptNumber);
+      const targetWords = calculateTargetWordCount(targetWordCount || 1400, uniqueApproach, voicePatterns.vocabularyComplexity);
+      
+      console.log(`Attempt ${attemptNumber + 1}: Targeting ${targetWords} words`);
+      console.log(`Approach: ${uniqueApproach.perspective.substring(0, 60)}...`);
+      
+      const systemPrompt = buildSystemPrompt(uniqueApproach, targetWords, voicePatterns);
+      const userPrompt = buildUserPrompt(requestData, uniqueApproach, targetWords, voicePatterns);
 
-    console.log(`Advanced script generation initiated:`);
-    console.log(`- Session: ${sessionId}`);
-    console.log(`- Topic: ${topic}`);
-    console.log(`- Approach: ${uniqueApproach.perspective.substring(0, 80)}...`);
-    console.log(`- Narrative: ${uniqueApproach.narrativeStyle}`);
-    console.log(`- Tone: ${uniqueApproach.emotionalTone}`);
-    console.log(`- Target words: ${targetWords} (base: ${targetWordCount})`);
-    console.log(`- Voice complexity: ${voicePatterns.vocabularyComplexity}`);
-
-    // Use Claude Sonnet 4 with optimized creativity settings
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': claudeApiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 8000,
-        temperature: 1.0,
-        top_p: 0.9,
-        system: systemPrompt,
-        messages: [
-          {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': claudeApiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-sonnet-20241022',
+          max_tokens: 8000,
+          temperature: 0.9 + (attemptNumber * 0.1), // Increase creativity with each attempt
+          top_p: 0.95,
+          system: systemPrompt,
+          messages: [{
             role: 'user',
             content: userPrompt
-          }
-        ]
-      })
-    });
+          }]
+        })
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Claude API Error:', errorText);
-      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        throw new Error(`Claude API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      generatedScript = data.content[0].text;
+      
+      // Verify uniqueness and word count
+      isUnique = isContentUnique(generatedScript, topic, sessionId);
+      const actualWordCount = generatedScript.trim().split(/\s+/).length;
+      
+      console.log(`Attempt ${attemptNumber + 1} results:`);
+      console.log(`- Words generated: ${actualWordCount}`);
+      console.log(`- Target was: ${targetWords}`);
+      console.log(`- Content unique: ${isUnique}`);
+      
+      // If word count is significantly under target, regenerate
+      if (actualWordCount < targetWordCount * 0.9) {
+        console.log(`Word count too low (${actualWordCount} < ${targetWordCount * 0.9}), regenerating...`);
+        isUnique = false;
+      }
+      
+      if (isUnique && actualWordCount >= targetWordCount * 0.9) {
+        // Store successful generation
+        const sessionHistoryData = sessionHistory.get(sessionId) || [];
+        sessionHistoryData.push({
+          contentHash: generateContentHash(generatedScript),
+          wordCount: actualWordCount,
+          timestamp: Date.now(),
+          approach: uniqueApproach.perspective
+        });
+        sessionHistory.set(sessionId, sessionHistoryData);
+        break;
+      }
+      
+      attemptNumber++;
     }
 
-    const data = await response.json();
-    const generatedScript = data.content[0].text;
-    
-    // Advanced quality checks
-    const actualWordCount = generatedScript.trim().split(/\s+/).length;
-    const uniquenessCheck = checkContentUniqueness(generatedScript, topic);
-    const meetsTarget = actualWordCount >= targetWordCount;
-    const wordCountAccuracy = Math.abs(targetWords - actualWordCount);
+    const finalWordCount = generatedScript.trim().split(/\s+/).length;
+    const meetsWordCount = finalWordCount >= (targetWordCount || 1400) * 0.9;
 
-    // Record generation history
-    generationHistory.push({
-      sessionId,
-      topic,
-      approach: uniqueApproach.perspective,
-      timestamp: Date.now(),
-      contentHash: generateSemanticHash(generatedScript)
-    });
-
-    // Comprehensive metrics
-    const metrics = {
-      wordCount: actualWordCount,
-      targetWordCount: targetWords,
-      minimumTarget: targetWordCount,
-      meetsMinimum: meetsTarget,
-      wordCountAccuracy: wordCountAccuracy,
-      uniquenessScore: 100 - uniquenessCheck.similarity,
-      isUnique: uniquenessCheck.isUnique,
-      voiceMatchScore: Math.max(0, 100 - Math.abs(voicePatterns.avgSentenceLength - (actualWordCount / generatedScript.split(/[.!?]+/).length))),
-      narrativeStyle: uniqueApproach.narrativeStyle,
-      emotionalTone: uniqueApproach.emotionalTone,
-      sessionId: sessionId,
-      generationQuality: meetsTarget && uniquenessCheck.isUnique && wordCountAccuracy < 50 ? 'Excellent' : 'Good'
-    };
-
-    console.log(`Script generation completed:`);
-    console.log(`- Words: ${actualWordCount}/${targetWords} (accuracy: ±${wordCountAccuracy})`);
-    console.log(`- Uniqueness: ${metrics.uniquenessScore}%`);
-    console.log(`- Quality: ${metrics.generationQuality}`);
-    console.log(`- Voice match: ${metrics.voiceMatchScore}%`);
+    console.log(`Final script generated:`);
+    console.log(`- Final word count: ${finalWordCount}`);
+    console.log(`- Requested minimum: ${targetWordCount || 1400}`);
+    console.log(`- Meets requirement: ${meetsWordCount}`);
+    console.log(`- Attempts needed: ${attemptNumber + 1}`);
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
         success: true,
-        metrics: metrics,
-        approach: {
-          perspective: uniqueApproach.perspective,
-          narrativeStyle: uniqueApproach.narrativeStyle,
-          emotionalTone: uniqueApproach.emotionalTone
+        metrics: {
+          wordCount: finalWordCount,
+          targetWordCount: targetWordCount || 1400,
+          meetsRequirement: meetsWordCount,
+          attemptsNeeded: attemptNumber + 1,
+          isUnique: isUnique,
+          sessionId: sessionId
         },
-        message: `Advanced script generated: ${actualWordCount} words, ${metrics.uniquenessScore}% unique, ${metrics.generationQuality.toLowerCase()} quality`
+        message: `Script generated: ${finalWordCount} words (target: ${targetWordCount || 1400})`
       }),
       { 
         headers: { 
@@ -449,10 +423,10 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error in advanced script generation:', error);
+    console.error('Script generation error:', error);
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Advanced script generation failed',
+        error: error.message || 'Script generation failed',
         success: false 
       }),
       { 
