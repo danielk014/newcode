@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText } from 'lucide-react';
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft } from 'lucide-react';
 import { TacticMapper } from './TacticMapper';
+import { ScriptImprovement } from './ScriptImprovement';
 
 interface ScriptGeneratorProps {
   script: string;
@@ -17,6 +17,8 @@ interface ScriptGeneratorProps {
 export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactics, onRestart }) => {
   const [editedScript, setEditedScript] = useState(script);
   const [copied, setCopied] = useState(false);
+  const [improvedVersions, setImprovedVersions] = useState<Array<{script: string, improvement: string, timestamp: Date}>>([]);
+  const [activeTab, setActiveTab] = useState("script");
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(editedScript);
@@ -31,6 +33,22 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     a.href = url;
     a.download = 'generated-script.txt';
     a.click();
+  };
+
+  const handleImprovedScript = (improvedScript: string, improvementType: string) => {
+    const newImprovedVersion = {
+      script: improvedScript,
+      improvement: improvementType,
+      timestamp: new Date()
+    };
+    setImprovedVersions(prev => [newImprovedVersion, ...prev]);
+    setEditedScript(improvedScript);
+    setActiveTab("script");
+  };
+
+  const loadImprovedVersion = (version: any) => {
+    setEditedScript(version.script);
+    setActiveTab("script");
   };
 
   const tacticMap = [
@@ -80,13 +98,19 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             <CheckCircle className="w-6 h-6 text-green-600" />
             Your Script is Ready!
           </CardTitle>
+          {improvedVersions.length > 0 && (
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <Badge variant="secondary">{improvedVersions.length} improvement{improvedVersions.length > 1 ? 's' : ''} applied</Badge>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="script" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="script">Generated Script</TabsTrigger>
               <TabsTrigger value="mapping">Tactic Mapping</TabsTrigger>
-              <TabsTrigger value="revisions">Suggested Revisions</TabsTrigger>
+              <TabsTrigger value="revisions">Improve Script</TabsTrigger>
+              <TabsTrigger value="versions">Versions</TabsTrigger>
               <TabsTrigger value="export">Export & Share</TabsTrigger>
             </TabsList>
 
@@ -95,8 +119,8 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Your Generated Script</h3>
                   <div className="flex gap-2">
-                    <Badge variant="outline">~1,400 words</Badge>
-                    <Badge variant="outline">~5 minutes</Badge>
+                    <Badge variant="outline">~{Math.round(editedScript.split(' ').length)} words</Badge>
+                    <Badge variant="outline">~{Math.round(editedScript.split(' ').length / 140)} minutes</Badge>
                   </div>
                 </div>
                 <Textarea
@@ -142,27 +166,70 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="revisions" className="mt-6">
+              <ScriptImprovement 
+                originalScript={editedScript}
+                onImprovedScript={handleImprovedScript}
+              />
+            </TabsContent>
+
+            <TabsContent value="versions" className="mt-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5 text-yellow-600" />
-                    Suggested Improvements
+                    <FileText className="w-5 h-5 text-purple-600" />
+                    Script Versions & Improvements
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {revisionSuggestions.map((suggestion, index) => (
-                      <div key={index} className="p-4 border rounded-lg">
+                  {improvedVersions.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">
+                      No improvements applied yet. Use the "Improve Script" tab to enhance your script.
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="p-4 border rounded-lg bg-blue-50">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{suggestion.title}</h4>
-                          <Badge variant={suggestion.impact === 'High' ? 'destructive' : 'secondary'}>
-                            {suggestion.impact} Impact
+                          <h4 className="font-medium">Original Version</h4>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditedScript(script);
+                              setActiveTab("script");
+                            }}
+                          >
+                            <ArrowLeft className="w-4 h-4 mr-1" />
+                            Load
+                          </Button>
+                        </div>
+                        <p className="text-sm text-gray-600">The initial generated script</p>
+                      </div>
+                      
+                      {improvedVersions.map((version, index) => (
+                        <div key={index} className="p-4 border rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <h4 className="font-medium">{version.improvement} Applied</h4>
+                              <p className="text-xs text-gray-500">
+                                {version.timestamp.toLocaleString()}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => loadImprovedVersion(version)}
+                            >
+                              <ArrowLeft className="w-4 h-4 mr-1" />
+                              Load
+                            </Button>
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            Version {improvedVersions.length - index}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600">{suggestion.description}</p>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -185,7 +252,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                       </div>
                     </Button>
                     <Button onClick={copyToClipboard} variant="outline" className="h-auto p-4 flex-col items-start">
-                      <Copy className="w-6 h-6 mb-2" />
+                      <Copy className="w-6 h-4 mb-2" />
                       <div className="text-left">
                         <div className="font-medium">Copy to Clipboard</div>
                         <div className="text-sm opacity-70">Paste directly into your editor</div>
