@@ -22,6 +22,7 @@ import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 interface ScriptInput {
   scripts: string[];
   topic: string;
+  description: string;
   targetLength: number;
   callToAction: string;
 }
@@ -31,6 +32,7 @@ const Index = () => {
   const [scriptInput, setScriptInput] = useState<ScriptInput>({
     scripts: ['', ''], // Start with 2 empty scripts
     topic: '',
+    description: '',
     targetLength: 1400,
     callToAction: ''
   });
@@ -83,25 +85,30 @@ const Index = () => {
 
     setIsAnalyzing(true);
     
-    // Import the actual analyzer
-    const { analyzeScript, synthesizeAnalyses } = await import('@/utils/scriptAnalyzer');
-    
-    // Analyze each script
-    const scriptAnalyses = filledScripts.map(script => analyzeScript(script));
-    
-    // Synthesize the analyses
-    const synthesis = synthesizeAnalyses(scriptAnalyses);
-    
-    setTimeout(() => {
-      setAnalysis({
-        scriptAnalyses,
-        synthesizedTactics: synthesis.commonTactics,
-        blueprint: synthesis.averageStructure,
-        insights: synthesis.insights
-      });
+    try {
+      // Import the actual analyzer
+      const { analyzeScript, synthesizeAnalyses } = await import('@/utils/scriptAnalyzer');
+      
+      // Analyze each script
+      const scriptAnalyses = filledScripts.map(script => analyzeScript(script));
+      
+      // Synthesize the analyses
+      const synthesis = synthesizeAnalyses(scriptAnalyses);
+      
+      setTimeout(() => {
+        setAnalysis({
+          scriptAnalyses,
+          synthesizedTactics: synthesis.commonTactics,
+          blueprint: synthesis.averageStructure,
+          insights: synthesis.insights
+        });
+        setIsAnalyzing(false);
+        setCurrentStep(1);
+      }, 2000);
+    } catch (error) {
+      console.error('Analysis error:', error);
       setIsAnalyzing(false);
-      setCurrentStep(1);
-    }, 2000);
+    }
   };
 
   const handleGenerate = async () => {
@@ -114,6 +121,7 @@ const Index = () => {
       const { data, error } = await supabase.functions.invoke('generate-script', {
         body: {
           topic: scriptInput.topic,
+          description: scriptInput.description,
           targetAudience: 'YouTube viewers interested in ' + scriptInput.topic,
           videoLength: Math.round(scriptInput.targetLength / 140),
           scripts: scriptInput.scripts.filter(s => s.trim()),
@@ -358,16 +366,39 @@ Avoiding these mistakes alone can 10x your results.`
                 <Separator />
 
                 {/* Video Details */}
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
+                      <Input
+                        id="topic"
+                        placeholder="e.g., How to make money online"
+                        value={scriptInput.topic}
+                        onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
+                      <Input
+                        id="cta"
+                        placeholder="Subscribe to my course"
+                        value={scriptInput.callToAction}
+                        onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
-                    <Input
-                      id="topic"
-                      placeholder="e.g., How to make money online"
-                      value={scriptInput.topic}
-                      onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                    <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
+                      className="min-h-[80px]"
+                      value={scriptInput.description}
+                      onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
                     />
                   </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="length" className="text-sm font-medium">Target Length (words)</Label>
                     <Input
@@ -376,15 +407,6 @@ Avoiding these mistakes alone can 10x your results.`
                       placeholder="1400"
                       value={scriptInput.targetLength}
                       onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
-                    <Input
-                      id="cta"
-                      placeholder="Subscribe to my course"
-                      value={scriptInput.callToAction}
-                      onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
                     />
                   </div>
                 </div>
@@ -443,6 +465,7 @@ Avoiding these mistakes alone can 10x your results.`
                 setScriptInput({
                   scripts: ['', ''],
                   topic: '',
+                  description: '',
                   targetLength: 1400,
                   callToAction: ''
                 });

@@ -45,55 +45,52 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
 
             <TabsContent value="analysis" className="mt-6">
               <div className="grid md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-blue-600" />
-                      Reference Script #1
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>Tactics Detected</span>
-                        <span>{analysis.script1Tactics.length}</span>
+                {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
+                  <Card key={index}>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <BarChart3 className="w-5 h-5 text-blue-600" />
+                        Reference Script #{index + 1}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Word Count</span>
+                          <span>{scriptAnalysis.wordCount}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Est. Duration</span>
+                          <span>{scriptAnalysis.estimatedDuration}m</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Tactics Detected</span>
+                          <span>{scriptAnalysis.tactics.length}</span>
+                        </div>
+                        <Progress value={Math.min(85, scriptAnalysis.tactics.length * 10)} className="h-2" />
+                        <div className="flex flex-wrap gap-2">
+                          {scriptAnalysis.tactics.slice(0, 5).map((tactic: any, tacticIndex: number) => (
+                            <Badge key={tacticIndex} className={getTacticColor(tactic.name)}>
+                              {tactic.name}
+                            </Badge>
+                          ))}
+                        </div>
+                        {scriptAnalysis.emotionalTone.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium mb-2">Emotional Tone:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {scriptAnalysis.emotionalTone.map((tone: string, toneIndex: number) => (
+                                <Badge key={toneIndex} variant="outline" className="text-xs">
+                                  {tone}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <Progress value={85} className="h-2" />
-                      <div className="flex flex-wrap gap-2">
-                        {analysis.script1Tactics.map((tactic: any, index: number) => (
-                          <Badge key={index} className={getTacticColor(tactic.name)}>
-                            {tactic.name}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-green-600" />
-                      Reference Script #2
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>Tactics Detected</span>
-                        <span>{analysis.script2Tactics.length}</span>
-                      </div>
-                      <Progress value={78} className="h-2" />
-                      <div className="flex flex-wrap gap-2">
-                        {analysis.script2Tactics.map((tactic: any, index: number) => (
-                          <Badge key={index} className={getTacticColor(tactic.name)}>
-                            {tactic.name}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </TabsContent>
 
@@ -102,7 +99,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-purple-600" />
-                    Synthesized Tactics
+                    Synthesized Tactics ({analysis.synthesizedTactics.length} Found)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -117,6 +114,19 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       </div>
                     ))}
                   </div>
+                  {analysis.insights && analysis.insights.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="font-medium mb-3">Key Insights:</h4>
+                      <ul className="space-y-2">
+                        {analysis.insights.map((insight: string, index: number) => (
+                          <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+                            {insight}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -126,7 +136,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-orange-600" />
-                    Script Blueprint
+                    Script Blueprint (Based on Your Scripts)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -138,13 +148,14 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                             <span className="text-blue-600 font-bold">{index + 1}</span>
                           </div>
                           <div>
-                            <h4 className="font-medium">{section.section}</h4>
-                            <p className="text-sm text-gray-600">{section.duration}</p>
+                            <h4 className="font-medium">{section.type}</h4>
+                            <p className="text-sm text-gray-600">{section.startTime} - {section.endTime}</p>
+                            <p className="text-xs text-gray-500">{section.wordCount} words</p>
                           </div>
                         </div>
                         <div className="flex gap-2">
                           {section.tactics.map((tactic: string, tacticIndex: number) => (
-                            <Badge key={tacticIndex} variant="secondary">
+                            <Badge key={tacticIndex} variant="secondary" className="text-xs">
                               {tactic}
                             </Badge>
                           ))}
@@ -176,12 +187,14 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         <div className="text-sm text-gray-600">Sections Planned</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">92%</div>
+                        <div className="text-2xl font-bold text-purple-600">
+                          {Math.round((analysis.synthesizedTactics.length / 10) * 100)}%
+                        </div>
                         <div className="text-sm text-gray-600">Confidence Score</div>
                       </div>
                     </div>
                     <p className="text-gray-600 mb-6">
-                      Your script will incorporate the most effective tactics from both reference scripts, 
+                      Your script will incorporate the most effective tactics from your reference scripts, 
                       structured for maximum engagement and conversion.
                     </p>
                   </div>

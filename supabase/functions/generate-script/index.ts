@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, targetAudience, videoLength, scripts, callToAction, format, targetWordCount } = await req.json();
+    const { topic, description, targetAudience, videoLength, scripts, callToAction, format, targetWordCount } = await req.json();
     
     const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
     if (!claudeApiKey) {
@@ -77,6 +77,7 @@ ${script}
 
 **Content Details:**
 Topic: ${topic}
+${description ? `Description/Context: ${description}` : ''}
 Target Audience: ${targetAudience}
 Video Length: ${videoLength} minutes
 Call to Action: ${callToAction}
