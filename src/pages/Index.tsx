@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,10 +13,13 @@ import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { ScriptInputPanel } from '@/components/ScriptInputPanel';
+import { ScriptGenerationProgress } from '@/components/ScriptGenerationProgress';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
+import { useProgressTracking } from '@/hooks/useProgressTracking';
+import { useToast } from '@/hooks/use-toast';
 
 interface ScriptInput {
   scripts: string[];
@@ -41,6 +43,31 @@ const Index = () => {
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const { toast } = useToast();
+
+  const generationSteps = [
+    { id: 'analyzing', label: 'Analyzing reference scripts and viral tactics' },
+    { id: 'generating', label: 'Generating script with AI (Claude/OpenAI)' },
+    { id: 'validating', label: 'Validating content quality and uniqueness' },
+    { id: 'finalizing', label: 'Finalizing and formatting your script' }
+  ];
+
+  const progressTracking = useProgressTracking({
+    steps: generationSteps,
+    onComplete: () => {
+      console.log('Script generation completed!');
+      setCurrentStep(3);
+    },
+    onError: (error) => {
+      console.error('Progress tracking error:', error);
+      toast({
+        title: "Generation Error",
+        description: error,
+        variant: "destructive"
+      });
+    }
+  });
 
   const steps = [
     { id: 0, title: 'Input Scripts', icon: FileText },
@@ -80,6 +107,11 @@ const Index = () => {
   const handleAnalyze = async () => {
     const filledScripts = scriptInput.scripts.filter(script => script.trim());
     if (filledScripts.length < 2 || !scriptInput.topic) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide at least 2 reference scripts and a video topic.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -104,19 +136,37 @@ const Index = () => {
         });
         setIsAnalyzing(false);
         setCurrentStep(1);
+        
+        toast({
+          title: "Analysis Complete",
+          description: "Your scripts have been analyzed for viral tactics and patterns."
+        });
       }, 2000);
     } catch (error) {
       console.error('Analysis error:', error);
       setIsAnalyzing(false);
+      toast({
+        title: "Analysis Failed",
+        description: "There was an error analyzing your scripts. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
   const handleGenerate = async () => {
     setCurrentStep(2);
     setIsGenerating(true);
+    progressTracking.reset();
     
     try {
-      console.log('Generating viral script with enhanced tactics...');
+      // Start progress tracking
+      progressTracking.simulateProgress('analyzing', 3000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      progressTracking.completeStep('analyzing');
+      
+      progressTracking.simulateProgress('generating', 25000);
+      
+      console.log('Generating viral script with optimized performance...');
       
       const { data, error } = await supabase.functions.invoke('generate-script', {
         body: {
@@ -131,26 +181,51 @@ const Index = () => {
         }
       });
 
+      progressTracking.completeStep('generating');
+      progressTracking.simulateProgress('validating', 2000);
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       if (error) {
         console.error('Supabase function error:', error);
-        throw error;
+        throw new Error(error.message || 'Failed to generate script');
       }
 
       if (!data.success) {
         throw new Error(data.error || 'Failed to generate script');
       }
 
+      progressTracking.completeStep('validating');
+      progressTracking.simulateProgress('finalizing', 1000);
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       console.log('Viral script generated successfully');
       setGeneratedScript(data.script);
-      setCurrentStep(3);
+      
+      progressTracking.completeStep('finalizing');
+      
+      toast({
+        title: "Script Generated!",
+        description: `Generated ${data.metrics?.wordCount || 'N/A'} words in ${Math.round((data.metrics?.generationTimeMs || 0) / 1000)}s`
+      });
       
     } catch (error) {
       console.error('Error generating script:', error);
-      // Generate a fallback script that meets minimum length
+      
+      progressTracking.errorStep('generating', error.message);
+      
+      // Generate a fallback script
       const targetWords = scriptInput.targetLength;
       const mockScript = generateFallbackScript(scriptInput.topic, scriptInput.callToAction, targetWords);
       setGeneratedScript(mockScript);
       setCurrentStep(3);
+      
+      toast({
+        title: "Using Fallback Generation",
+        description: "Generated script using local fallback due to API issues.",
+        variant: "destructive"
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -442,18 +517,12 @@ Avoiding these mistakes alone can 10x your results.`
           )}
 
           {currentStep === 2 && (
-            <div className="text-center py-12">
-              <div className="animate-pulse">
-                <Zap className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">
-                  {isGenerating ? 'Generating Your Script with Claude AI...' : 'Generating Your Script'}
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Applying psychological tactics and creating compelling content...
-                </p>
-                <Progress value={isGenerating ? 75 : 90} className="w-64 mx-auto" />
-              </div>
-            </div>
+            <ScriptGenerationProgress
+              steps={progressTracking.progressSteps}
+              overallProgress={progressTracking.overallProgress}
+              currentStep={generationSteps[progressTracking.currentStepIndex]?.id || 'analyzing'}
+              error={progressTracking.error}
+            />
           )}
 
           {currentStep === 3 && generatedScript && (
@@ -471,6 +540,7 @@ Avoiding these mistakes alone can 10x your results.`
                 });
                 setAnalysis(null);
                 setGeneratedScript('');
+                progressTracking.reset();
               }}
             />
           )}
