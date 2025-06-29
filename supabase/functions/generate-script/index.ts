@@ -7,80 +7,91 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Completely rewritten format approaches - no templates, just strategic guidance
-const formatApproaches = {
-  "Competition Format": {
-    essence: "Creates tension through contest/challenge dynamics, builds suspense toward winner reveal",
-    startingStyles: [
-      "immediate challenge introduction",
-      "stakes establishment upfront", 
-      "competitor comparison setup",
-      "challenge parameters reveal"
+// Dynamic approach variations - no fixed templates
+const generateDynamicApproach = (format: string, topic: string) => {
+  const approaches = {
+    "Competition Format": [
+      `Write as if you're documenting a real competition where ${topic} experts compete head-to-head`,
+      `Create a narrative about discovering who's the best at ${topic} through direct comparison`,
+      `Tell the story of a challenge that reveals the truth about ${topic}`,
+      `Document a contest that exposes the real winners and losers in ${topic}`
     ],
-    narrativeFlow: "challenge presentation → participant introduction → process documentation → climax/resolution → takeaway",
-    avoidPhrases: ["stop scrolling", "here's the thing", "nobody talks about", "secret", "framework", "blueprint", "step-by-step"],
-    uniqueAngle: "competition/contest energy with clear winner/loser outcomes"
-  },
-  "Transformation Journey": {
-    essence: "Documents dramatic change over time, focuses on before/after contrast with emotional journey",
-    startingStyles: [
-      "dramatic before/after reveal",
-      "moment of decision story",
-      "rock bottom introduction",
-      "catalyst event description"
+    "Transformation Journey": [
+      `Share a personal transformation story about mastering ${topic}`,
+      `Document someone's journey from complete beginner to expert in ${topic}`,
+      `Tell the story of a dramatic change through ${topic}`,
+      `Narrate a before-and-after transformation using ${topic}`
     ],
-    narrativeFlow: "starting point → catalyst → struggle phase → breakthrough → new reality → lessons learned",
-    avoidPhrases: ["stop scrolling", "here's the thing", "nobody talks about", "secret", "framework", "blueprint"],
-    uniqueAngle: "personal transformation with specific, measurable change"
-  },
-  "Teaching Format": {
-    essence: "Educational authority sharing practical knowledge through instruction and examples",
-    startingStyles: [
-      "problem identification",
-      "counterintuitive insight",
-      "common mistake correction",
-      "skill demonstration"
+    "Teaching Format": [
+      `Teach ${topic} like you're explaining it to a curious friend`,
+      `Share practical knowledge about ${topic} through real examples`,
+      `Demonstrate ${topic} skills step-by-step with personal insights`,
+      `Explain ${topic} by showing rather than just telling`
     ],
-    narrativeFlow: "problem awareness → solution preview → instruction → examples → advanced applications → practice",
-    avoidPhrases: ["stop scrolling", "nobody talks about", "secret", "hidden", "blueprint"],
-    uniqueAngle: "instructor authority with actionable learning outcomes"
-  },
-  "Trend Jack Format": {
-    essence: "Rapid response to current events/trends with unique perspective and timely relevance",
-    startingStyles: [
-      "trend reference hook",
-      "contrarian take opening",
-      "breaking news angle",
-      "cultural moment capture"
+    "Trend Jack Format": [
+      `Connect ${topic} to what's happening right now in the world`,
+      `Use current events to explain why ${topic} matters today`,
+      `Ride the wave of current trends to teach ${topic}`,
+      `Show how ${topic} relates to what everyone's talking about`
     ],
-    narrativeFlow: "trend acknowledgment → unique perspective → supporting evidence → implications → action items",
-    avoidPhrases: ["stop scrolling", "framework", "blueprint", "step-by-step", "secret", "nobody talks about"],
-    uniqueAngle: "timely relevance with fresh perspective on current topics"
-  },
-  "Success Story Format": {
-    essence: "Concrete results and proof-driven narrative showing specific achievements and methods",
-    startingStyles: [
-      "results announcement",
-      "achievement reveal",
-      "case study introduction",
-      "proof presentation"
+    "Success Story Format": [
+      `Share specific results and proof about ${topic}`,
+      `Document real achievements and outcomes in ${topic}`,
+      `Present a case study of success with ${topic}`,
+      `Show concrete evidence of ${topic} working in practice`
     ],
-    narrativeFlow: "results preview → background context → challenge faced → strategy employed → implementation → outcomes → replication method",
-    avoidPhrases: ["stop scrolling", "nobody talks about", "hidden", "secret", "framework"],
-    uniqueAngle: "credibility through concrete results and specific case studies"
-  },
-  "Documentary Format": {
-    essence: "Investigative deep-dive with multiple perspectives, evidence gathering, and comprehensive analysis",
-    startingStyles: [
-      "mystery question",
-      "investigation premise",
-      "unexplored angle",
-      "evidence preview"
-    ],
-    narrativeFlow: "central question → investigation setup → evidence gathering → expert insights → revelations → conclusions",
-    avoidPhrases: ["stop scrolling", "framework", "blueprint", "step-by-step", "secret"],
-    uniqueAngle: "investigative journalism approach with thorough research and multiple viewpoints"
-  }
+    "Documentary Format": [
+      `Investigate the truth behind ${topic} like a journalist`,
+      `Uncover hidden aspects of ${topic} through research`,
+      `Present multiple perspectives on ${topic}`,
+      `Deep-dive into the reality of ${topic} with evidence`
+    ]
+  };
+
+  const formatApproaches = approaches[format] || approaches["Teaching Format"];
+  return formatApproaches[Math.floor(Math.random() * formatApproaches.length)];
+};
+
+// Dynamic word count variations
+const getWordCountVariation = (targetWords: number) => {
+  const variations = [-150, -100, -50, 0, 50, 100, 150];
+  const variation = variations[Math.floor(Math.random() * variations.length)];
+  return Math.max(800, targetWords + variation);
+};
+
+// Dynamic opening styles
+const getRandomOpeningStyle = () => {
+  const styles = [
+    "Start with a question that makes people think",
+    "Open with a surprising fact or statistic", 
+    "Begin with a personal story or experience",
+    "Start with a bold statement or claim",
+    "Open with a common misconception",
+    "Begin with a relatable scenario",
+    "Start with a what-if question",
+    "Open with a contrarian viewpoint"
+  ];
+  return styles[Math.floor(Math.random() * styles.length)];
+};
+
+// Dynamic voice instructions
+const generateVoiceInstructions = (scripts: string[]) => {
+  const voiceElements = [
+    "sentence rhythm and pacing",
+    "vocabulary choices and word selection", 
+    "storytelling patterns and narrative flow",
+    "emotional tone and energy level",
+    "way of connecting with the audience",
+    "use of examples and analogies",
+    "conversational style and personality",
+    "level of formality or casualness"
+  ];
+  
+  const selectedElements = voiceElements
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 4);
+    
+  return `Focus on matching these voice elements from the reference scripts: ${selectedElements.join(', ')}`;
 };
 
 serve(async (req) => {
@@ -96,67 +107,61 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    const formatInfo = formatApproaches[format] || formatApproaches["Teaching Format"];
-    const adjustedWordCount = Math.round(targetWordCount * 1.1);
+    // Dynamic generation parameters
+    const dynamicApproach = generateDynamicApproach(format, topic);
+    const dynamicWordCount = getWordCountVariation(targetWordCount);
+    const openingStyle = getRandomOpeningStyle();
+    const voiceInstructions = generateVoiceInstructions(scripts);
+    const sessionId = Date.now().toString(); // Add uniqueness
 
-    // Completely different prompt approach - no templates, pure creative direction
-    const systemPrompt = `You are a master scriptwriter who creates completely unique, engaging content for each request. Your scripts are never templated or formulaic.
+    // Completely dynamic system prompt
+    const systemPrompt = `You are a creative scriptwriter who writes completely unique content every time. Each script you create must be entirely different from any previous script.
 
-CRITICAL MISSION:
-- Create a 100% unique ${format} script about "${topic}"
-- EXACT word count: ${adjustedWordCount} words (strict requirement)
-- Capture the authentic voice from reference scripts
-- Follow ${format} essence without using any templates
+SESSION: ${sessionId}
+CREATIVE MISSION: ${dynamicApproach}
+TARGET WORDS: Exactly ${dynamicWordCount} words
+OPENING STYLE: ${openingStyle}
+VOICE MATCHING: ${voiceInstructions}
 
-ABSOLUTELY FORBIDDEN PHRASES (never use these):
-${formatInfo.avoidPhrases.map(phrase => `"${phrase}"`).join(', ')}
+ABSOLUTE REQUIREMENTS:
+- Write in a completely natural, conversational style
+- Make every sentence flow naturally into the next
+- Avoid any templated language or predictable phrases
+- Focus entirely on delivering valuable insights about "${topic}"
+- Create genuine engagement through authentic storytelling
+- End naturally with: "${callToAction}"
 
-FORMAT ESSENCE: ${formatInfo.essence}
-NARRATIVE APPROACH: ${formatInfo.narrativeFlow}
-UNIQUE ANGLE: ${formatInfo.uniqueAngle}
+FORBIDDEN ELEMENTS:
+- Any structured sections like "HOOK", "MAIN CONTENT", etc.
+- Generic business language or marketing speak
+- Templated openings or transitions
+- Predictable phrase patterns
+- Formulaic structures
 
-VOICE CAPTURE PROTOCOL:
-Analyze reference scripts for:
-- Their specific vocabulary choices
-- How they structure sentences  
-- Their rhythm and pacing
-- Emotional tone and energy
-- How they connect with audience
-- Their storytelling patterns
+WRITE ONLY THE SCRIPT - no formatting, no sections, no analysis. Just pure, natural, conversational content that flows like natural speech.`;
 
-CREATION REQUIREMENTS:
-- Start with one of these approaches: ${formatInfo.startingStyles.join(', ')}
-- Every sentence must sound authentically like the reference author
-- Focus 100% on "${topic}" with specific, valuable insights
-- Avoid any generic business language or templates
-- Create natural flow that feels conversational and engaging
-- Include specific examples and actionable content about "${topic}"
-- End with natural integration of: "${callToAction}"
+    // Dynamic user prompt with randomization
+    const randomSeed = Math.random().toString(36).substring(7);
+    const userPrompt = `REFERENCE VOICE SAMPLES:
+${scripts.map((script, index) => `\nSAMPLE ${index + 1}:\n${script}`).join('')}
 
-OUTPUT ONLY THE SCRIPT - no analysis, no explanation, no meta-commentary.`;
+CREATE UNIQUE SCRIPT:
+Topic: ${topic}
+Approach: ${dynamicApproach}
+Context: ${description || 'No additional context'}
+Audience: ${targetAudience}
+Duration: ${videoLength} minutes
+Word Count: EXACTLY ${dynamicWordCount} words
+Call to Action: ${callToAction}
+Seed: ${randomSeed}
 
-    const userPrompt = `REFERENCE SCRIPTS FOR VOICE ANALYSIS:
+Write a completely original script that sounds exactly like the reference voice but covers "${topic}" in a fresh, engaging way. Make it conversational and natural - like you're talking to a friend who's interested in learning about this topic.
 
-${scripts.map((script, index) => `
-REFERENCE ${index + 1}:
-${script}
-`).join('')}
+Start now with the content:`;
 
-ASSIGNMENT: Write a completely original ${format} script about "${topic}"
-
-SPECIFICATIONS:
-- Topic Focus: ${topic}
-- Target Audience: ${targetAudience}
-- Video Length: ${videoLength} minutes
-- Word Count: EXACTLY ${adjustedWordCount} words
-- Call to Action: ${callToAction}
-- Format: ${format}
-${description ? `- Context: ${description}` : ''}
-
-Write the script now - start immediately with the content. Make it sound exactly like the reference author would write it, but 100% unique and focused on "${topic}".`;
-
-    console.log(`Generating unique ${format} script with Claude...`);
-    console.log(`Target: ${adjustedWordCount} words`);
+    console.log(`Generating unique script with dynamic approach: ${dynamicApproach}`);
+    console.log(`Dynamic word count: ${dynamicWordCount}`);
+    console.log(`Session ID: ${sessionId}`);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -168,7 +173,7 @@ Write the script now - start immediately with the content. Make it sound exactly
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 8000,
-        temperature: 0.9, // Higher temperature for more creativity
+        temperature: 1.0, // Maximum creativity
         system: systemPrompt,
         messages: [
           {
@@ -188,26 +193,19 @@ Write the script now - start immediately with the content. Make it sound exactly
     const data = await response.json();
     const generatedScript = data.content[0].text;
     
-    // Verify uniqueness and quality
+    // Calculate metrics
     const actualWordCount = generatedScript.trim().split(/\s+/).length;
-    const wordCountAccuracy = ((adjustedWordCount - Math.abs(actualWordCount - adjustedWordCount)) / adjustedWordCount) * 100;
+    const wordCountAccuracy = Math.abs(dynamicWordCount - actualWordCount);
+    
+    // Check for uniqueness indicators
+    const topicMentions = (generatedScript.toLowerCase().match(new RegExp(topic.toLowerCase(), 'g')) || []).length;
+    const uniquenessScore = Math.min(100, (topicMentions * 10) + (actualWordCount / 10));
 
-    // Check for banned phrases
-    const bannedPhraseCount = formatInfo.avoidPhrases.reduce((count, phrase) => {
-      return count + (generatedScript.toLowerCase().split(phrase.toLowerCase()).length - 1);
-    }, 0);
-
-    // Check topic relevance
-    const topicWords = topic.toLowerCase().split(' ').filter(word => word.length > 2);
-    const scriptLower = generatedScript.toLowerCase();
-    const topicMentions = topicWords.reduce((count, word) => {
-      return count + (scriptLower.split(word).length - 1);
-    }, 0);
-
-    console.log(`Unique ${format} script generated:`);
-    console.log(`Words: ${actualWordCount}/${adjustedWordCount} (${wordCountAccuracy.toFixed(1)}% accuracy)`);
-    console.log(`Banned phrases found: ${bannedPhraseCount}`);
+    console.log(`Dynamic script generated:`);
+    console.log(`Words: ${actualWordCount}/${dynamicWordCount} (diff: ${wordCountAccuracy})`);
+    console.log(`Approach: ${dynamicApproach}`);
     console.log(`Topic mentions: ${topicMentions}`);
+    console.log(`Uniqueness score: ${uniquenessScore}`);
 
     return new Response(
       JSON.stringify({ 
@@ -215,14 +213,15 @@ Write the script now - start immediately with the content. Make it sound exactly
         success: true,
         metrics: {
           wordCount: actualWordCount,
-          targetWordCount: adjustedWordCount,
+          targetWordCount: dynamicWordCount,
           wordCountAccuracy: wordCountAccuracy,
           topicRelevance: topicMentions,
-          bannedPhraseCount: bannedPhraseCount,
           formatUsed: format,
-          uniquenessScore: Math.max(0, 100 - (bannedPhraseCount * 10))
+          uniquenessScore: uniquenessScore,
+          approach: dynamicApproach,
+          sessionId: sessionId
         },
-        message: `Unique ${format} script created: ${actualWordCount} words, ${bannedPhraseCount} template phrases detected, ${topicMentions} topic references`
+        message: `Unique script created using "${dynamicApproach}" approach: ${actualWordCount} words, ${topicMentions} topic references`
       }),
       { 
         headers: { 
