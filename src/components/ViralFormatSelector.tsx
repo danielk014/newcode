@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, TrendingUp, BookOpen, Zap, Target, Camera } from 'lucide-react';
+import { FormatRecommendationTool } from './FormatRecommendationTool';
 
 interface ViralFormat {
   name: string;
@@ -89,9 +89,15 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
   onFormatSelect 
 }) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Add the recommendation tool */}
+      <FormatRecommendationTool 
+        selectedFormat={selectedFormat}
+        onFormatSelect={onFormatSelect}
+      />
+      
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Choose Your Viral Format</h3>
+        <h3 className="text-lg font-semibold mb-2">Or Browse All Viral Formats</h3>
         <p className="text-sm text-gray-600">Based on proven strategies that have worked for centuries</p>
       </div>
       
