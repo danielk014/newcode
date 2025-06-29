@@ -21,116 +21,103 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Enhanced system prompt focused on authentic style replication
-    const systemPrompt = `You are a master scriptwriter who specializes in analyzing and replicating the exact writing style, voice, and psychological tactics of successful content creators.
+    // Completely new approach focused on authentic style replication
+    const systemPrompt = `You are an expert YouTube script ghostwriter who specializes in studying successful creators and writing scripts that are INDISTINGUISHABLE from their authentic work.
 
-Your job is to:
-1. DEEPLY ANALYZE the reference scripts to understand their unique writing DNA
-2. EXTRACT their specific voice, tone, pacing, and delivery patterns
-3. IDENTIFY their psychological tactics and how they implement them
-4. CREATE a new script that sounds like it was written by the SAME PERSON
-5. Make the content 100% about the actual topic - never use generic frameworks
+Your mission: Analyze the reference scripts with forensic precision and create a new script that sounds like the EXACT SAME PERSON wrote it.
 
-CRITICAL ANALYSIS REQUIREMENTS:
-- Study how they start sentences and paragraphs
-- Notice their rhythm and pacing patterns
-- Identify their specific vocabulary and phrase choices
-- Understand their storytelling approach and examples
-- Extract their unique psychological hooks and triggers
-- Analyze how they build tension and release it
-- Notice their transition phrases and connecting words
-- Study their call-to-action style and urgency creation
+CRITICAL RULES:
+1. NO GENERIC TEMPLATES - Every word must reflect the specific author's voice
+2. NO PLACEHOLDER FRAMEWORKS - Use their actual writing patterns and tactics
+3. TOPIC IMMERSION - Write 100% about the actual topic, not about "frameworks"
+4. AUTHENTIC VOICE - Match their personality, energy, and communication style exactly
+5. REAL PSYCHOLOGY - Use their specific psychological approaches, not textbook tactics
 
-SCRIPT CREATION RULES:
-- The script must sound like the SAME AUTHOR wrote it
-- Every word must relate to the specific topic requested
-- Use their exact tone, pacing, and delivery style
-- Implement their psychological tactics in the same way they do
-- Match their energy level and personality
-- Use similar sentence structures and paragraph lengths
-- Include topic-specific facts, insights, and examples
-- NO GENERIC BUSINESS FRAMEWORKS unless that's their style`;
+ANALYSIS PROCESS:
+1. Study their opening patterns - How do they actually start content?
+2. Identify their transition phrases and connecting words
+3. Extract their specific vocabulary and word choices
+4. Understand their storytelling approach and examples style
+5. Map their psychological triggers and how they deploy them
+6. Analyze their pacing and rhythm patterns
+7. Study their closing and CTA style`;
 
-    const userPrompt = `I need you to write a script about "${topic}" that perfectly matches the writing style of these reference scripts.
-
-**TOPIC:** ${topic}
-${description ? `**CONTEXT:** ${description}` : ''}
-**TARGET AUDIENCE:** ${targetAudience}
-**VIDEO LENGTH:** ${videoLength} minutes
-**CALL TO ACTION:** ${callToAction}
-${format ? `**FORMAT STYLE:** ${format}` : ''}
-**MINIMUM WORD COUNT:** ${targetWordCount || 1400} words
-
-**REFERENCE SCRIPTS TO ANALYZE AND REPLICATE:**
+    const userPrompt = `REFERENCE SCRIPTS FOR DEEP ANALYSIS:
 
 ${scripts.map((script, index) => `
-==========================================
-REFERENCE SCRIPT ${index + 1}:
-==========================================
+=== REFERENCE SCRIPT ${index + 1} ===
 ${script}
 
 `).join('')}
 
-**ANALYSIS INSTRUCTIONS:**
+Now write a script about "${topic}" that captures their EXACT writing DNA.
 
-First, analyze these scripts deeply:
+**REQUIREMENTS:**
+- Topic: ${topic}
+- Target: ${targetAudience}
+- Length: ${videoLength} minutes (${targetWordCount} words)
+- CTA: ${callToAction}
+${description ? `- Context: ${description}` : ''}
+${format ? `- Style: ${format}` : ''}
 
-1. **VOICE & TONE ANALYSIS:**
-   - What's their personality? (casual/formal, energetic/calm, friendly/authoritative)
-   - How do they speak to their audience? (like a friend, teacher, expert, rebel)
-   - What's their energy level and pacing?
+**DEEP ANALYSIS QUESTIONS TO ANSWER FIRST:**
 
-2. **STRUCTURAL PATTERNS:**
-   - How do they open their content?
+1. VOICE FINGERPRINT:
+   - What's their personality? (energy level, tone, attitude)
+   - How do they talk to their audience? (friend, teacher, authority, rebel)
+   - What makes their voice unique vs generic YouTubers?
+
+2. LANGUAGE DNA:
+   - What specific words/phrases do they repeat?
+   - How long are their sentences typically?
+   - What's their question-to-statement ratio?
+   - How do they use punctuation and emphasis?
+
+3. STRUCTURAL PATTERNS:
+   - How do they actually open content? (not generic hooks)
    - How do they transition between ideas?
-   - How do they build and release tension?
-   - How do they close and create urgency?
+   - How do they present information and examples?
+   - How do they close and create action?
 
-3. **LANGUAGE DNA:**
-   - What specific words and phrases do they repeat?
-   - What's their sentence length preference?
-   - How do they use questions, statements, and exclamations?
-   - What metaphors or analogies do they prefer?
-
-4. **PSYCHOLOGICAL TACTICS:**
-   - How do they create curiosity and intrigue?
-   - How do they build credibility and authority?
-   - How do they create emotional connection?
+4. PSYCHOLOGICAL APPROACH:
+   - What specific emotions do they target?
+   - How do they build credibility in their unique way?
+   - What's their approach to creating urgency?
    - How do they handle objections and skepticism?
-   - How do they create urgency and scarcity?
 
-5. **CONTENT APPROACH:**
-   - How do they present information and insights?
-   - How do they use stories and examples?
-   - How do they explain complex concepts?
-   - How do they make their content memorable?
+5. TOPIC INTEGRATION:
+   - How would they naturally approach "${topic}"?
+   - What examples and stories would they use?
+   - What angle would they take that's authentic to them?
+   - How would they make "${topic}" relevant to their audience?
 
-**SCRIPT CREATION REQUIREMENTS:**
+**SCRIPT CREATION PROCESS:**
 
-Now create a script about "${topic}" that:
+Step 1: Write a brief analysis of their unique style based on the questions above.
 
-✅ SOUNDS IDENTICAL to the reference scripts in voice and tone
-✅ USES THE SAME structural patterns and pacing
-✅ IMPLEMENTS their psychological tactics in their specific style
-✅ CONTAINS 100% topic-specific content about "${topic}"
-✅ INCLUDES real insights, facts, or perspectives about the topic
-✅ REACHES the ${targetWordCount || 1400} word minimum
-✅ FEELS like the same person wrote it
+Step 2: Create the script using ONLY their authentic patterns:
+- Use their actual opening style (not "stop scrolling")
+- Follow their natural information flow
+- Include topic-specific insights and examples
+- Match their energy and personality exactly
+- Use their specific psychological approaches
+- End with their authentic CTA style
 
-**STRUCTURE:** Use their natural flow, but ensure these elements:
-- **HOOK:** Match their opening style but make it about "${topic}"
-- **BODY:** Follow their content development pattern with topic-specific insights
-- **CLOSE:** Use their closing style with the specified call-to-action
+**QUALITY STANDARDS:**
+✓ Sounds like the same person who wrote the references
+✓ 100% focused on "${topic}" with real insights
+✓ No generic business templates or frameworks
+✓ Uses their specific language patterns and vocabulary
+✓ Matches their psychological approach and energy
+✓ Includes authentic examples and stories about the topic
+✓ Reaches ${targetWordCount} words through valuable content, not filler
 
-**QUALITY CHECK:**
-- Does this sound like the same person who wrote the reference scripts?
-- Is every sentence about "${topic}" specifically?
-- Are the psychological tactics implemented in their unique style?
-- Would someone familiar with the reference scripts believe this is authentic?
+**CRITICAL CHECK:**
+Would someone who knows this creator's work believe they wrote this script about "${topic}"? If not, rewrite until authentic.
 
-Write the script now, making it indistinguishable from their authentic work while being completely focused on "${topic}".`;
+Begin with your style analysis, then write the script.`;
 
-    console.log('Calling Claude API with enhanced style analysis and replication...');
+    console.log('Calling Claude API for authentic style replication...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -142,7 +129,7 @@ Write the script now, making it indistinguishable from their authentic work whil
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        temperature: 0.8,
+        temperature: 0.9,
         system: systemPrompt,
         messages: [
           {
@@ -160,22 +147,36 @@ Write the script now, making it indistinguishable from their authentic work whil
     }
 
     const data = await response.json();
-    console.log('Enhanced style-matching script generated successfully');
+    console.log('Authentic style-matched script generated successfully');
     
     const generatedScript = data.content[0].text;
     
-    // Verify word count and topic relevance
+    // Quality checks
     const wordCount = generatedScript.trim().split(/\s+/).length;
-    console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount || 1400}`);
+    console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount}`);
 
-    // Enhanced topic relevance check
+    // Check for topic relevance (avoid generic content)
     const topicWords = topic.toLowerCase().split(' ').filter(word => word.length > 2);
     const scriptLower = generatedScript.toLowerCase();
     const topicMentions = topicWords.reduce((count, word) => {
       return count + (scriptLower.split(word).length - 1);
     }, 0);
     
-    console.log(`Topic relevance score: ${topicMentions} mentions across ${topicWords.length} key words`);
+    // Check for generic template phrases (red flags)
+    const genericPhrases = [
+      'simple framework',
+      'one crucial element', 
+      'step by step',
+      'here\'s the thing nobody talks about',
+      '97% of people fail',
+      'from zero to hero in just 30 days'
+    ];
+    
+    const genericCount = genericPhrases.reduce((count, phrase) => {
+      return count + (scriptLower.split(phrase.toLowerCase()).length - 1);
+    }, 0);
+
+    console.log(`Topic relevance: ${topicMentions} mentions, Generic phrases detected: ${genericCount}`);
 
     return new Response(
       JSON.stringify({ 
@@ -183,7 +184,8 @@ Write the script now, making it indistinguishable from their authentic work whil
         success: true,
         wordCount: wordCount,
         topicRelevance: topicMentions,
-        message: "Enhanced script generation with deep style analysis and authentic replication"
+        genericContent: genericCount,
+        message: "Authentic style replication with deep voice analysis"
       }),
       { 
         headers: { 
