@@ -21,41 +21,28 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Enhanced system prompt based on DanielKCI's proven tactics
-    const systemPrompt = `You are an expert YouTube script writer who uses proven viral content strategies. You understand that successful content follows these core principles:
+    // Enhanced system prompt that focuses on actual content creation
+    const systemPrompt = `You are an expert YouTube script writer who creates content that actually addresses the specific topic requested. You understand that successful scripts must:
 
-1. GIVE PEOPLE WHAT THEY WANT - Don't force creativity, adapt proven formats
-2. PROVEN FORMAT + UNIQUE TWIST = VIRAL CONTENT
-3. Hook viewers in first 3 seconds, keep them curious throughout
-4. Use psychological triggers that have worked for centuries
-5. Structure for algorithm optimization and maximum retention
-6. ALWAYS meet or exceed the target word count - this is critical for proper video length
+1. ACTUALLY DISCUSS THE TOPIC - Never use generic placeholder language
+2. Match the tone, style, and delivery of the reference scripts provided
+3. Create topic-specific hooks, examples, and content
+4. Use the actual subject matter throughout the script
+5. Incorporate psychological triggers naturally within the topic context
+6. Generate content that sounds like a real person talking about the real topic
 
-Key Viral Strategies:
-- Start with climax/result first (grab immediate attention)
-- Create information gaps that viewers MUST fill
-- Use micro-hooks every 15-30 seconds
-- Build greed/desire triggers (financial freedom, status, improvement)
-- Integrate soft-sell monetization naturally
-- Optimize for watch time and engagement
-- Use pattern interrupts to reset attention
-- End with strong, specific call-to-action
-- MINIMUM word count requirement must be met or exceeded
+CRITICAL RULES:
+- NEVER use generic phrases like "framework" or "system" unless the topic specifically calls for it
+- NEVER use placeholder text or generic language that could apply to any topic
+- ALWAYS create content that is 100% specific to the requested topic
+- Match the writing style, tone, and delivery patterns from the reference scripts
+- The script must actually educate or inform about the specific topic requested
+- Word count MUST meet or exceed the target requirement`;
 
-Format Types:
-- Competition Format (proven since Roman times)
-- Transformation Journey (before/after)
-- Teaching Format (authority building)
-- Success Story Format (social proof)
-- Trend Jack Format (rapid response)
-
-Write scripts that collaborate with the algorithm, not fight it.`;
-
-    // Analyze the provided scripts to extract patterns
+    // Analyze reference scripts for style patterns
     const scriptAnalysis = scripts.length > 0 ? `
-
-**SCRIPT ANALYSIS:**
-You have been provided with ${scripts.length} reference scripts to analyze and learn from:
+**REFERENCE SCRIPT ANALYSIS:**
+You have ${scripts.length} reference scripts to learn from. Study these carefully:
 
 ${scripts.map((script, index) => `
 **Reference Script ${index + 1}:**
@@ -64,73 +51,70 @@ ${script}
 ---
 `).join('')}
 
-**CRITICAL INSTRUCTIONS:**
-1. Analyze the writing style, hooks, transitions, and tactics used in these reference scripts
-2. Identify the psychological triggers and persuasion techniques employed
-3. Note the structure and pacing patterns
-4. Adapt these proven elements to the new topic while maintaining what makes them effective
-5. The generated script MUST be at least ${targetWordCount || 1400} words to meet the target video length
-6. If the script falls short of the word count, expand the content with additional value, examples, stories, or detailed explanations
+**CRITICAL ANALYSIS INSTRUCTIONS:**
+1. Extract the exact writing style, tone, and personality from these scripts
+2. Note how they introduce topics, build tension, and deliver information
+3. Identify their specific language patterns, sentence structures, and transitions
+4. See how they use hooks, stories, and examples
+5. Notice their pacing and rhythm
+6. Observe how they handle the topic-specific content (not generic frameworks)
+7. Copy their authentic voice and delivery method
 ` : '';
 
-    const userPrompt = `Create a viral YouTube script using proven psychological tactics and format structures.
+    const userPrompt = `Create a YouTube script about "${topic}" that matches the style and delivery of the reference scripts provided.
 
-**Content Details:**
-Topic: ${topic}
-${description ? `Description/Context: ${description}` : ''}
-Target Audience: ${targetAudience}
-Video Length: ${videoLength} minutes
-Call to Action: ${callToAction}
-${format ? `Preferred Format: ${format}` : ''}
-**MINIMUM Word Count Required: ${targetWordCount || 1400} words**
+**TOPIC REQUIREMENTS:**
+- The script MUST be specifically about: ${topic}
+- ${description ? `Additional context: ${description}` : ''}
+- Target audience: ${targetAudience}
+- Video length: ${videoLength} minutes
+- Call to action: ${callToAction}
+- ${format ? `Format style: ${format}` : ''}
+- **MINIMUM ${targetWordCount || 1400} words required**
 
 ${scriptAnalysis}
 
-**Script Requirements:**
-1. HOOK (0-3 seconds): Use information gap, climax first, or bold statement
-2. PROMISE (3-15 seconds): Clear value proposition - "By the end you'll..."
-3. PAYOFF (Main Content): 
-   - Micro-hooks every 15-30 seconds
-   - Pattern interrupts for attention reset
-   - Build desire/greed triggers
-   - Use proven format structure
-   - Soft-sell integration if monetization opportunity exists
-4. CALL TO ACTION (Final 10 seconds): Specific, actionable direction
+**SCRIPT CREATION REQUIREMENTS:**
 
-**CRITICAL WORD COUNT REQUIREMENT:**
-- The script MUST contain at least ${targetWordCount || 1400} words
-- If your initial draft is shorter, expand it with:
-  - Additional examples and case studies
-  - More detailed explanations
-  - Personal stories or student success stories
-  - Deeper dives into concepts
-  - Additional psychological triggers
-  - More comprehensive value delivery
+1. **TOPIC FOCUS**: Every sentence must relate directly to "${topic}". NO generic business/framework language unless the topic specifically calls for it.
 
-**Psychological Tactics to Incorporate:**
-- Information gaps and curiosity loops
-- Success stories and social proof
-- Dream selling and future pacing
-- Authority building and credibility
-- Engagement optimization for algorithm
-- Watch time maximization techniques
+2. **STYLE MATCHING**: Write in the exact same style, tone, and personality as the reference scripts. Copy their:
+   - Hook patterns and opening style
+   - Way of explaining concepts
+   - Storytelling approach
+   - Language patterns and vocabulary
+   - Pacing and rhythm
+   - How they build curiosity and engagement
 
-**Format Structure:**
+3. **CONTENT SPECIFICITY**: 
+   - Use real facts, statistics, or insights about the actual topic
+   - Create topic-specific examples and scenarios
+   - Address real concerns or questions people have about this topic
+   - Provide actual value related to the subject matter
+
+4. **WORD COUNT**: The script MUST contain at least ${targetWordCount || 1400} words. If your initial draft is shorter:
+   - Add more topic-specific examples and case studies
+   - Include additional insights and perspectives on the topic
+   - Expand on key points with more detail and explanation
+   - Add relevant stories or anecdotes related to the topic
+
+5. **STRUCTURE**: Follow this format but fill it with topic-specific content:
+
 **VIRAL HOOK (0-3s)**
-[Attention-grabbing opener - climax first, information gap, or bold statement]
+[Topic-specific attention-grabbing opener that directly relates to "${topic}"]
 
 **PROMISE & SETUP (3-15s)**
-[Clear value proposition and expectations]
+[Clear value about what they'll learn regarding "${topic}"]
 
 **MAIN CONTENT (15s-${Math.round(videoLength * 0.8)}m)**
-[Structured content with micro-hooks, pattern interrupts, and value delivery - EXPAND THIS SECTION TO MEET WORD COUNT]
+[Deep dive into "${topic}" with specific insights, examples, and information - EXPAND THIS HEAVILY]
 
 **PAYOFF & CTA (${Math.round(videoLength * 0.8)}m-${videoLength}m)**
-[Deliver on promise, recap value, strong call to action]
+[Conclusion about "${topic}" and specific call to action]
 
-Create a script that gives people what they want while building your authority and driving specific action. Remember: The script must be comprehensive and detailed to meet the minimum ${targetWordCount || 1400} word requirement.`;
+Remember: This must be a real script about "${topic}" written in the style of your reference scripts, not a generic template with the topic name plugged in. Make it authentic, informative, and genuinely valuable.`;
 
-    console.log('Calling Claude API with enhanced viral tactics and script analysis...');
+    console.log('Calling Claude API for topic-specific script generation...');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -141,7 +125,7 @@ Create a script that gives people what they want while building your authority a
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 6000, // Increased for longer scripts
+        max_tokens: 8000,
         temperature: 0.7,
         system: systemPrompt,
         messages: [
@@ -160,20 +144,25 @@ Create a script that gives people what they want while building your authority a
     }
 
     const data = await response.json();
-    console.log('Enhanced viral script generated successfully');
+    console.log('Topic-specific script generated successfully');
     
     const generatedScript = data.content[0].text;
     
-    // Verify word count and expand if necessary
+    // Verify word count and topic relevance
     const wordCount = generatedScript.trim().split(/\s+/).length;
     console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount || 1400}`);
+
+    // Basic check to ensure the script actually discusses the topic
+    const topicMentions = (generatedScript.toLowerCase().match(new RegExp(topic.toLowerCase().split(' ').join('|'), 'g')) || []).length;
+    console.log(`Topic mentions in script: ${topicMentions}`);
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
         success: true,
         wordCount: wordCount,
-        tactics_used: "Enhanced with DanielKCI proven viral strategies and script analysis"
+        topicRelevance: topicMentions,
+        message: "Enhanced script generation with topic-specific content and style matching"
       }),
       { 
         headers: { 
