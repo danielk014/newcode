@@ -7,8 +7,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Format-specific structures and approaches
+const formatStructures = {
+  "Competition Format": {
+    structure: "Challenge Setup → Contestants/Options → Stakes → Process → Tension → Winner → Lessons",
+    approach: "Create drama through competition, show clear winners/losers, build suspense",
+    lengthMultiplier: 1.2,
+    sections: ["Hook: Challenge announcement", "Setup: Who/what is competing", "Stakes: What's at risk", "Process: How it unfolds", "Climax: The competition", "Resolution: Winner and why", "Takeaway: What this means for viewers"]
+  },
+  "Transformation Journey": {
+    structure: "Before State → Catalyst → Struggle → Breakthrough → After State → Replication",
+    approach: "Show dramatic before/after, focus on the journey and struggles",
+    lengthMultiplier: 1.1,
+    sections: ["Hook: The transformation preview", "Before: Starting point", "Catalyst: What changed", "Journey: The process and struggles", "Breakthrough: The turning point", "After: The new reality", "How-to: Steps for viewers"]
+  },
+  "Teaching Format": {
+    structure: "Problem → Solution Preview → Method → Examples → Advanced Tips → Practice",
+    approach: "Educational but engaging, step-by-step breakdown with examples",
+    lengthMultiplier: 1.3,
+    sections: ["Hook: The problem everyone faces", "Preview: What you'll learn", "Method: Step-by-step process", "Examples: Real applications", "Advanced: Pro tips", "Practice: How to implement"]
+  },
+  "Trend Jack Format": {
+    structure: "Trend Hook → Context → Your Angle → Evidence → Implications → Action",
+    approach: "Fast-paced, timely, controversial takes on current events",
+    lengthMultiplier: 0.9,
+    sections: ["Hook: Reference the trend", "Context: What everyone knows", "Angle: Your unique take", "Evidence: Why you're right", "Implications: What this means", "Action: What viewers should do"]
+  },
+  "Success Story Format": {
+    structure: "Result First → Background → Challenge → Strategy → Implementation → Results → Blueprint",
+    approach: "Lead with results, show the journey, provide replicable framework",
+    lengthMultiplier: 1.1,
+    sections: ["Hook: The impressive result", "Background: Who they were", "Challenge: What they faced", "Strategy: Their approach", "Implementation: How they did it", "Results: What happened", "Blueprint: How you can copy it"]
+  },
+  "Documentary Format": {
+    structure: "Mystery/Question → Investigation → Evidence → Interviews → Revelations → Truth",
+    approach: "Deep investigation, multiple perspectives, uncovering hidden truth",
+    lengthMultiplier: 1.4,
+    sections: ["Hook: The mystery or question", "Investigation: What we found", "Evidence: The facts", "Perspectives: Different viewpoints", "Discovery: What we uncovered", "Truth: The real story", "Impact: What this means"]
+  }
+};
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -21,26 +60,27 @@ serve(async (req) => {
       throw new Error('Claude API key not configured');
     }
 
-    // Completely new approach focused on authentic style replication
-    const systemPrompt = `You are an expert YouTube script ghostwriter who specializes in studying successful creators and writing scripts that are INDISTINGUISHABLE from their authentic work.
+    // Get format-specific structure
+    const formatInfo = formatStructures[format] || formatStructures["Teaching Format"];
+    const adjustedWordCount = Math.round(targetWordCount * formatInfo.lengthMultiplier);
 
-Your mission: Analyze the reference scripts with forensic precision and create a new script that sounds like the EXACT SAME PERSON wrote it.
+    const systemPrompt = `You are a master YouTube script analyst and ghostwriter. Your expertise is in studying successful creators' scripts and replicating their EXACT voice, style, and psychological tactics while applying specific viral formats.
 
-CRITICAL RULES:
-1. NO GENERIC TEMPLATES - Every word must reflect the specific author's voice
-2. NO PLACEHOLDER FRAMEWORKS - Use their actual writing patterns and tactics
-3. TOPIC IMMERSION - Write 100% about the actual topic, not about "frameworks"
-4. AUTHENTIC VOICE - Match their personality, energy, and communication style exactly
-5. REAL PSYCHOLOGY - Use their specific psychological approaches, not textbook tactics
+CRITICAL MISSION: Create a script that is INDISTINGUISHABLE from the reference author's work while following the specific viral format structure.
+
+WORD COUNT REQUIREMENT: The script MUST be exactly ${adjustedWordCount} words (±50 words). This is non-negotiable.
+
+FORMAT: ${format}
+- Structure: ${formatInfo.structure}
+- Approach: ${formatInfo.approach}
+- Required Sections: ${formatInfo.sections.join(', ')}
 
 ANALYSIS PROCESS:
-1. Study their opening patterns - How do they actually start content?
-2. Identify their transition phrases and connecting words
-3. Extract their specific vocabulary and word choices
-4. Understand their storytelling approach and examples style
-5. Map their psychological triggers and how they deploy them
-6. Analyze their pacing and rhythm patterns
-7. Study their closing and CTA style`;
+1. Voice DNA Analysis: Extract their personality, energy, tone, and communication style
+2. Language Patterns: Identify their specific vocabulary, sentence structure, and rhythm
+3. Psychological Tactics: Map their persuasion techniques and emotional triggers
+4. Storytelling Style: Understand how they structure narratives and examples
+5. Format Adaptation: Apply their style to the specific viral format chosen`;
 
     const userPrompt = `REFERENCE SCRIPTS FOR DEEP ANALYSIS:
 
@@ -50,74 +90,80 @@ ${script}
 
 `).join('')}
 
-Now write a script about "${topic}" that captures their EXACT writing DNA.
+**TASK: Create a ${format} script about "${topic}"**
 
-**REQUIREMENTS:**
+**SPECIFICATIONS:**
 - Topic: ${topic}
-- Target: ${targetAudience}
-- Length: ${videoLength} minutes (${targetWordCount} words)
-- CTA: ${callToAction}
-${description ? `- Context: ${description}` : ''}
-${format ? `- Style: ${format}` : ''}
+- Target Audience: ${targetAudience}
+- Video Length: ${videoLength} minutes
+- Target Word Count: ${adjustedWordCount} words (MANDATORY)
+- Call to Action: ${callToAction}
+- Format Structure: ${formatInfo.structure}
+${description ? `- Additional Context: ${description}` : ''}
 
-**DEEP ANALYSIS QUESTIONS TO ANSWER FIRST:**
+**STEP 1: VOICE DNA EXTRACTION**
+Analyze the reference scripts and identify:
 
-1. VOICE FINGERPRINT:
-   - What's their personality? (energy level, tone, attitude)
-   - How do they talk to their audience? (friend, teacher, authority, rebel)
-   - What makes their voice unique vs generic YouTubers?
+1. **Personality Profile:**
+   - Energy level (high/medium/low)
+   - Tone (casual/professional/edgy/friendly)
+   - Attitude (confident/humble/rebellious/educational)
+   - Relationship with audience (friend/teacher/authority/peer)
 
-2. LANGUAGE DNA:
-   - What specific words/phrases do they repeat?
-   - How long are their sentences typically?
-   - What's their question-to-statement ratio?
-   - How do they use punctuation and emphasis?
+2. **Language Fingerprint:**
+   - Signature phrases they use repeatedly
+   - Average sentence length and complexity
+   - Question vs statement ratio
+   - Use of slang, technical terms, or specific vocabulary
+   - Punctuation and emphasis patterns
 
-3. STRUCTURAL PATTERNS:
-   - How do they actually open content? (not generic hooks)
-   - How do they transition between ideas?
-   - How do they present information and examples?
-   - How do they close and create action?
+3. **Psychological Toolkit:**
+   - Primary emotions they target (fear, excitement, curiosity, urgency)
+   - How they build credibility and authority
+   - Their approach to creating urgency and scarcity
+   - How they handle objections and skepticism
+   - Their storytelling and example style
 
-4. PSYCHOLOGICAL APPROACH:
-   - What specific emotions do they target?
-   - How do they build credibility in their unique way?
-   - What's their approach to creating urgency?
-   - How do they handle objections and skepticism?
+4. **Structural Patterns:**
+   - How they typically open content
+   - Their transition phrases and connecting words
+   - How they present information and build arguments
+   - Their closing and CTA style
 
-5. TOPIC INTEGRATION:
-   - How would they naturally approach "${topic}"?
-   - What examples and stories would they use?
-   - What angle would they take that's authentic to them?
-   - How would they make "${topic}" relevant to their audience?
+**STEP 2: FORMAT-SPECIFIC ADAPTATION**
+Apply their voice to the ${format} structure:
 
-**SCRIPT CREATION PROCESS:**
+${formatInfo.sections.map((section, index) => `
+**Section ${index + 1}: ${section}**
+- Word target: ~${Math.round(adjustedWordCount / formatInfo.sections.length)} words
+- Apply their voice: [Use their specific language patterns]
+- Format requirement: [Follow ${format} structure]
+- Topic integration: [Make it 100% about "${topic}"]`).join('')}
 
-Step 1: Write a brief analysis of their unique style based on the questions above.
+**STEP 3: SCRIPT CREATION**
+Write the complete script following these requirements:
 
-Step 2: Create the script using ONLY their authentic patterns:
-- Use their actual opening style (not "stop scrolling")
-- Follow their natural information flow
-- Include topic-specific insights and examples
-- Match their energy and personality exactly
-- Use their specific psychological approaches
-- End with their authentic CTA style
+1. **WORD COUNT**: Must reach ${adjustedWordCount} words through valuable content about "${topic}"
+2. **VOICE MATCHING**: Every sentence must sound like the reference author wrote it
+3. **FORMAT ADHERENCE**: Must follow ${format} structure exactly
+4. **TOPIC FOCUS**: 100% about "${topic}" with specific insights, examples, and actionable content
+5. **NO GENERIC CONTENT**: No template language, placeholder frameworks, or generic business advice
 
-**QUALITY STANDARDS:**
-✓ Sounds like the same person who wrote the references
-✓ 100% focused on "${topic}" with real insights
-✓ No generic business templates or frameworks
-✓ Uses their specific language patterns and vocabulary
-✓ Matches their psychological approach and energy
+**QUALITY CHECKLIST:**
+✓ Sounds exactly like the reference author's voice
+✓ Follows ${format} structure precisely
+✓ Reaches ${adjustedWordCount} words with valuable content
+✓ 100% focused on "${topic}" with specific insights
 ✓ Includes authentic examples and stories about the topic
-✓ Reaches ${targetWordCount} words through valuable content, not filler
+✓ Uses their specific psychological tactics and language patterns
+✓ Ends with their authentic CTA style incorporating "${callToAction}"
 
-**CRITICAL CHECK:**
-Would someone who knows this creator's work believe they wrote this script about "${topic}"? If not, rewrite until authentic.
+**FINAL CHECK:**
+Would someone who knows this creator's work believe they wrote this ${format} script about "${topic}"? If not, rewrite until authentic.
 
-Begin with your style analysis, then write the script.`;
+Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-word script.`;
 
-    console.log('Calling Claude API for authentic style replication...');
+    console.log(`Generating ${format} script with ${adjustedWordCount} word target...`);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -129,7 +175,7 @@ Begin with your style analysis, then write the script.`;
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        temperature: 0.9,
+        temperature: 0.8,
         system: systemPrompt,
         messages: [
           {
@@ -147,45 +193,42 @@ Begin with your style analysis, then write the script.`;
     }
 
     const data = await response.json();
-    console.log('Authentic style-matched script generated successfully');
-    
     const generatedScript = data.content[0].text;
     
-    // Quality checks
-    const wordCount = generatedScript.trim().split(/\s+/).length;
-    console.log(`Generated script word count: ${wordCount}, Target: ${targetWordCount}`);
+    // Verify word count
+    const actualWordCount = generatedScript.trim().split(/\s+/).length;
+    const wordCountDifference = Math.abs(actualWordCount - adjustedWordCount);
+    const wordCountAccuracy = ((adjustedWordCount - wordCountDifference) / adjustedWordCount) * 100;
 
-    // Check for topic relevance (avoid generic content)
+    console.log(`${format} script generated:`);
+    console.log(`Target: ${adjustedWordCount} words, Actual: ${actualWordCount} words`);
+    console.log(`Accuracy: ${wordCountAccuracy.toFixed(1)}%`);
+
+    // Check for format-specific elements
+    const formatElements = formatInfo.sections.length;
+    const scriptSections = generatedScript.split('\n').filter(line => line.includes('**')).length;
+    const structureScore = Math.min((scriptSections / formatElements), 1) * 100;
+
+    // Check topic relevance
     const topicWords = topic.toLowerCase().split(' ').filter(word => word.length > 2);
     const scriptLower = generatedScript.toLowerCase();
     const topicMentions = topicWords.reduce((count, word) => {
       return count + (scriptLower.split(word).length - 1);
     }, 0);
-    
-    // Check for generic template phrases (red flags)
-    const genericPhrases = [
-      'simple framework',
-      'one crucial element', 
-      'step by step',
-      'here\'s the thing nobody talks about',
-      '97% of people fail',
-      'from zero to hero in just 30 days'
-    ];
-    
-    const genericCount = genericPhrases.reduce((count, phrase) => {
-      return count + (scriptLower.split(phrase.toLowerCase()).length - 1);
-    }, 0);
-
-    console.log(`Topic relevance: ${topicMentions} mentions, Generic phrases detected: ${genericCount}`);
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
         success: true,
-        wordCount: wordCount,
-        topicRelevance: topicMentions,
-        genericContent: genericCount,
-        message: "Authentic style replication with deep voice analysis"
+        metrics: {
+          wordCount: actualWordCount,
+          targetWordCount: adjustedWordCount,
+          wordCountAccuracy: wordCountAccuracy,
+          formatStructureScore: structureScore,
+          topicRelevance: topicMentions,
+          formatUsed: format
+        },
+        message: `${format} script generated with ${actualWordCount} words (${wordCountAccuracy.toFixed(1)}% accuracy)`
       }),
       { 
         headers: { 
