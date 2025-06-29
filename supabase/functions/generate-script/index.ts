@@ -7,43 +7,49 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Format-specific structures and approaches
+// Format-specific structures with distinct approaches
 const formatStructures = {
   "Competition Format": {
     structure: "Challenge Setup → Contestants/Options → Stakes → Process → Tension → Winner → Lessons",
-    approach: "Create drama through competition, show clear winners/losers, build suspense",
+    approach: "Competition-based tension, clear winner/loser dynamic, builds suspense through process",
     lengthMultiplier: 1.2,
-    sections: ["Hook: Challenge announcement", "Setup: Who/what is competing", "Stakes: What's at risk", "Process: How it unfolds", "Climax: The competition", "Resolution: Winner and why", "Takeaway: What this means for viewers"]
+    uniqueElements: ["challenger introduction", "stakes establishment", "process documentation", "tension building", "winner reveal", "lesson extraction"],
+    avoidWords: ["framework", "system", "blueprint", "secret", "experts", "step-by-step"]
   },
   "Transformation Journey": {
     structure: "Before State → Catalyst → Struggle → Breakthrough → After State → Replication",
-    approach: "Show dramatic before/after, focus on the journey and struggles",
+    approach: "Personal story-driven, emotional journey, concrete before/after evidence",
     lengthMultiplier: 1.1,
-    sections: ["Hook: The transformation preview", "Before: Starting point", "Catalyst: What changed", "Journey: The process and struggles", "Breakthrough: The turning point", "After: The new reality", "How-to: Steps for viewers"]
+    uniqueElements: ["specific before situation", "catalyst moment", "struggle documentation", "breakthrough point", "after evidence", "replication guide"],
+    avoidWords: ["framework", "system", "blueprint", "secret", "experts", "step-by-step"]
   },
   "Teaching Format": {
     structure: "Problem → Solution Preview → Method → Examples → Advanced Tips → Practice",
-    approach: "Educational but engaging, step-by-step breakdown with examples",
+    approach: "Educational authority, practical instruction, multiple examples and applications",
     lengthMultiplier: 1.3,
-    sections: ["Hook: The problem everyone faces", "Preview: What you'll learn", "Method: Step-by-step process", "Examples: Real applications", "Advanced: Pro tips", "Practice: How to implement"]
+    uniqueElements: ["problem identification", "solution preview", "method explanation", "real examples", "advanced applications", "practice opportunities"],
+    avoidWords: ["secret", "nobody talks about", "hidden", "blueprint", "framework"]
   },
   "Trend Jack Format": {
     structure: "Trend Hook → Context → Your Angle → Evidence → Implications → Action",
-    approach: "Fast-paced, timely, controversial takes on current events",
+    approach: "Timely, reactive, controversial takes, rapid response style",
     lengthMultiplier: 0.9,
-    sections: ["Hook: Reference the trend", "Context: What everyone knows", "Angle: Your unique take", "Evidence: Why you're right", "Implications: What this means", "Action: What viewers should do"]
+    uniqueElements: ["trend reference", "context setting", "unique angle", "supporting evidence", "implications", "immediate action"],
+    avoidWords: ["framework", "system", "blueprint", "step-by-step", "secret"]
   },
   "Success Story Format": {
     structure: "Result First → Background → Challenge → Strategy → Implementation → Results → Blueprint",
-    approach: "Lead with results, show the journey, provide replicable framework",
+    approach: "Results-focused, credibility-building, proof-driven narrative",
     lengthMultiplier: 1.1,
-    sections: ["Hook: The impressive result", "Background: Who they were", "Challenge: What they faced", "Strategy: Their approach", "Implementation: How they did it", "Results: What happened", "Blueprint: How you can copy it"]
+    uniqueElements: ["concrete results", "background story", "specific challenge", "strategy used", "implementation details", "measurable outcomes", "replication method"],
+    avoidWords: ["secret", "nobody talks about", "hidden", "framework"]
   },
   "Documentary Format": {
     structure: "Mystery/Question → Investigation → Evidence → Interviews → Revelations → Truth",
-    approach: "Deep investigation, multiple perspectives, uncovering hidden truth",
+    approach: "Investigative journalism style, multiple perspectives, evidence-based conclusions",
     lengthMultiplier: 1.4,
-    sections: ["Hook: The mystery or question", "Investigation: What we found", "Evidence: The facts", "Perspectives: Different viewpoints", "Discovery: What we uncovered", "Truth: The real story", "Impact: What this means"]
+    uniqueElements: ["central mystery", "investigation process", "evidence gathering", "expert perspectives", "revelations", "truth conclusion"],
+    avoidWords: ["framework", "system", "blueprint", "secret", "step-by-step"]
   }
 };
 
@@ -64,104 +70,84 @@ serve(async (req) => {
     const formatInfo = formatStructures[format] || formatStructures["Teaching Format"];
     const adjustedWordCount = Math.round(targetWordCount * formatInfo.lengthMultiplier);
 
-    const systemPrompt = `You are a master YouTube script analyst and ghostwriter. Your expertise is in studying successful creators' scripts and replicating their EXACT voice, style, and psychological tactics while applying specific viral formats.
+    const systemPrompt = `You are a master script analyst and creator. Your mission is to create scripts that are COMPLETELY AUTHENTIC to the reference author's voice while following specific viral format structures.
 
-CRITICAL MISSION: Create a script that is INDISTINGUISHABLE from the reference author's work while following the specific viral format structure.
+CRITICAL REQUIREMENTS:
+1. WORD COUNT: Must be exactly ${adjustedWordCount} words (±50 words maximum)
+2. FORMAT ADHERENCE: Must follow ${format} structure precisely
+3. VOICE AUTHENTICITY: Must sound exactly like the reference author wrote it
+4. TOPIC FOCUS: 100% about "${topic}" with specific, actionable content
+5. NO GENERIC CONTENT: Absolutely no template language or generic phrases
 
-WORD COUNT REQUIREMENT: The script MUST be exactly ${adjustedWordCount} words (±50 words). This is non-negotiable.
+BANNED PHRASES (NEVER USE):
+${formatInfo.avoidWords.map(word => `"${word}"`).join(', ')}
 
 FORMAT: ${format}
 - Structure: ${formatInfo.structure}
 - Approach: ${formatInfo.approach}
-- Required Sections: ${formatInfo.sections.join(', ')}
+- Required Elements: ${formatInfo.uniqueElements.join(', ')}`;
 
-ANALYSIS PROCESS:
-1. Voice DNA Analysis: Extract their personality, energy, tone, and communication style
-2. Language Patterns: Identify their specific vocabulary, sentence structure, and rhythm
-3. Psychological Tactics: Map their persuasion techniques and emotional triggers
-4. Storytelling Style: Understand how they structure narratives and examples
-5. Format Adaptation: Apply their style to the specific viral format chosen`;
-
-    const userPrompt = `REFERENCE SCRIPTS FOR DEEP ANALYSIS:
+    const userPrompt = `REFERENCE SCRIPTS FOR VOICE ANALYSIS:
 
 ${scripts.map((script, index) => `
 === REFERENCE SCRIPT ${index + 1} ===
 ${script}
-
 `).join('')}
 
-**TASK: Create a ${format} script about "${topic}"**
+TASK: Create a ${format} script about "${topic}"
 
-**SPECIFICATIONS:**
+SPECIFICATIONS:
 - Topic: ${topic}
 - Target Audience: ${targetAudience}
 - Video Length: ${videoLength} minutes
-- Target Word Count: ${adjustedWordCount} words (MANDATORY)
+- MANDATORY Word Count: ${adjustedWordCount} words
 - Call to Action: ${callToAction}
-- Format Structure: ${formatInfo.structure}
-${description ? `- Additional Context: ${description}` : ''}
+- Format: ${format}
+${description ? `- Context: ${description}` : ''}
 
-**STEP 1: VOICE DNA EXTRACTION**
-Analyze the reference scripts and identify:
+ANALYSIS PROCESS:
 
-1. **Personality Profile:**
-   - Energy level (high/medium/low)
-   - Tone (casual/professional/edgy/friendly)
-   - Attitude (confident/humble/rebellious/educational)
-   - Relationship with audience (friend/teacher/authority/peer)
+1. **VOICE DNA EXTRACTION**
+From the reference scripts, identify:
+- Exact phrases they use repeatedly
+- Their sentence structure and rhythm
+- How they address the audience
+- Their specific vocabulary and slang
+- Their emotional tone and energy level
+- How they transition between ideas
+- Their storytelling style and examples
 
-2. **Language Fingerprint:**
-   - Signature phrases they use repeatedly
-   - Average sentence length and complexity
-   - Question vs statement ratio
-   - Use of slang, technical terms, or specific vocabulary
-   - Punctuation and emphasis patterns
+2. **FORMAT ADAPTATION**
+Apply their authentic voice to ${format} structure:
 
-3. **Psychological Toolkit:**
-   - Primary emotions they target (fear, excitement, curiosity, urgency)
-   - How they build credibility and authority
-   - Their approach to creating urgency and scarcity
-   - How they handle objections and skepticism
-   - Their storytelling and example style
+${formatInfo.uniqueElements.map((element, index) => `
+**Element ${index + 1}: ${element}**
+- Word allocation: ~${Math.round(adjustedWordCount / formatInfo.uniqueElements.length)} words
+- Voice requirement: Use their exact language patterns and phrases
+- Topic integration: Make it 100% about "${topic}" with specific details
+- Format requirement: Follow ${format} approach - ${formatInfo.approach}`).join('')}
 
-4. **Structural Patterns:**
-   - How they typically open content
-   - Their transition phrases and connecting words
-   - How they present information and build arguments
-   - Their closing and CTA style
+3. **CONTENT CREATION RULES**
+- Write EXACTLY ${adjustedWordCount} words through valuable content about "${topic}"
+- Use their actual phrases, not generic business speak
+- Include specific examples, numbers, and actionable details about "${topic}"
+- Follow ${format} structure without deviation
+- End with authentic CTA incorporating "${callToAction}"
+- NO template language - every sentence must sound like them
 
-**STEP 2: FORMAT-SPECIFIC ADAPTATION**
-Apply their voice to the ${format} structure:
-
-${formatInfo.sections.map((section, index) => `
-**Section ${index + 1}: ${section}**
-- Word target: ~${Math.round(adjustedWordCount / formatInfo.sections.length)} words
-- Apply their voice: [Use their specific language patterns]
-- Format requirement: [Follow ${format} structure]
-- Topic integration: [Make it 100% about "${topic}"]`).join('')}
-
-**STEP 3: SCRIPT CREATION**
-Write the complete script following these requirements:
-
-1. **WORD COUNT**: Must reach ${adjustedWordCount} words through valuable content about "${topic}"
-2. **VOICE MATCHING**: Every sentence must sound like the reference author wrote it
-3. **FORMAT ADHERENCE**: Must follow ${format} structure exactly
-4. **TOPIC FOCUS**: 100% about "${topic}" with specific insights, examples, and actionable content
-5. **NO GENERIC CONTENT**: No template language, placeholder frameworks, or generic business advice
-
-**QUALITY CHECKLIST:**
-✓ Sounds exactly like the reference author's voice
-✓ Follows ${format} structure precisely
+4. **AUTHENTICITY CHECK**
+Before finalizing, verify:
+✓ Uses their specific vocabulary and phrases
+✓ Matches their energy and tone
+✓ Follows ${format} structure exactly
 ✓ Reaches ${adjustedWordCount} words with valuable content
 ✓ 100% focused on "${topic}" with specific insights
-✓ Includes authentic examples and stories about the topic
-✓ Uses their specific psychological tactics and language patterns
-✓ Ends with their authentic CTA style incorporating "${callToAction}"
+✓ Avoids all banned generic phrases
+✓ Someone familiar with their work would believe they wrote this
 
-**FINAL CHECK:**
-Would someone who knows this creator's work believe they wrote this ${format} script about "${topic}"? If not, rewrite until authentic.
+FINAL OUTPUT: Write the complete ${adjustedWordCount}-word script that authentically captures their voice while following the ${format} structure and being 100% about "${topic}".
 
-Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-word script.`;
+Begin with the script immediately - no preamble or analysis summary.`;
 
     console.log(`Generating ${format} script with ${adjustedWordCount} word target...`);
 
@@ -175,7 +161,7 @@ Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        temperature: 0.8,
+        temperature: 0.9,
         system: systemPrompt,
         messages: [
           {
@@ -204,10 +190,10 @@ Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-
     console.log(`Target: ${adjustedWordCount} words, Actual: ${actualWordCount} words`);
     console.log(`Accuracy: ${wordCountAccuracy.toFixed(1)}%`);
 
-    // Check for format-specific elements
-    const formatElements = formatInfo.sections.length;
-    const scriptSections = generatedScript.split('\n').filter(line => line.includes('**')).length;
-    const structureScore = Math.min((scriptSections / formatElements), 1) * 100;
+    // Check for banned phrases
+    const bannedPhraseCount = formatInfo.avoidWords.reduce((count, phrase) => {
+      return count + (generatedScript.toLowerCase().split(phrase.toLowerCase()).length - 1);
+    }, 0);
 
     // Check topic relevance
     const topicWords = topic.toLowerCase().split(' ').filter(word => word.length > 2);
@@ -215,6 +201,14 @@ Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-
     const topicMentions = topicWords.reduce((count, word) => {
       return count + (scriptLower.split(word).length - 1);
     }, 0);
+
+    // Check format elements
+    const formatElementsFound = formatInfo.uniqueElements.filter(element => {
+      const keywords = element.toLowerCase().split(' ');
+      return keywords.some(keyword => scriptLower.includes(keyword));
+    }).length;
+
+    const formatAdherence = (formatElementsFound / formatInfo.uniqueElements.length) * 100;
 
     return new Response(
       JSON.stringify({ 
@@ -224,11 +218,14 @@ Begin with a brief voice analysis, then write the complete ${adjustedWordCount}-
           wordCount: actualWordCount,
           targetWordCount: adjustedWordCount,
           wordCountAccuracy: wordCountAccuracy,
-          formatStructureScore: structureScore,
+          formatAdherence: formatAdherence,
           topicRelevance: topicMentions,
-          formatUsed: format
+          bannedPhraseCount: bannedPhraseCount,
+          formatUsed: format,
+          uniqueElementsFound: formatElementsFound,
+          totalUniqueElements: formatInfo.uniqueElements.length
         },
-        message: `${format} script generated with ${actualWordCount} words (${wordCountAccuracy.toFixed(1)}% accuracy)`
+        message: `${format} script generated: ${actualWordCount} words (${wordCountAccuracy.toFixed(1)}% accuracy), ${formatAdherence.toFixed(1)}% format adherence, ${bannedPhraseCount} banned phrases used`
       }),
       { 
         headers: { 
