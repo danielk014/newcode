@@ -7,31 +7,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Enhanced tracking system with better uniqueness detection
+// Enhanced session tracking with better uniqueness detection
 const sessionHistory = new Map<string, Array<{
   contentHash: string;
   wordCount: number;
   timestamp: number;
-  approach: string;
+  prompt: string;
 }>>();
 
-const topicHistory = new Map<string, Set<string>>();
-
-// Generate truly unique content hash based on semantic meaning
+// Generate content hash for uniqueness checking
 const generateContentHash = (content: string): string => {
-  // Extract semantic elements: key phrases, structure, and concepts
-  const sentences = content.toLowerCase()
+  const normalized = content.toLowerCase()
     .replace(/[^\w\s]/g, ' ')
-    .split(/\s+/)
-    .filter(word => word.length > 3);
+    .replace(/\s+/g, ' ')
+    .trim();
   
-  // Create semantic signature from meaningful words
-  const semanticWords = sentences
-    .filter(word => !['this', 'that', 'will', 'have', 'been', 'they', 'them', 'your', 'with', 'from'].includes(word))
-    .slice(0, 30)
-    .sort();
+  const words = normalized.split(' ').filter(word => 
+    word.length > 3 && 
+    !['this', 'that', 'will', 'have', 'been', 'they', 'them', 'your', 'with', 'from', 'into', 'like', 'when', 'what', 'where', 'here', 'there'].includes(word)
+  );
   
-  const signature = semanticWords.join('|');
+  const signature = words.slice(0, 50).sort().join('|');
   let hash = 0;
   for (let i = 0; i < signature.length; i++) {
     const char = signature.charCodeAt(i);
@@ -41,258 +37,157 @@ const generateContentHash = (content: string): string => {
   return hash.toString(36);
 };
 
-// Check if content is truly unique
-const isContentUnique = (content: string, topic: string, sessionId: string): boolean => {
+// Check content uniqueness
+const isContentUnique = (content: string, sessionId: string): boolean => {
   const contentHash = generateContentHash(content);
+  const sessionData = sessionHistory.get(sessionId) || [];
   
-  // Check against topic history
-  const topicHashes = topicHistory.get(topic.toLowerCase()) || new Set();
-  if (topicHashes.has(contentHash)) {
-    return false;
+  const isDuplicate = sessionData.some(entry => entry.contentHash === contentHash);
+  
+  if (!isDuplicate) {
+    sessionData.push({
+      contentHash,
+      wordCount: content.split(/\s+/).length,
+      timestamp: Date.now(),
+      prompt: 'generated'
+    });
+    sessionHistory.set(sessionId, sessionData);
   }
-  
-  // Check against session history
-  const sessionHistoryData = sessionHistory.get(sessionId) || [];
-  const isDuplicate = sessionHistoryData.some(entry => entry.contentHash === contentHash);
-  
-  // Store new content
-  topicHashes.add(contentHash);
-  topicHistory.set(topic.toLowerCase(), topicHashes);
   
   return !isDuplicate;
 };
 
-// Generate truly dynamic approaches based on multiple factors
-const generateUniqueApproach = (topic: string, audience: string, sessionId: string, attemptNumber: number = 0): any => {
-  const sessionSeed = parseInt(sessionId.slice(-6), 16) + attemptNumber * 1000;
-  const topicWords = topic.toLowerCase().split(/\s+/);
+// Generate truly dynamic prompts
+const generateDynamicPrompt = (data: any, attemptNumber: number): string => {
+  const timestamp = Date.now();
+  const seed = (timestamp + attemptNumber * 1000) % 10000;
   
-  // Dynamic perspective generators that change based on attempt
   const perspectives = [
-    `Reveal the counterintuitive truth about ${topic} that nobody talks about`,
-    `Share the insider methodology for ${topic} that only experts know`,
-    `Expose the hidden psychology behind successful ${topic} strategies`,
-    `Challenge conventional wisdom about ${topic} with surprising data`,
-    `Tell the untold story of how ${topic} really works behind the scenes`,
-    `Decode the secret patterns that make ${topic} actually effective`,
-    `Unveil the systematic approach to ${topic} that bypasses common failures`,
-    `Demonstrate the advanced ${topic} techniques that seem impossible`,
-    `Break down the mental models that separate ${topic} winners from losers`,
-    `Investigate why most ${topic} advice is completely backwards`
+    "Take a contrarian stance and challenge conventional wisdom",
+    "Focus on psychological triggers and emotional responses",
+    "Use storytelling with unexpected plot twists",
+    "Emphasize urgency and time-sensitive opportunities",
+    "Create mystery and curiosity gaps throughout",
+    "Build authority through specific examples and data",
+    "Address hidden fears and secret desires",
+    "Reveal insider secrets and behind-the-scenes truth",
+    "Use pattern interrupts and surprising statements",
+    "Focus on transformation and before/after scenarios"
   ];
   
-  const narrativeStyles = [
-    'Documentary investigation style',
-    'Personal transformation journey',
-    'Scientific case study approach',
-    'Behind-the-scenes revelation',
-    'Step-by-step methodology breakdown',
-    'Contrarian analysis format',
-    'Expert interview synthesis',
-    'Historical pattern analysis',
-    'Psychology-focused explanation',
-    'System architecture reveal'
-  ];
-  
-  const emotionalTones = [
-    'Urgent and revelatory',
-    'Confident and authoritative',
-    'Curious and investigative',
-    'Passionate and energetic',
-    'Calm and systematic',
-    'Bold and challenging',
-    'Empathetic and supportive',
-    'Analytical and precise',
-    'Inspiring and motivational',
-    'Cautionary and wise'
-  ];
-  
-  const selectedPerspective = perspectives[sessionSeed % perspectives.length];
-  const selectedNarrative = narrativeStyles[(sessionSeed + attemptNumber) % narrativeStyles.length];
-  const selectedTone = emotionalTones[(sessionSeed * 2 + attemptNumber) % emotionalTones.length];
-  
-  return {
-    perspective: selectedPerspective,
-    narrativeStyle: selectedNarrative,
-    emotionalTone: selectedTone,
-    uniqueAngle: generateUniqueAngle(topic, sessionSeed, attemptNumber),
-    structuralApproach: generateStructuralApproach(sessionSeed, attemptNumber)
-  };
-};
-
-const generateUniqueAngle = (topic: string, seed: number, attempt: number): string => {
-  const angles = [
-    `Focus on the unexpected obstacles that derail most ${topic} attempts`,
-    `Emphasize the timing and sequencing that makes ${topic} work`,
-    `Highlight the psychological barriers that prevent ${topic} success`,
-    `Concentrate on the environmental factors that influence ${topic} outcomes`,
-    `Examine the social dynamics that impact ${topic} effectiveness`,
-    `Analyze the systematic thinking required for ${topic} mastery`,
-    `Investigate the resource allocation strategies for ${topic}`,
-    `Explore the decision-making frameworks that optimize ${topic}`,
-    `Study the pattern recognition skills needed for ${topic}`,
-    `Understand the adaptation strategies for ${topic} challenges`
-  ];
-  
-  return angles[(seed + attempt * 3) % angles.length];
-};
-
-const generateStructuralApproach = (seed: number, attempt: number): string => {
   const structures = [
-    'Problem → Root Cause → Solution → Implementation',
-    'Mystery → Investigation → Discovery → Application',
-    'Challenge → Analysis → Strategy → Execution',
-    'Question → Research → Insight → Action',
-    'Observation → Pattern → System → Results',
-    'Conflict → Understanding → Resolution → Transformation',
-    'Confusion → Clarity → Method → Success',
-    'Struggle → Breakthrough → Framework → Achievement',
-    'Failure → Learning → Improvement → Mastery',
-    'Doubt → Evidence → Conviction → Implementation'
+    "Hook → Problem → Agitation → Solution → Proof → Call to Action",
+    "Pattern Interrupt → Curiosity → Story → Teaching → Application → CTA",
+    "Shocking Statement → Why It Matters → How to Fix → What Changes → Action",
+    "Question → Investigation → Discovery → Implementation → Results → Next Steps",
+    "Mistake → Consequence → Better Way → How To → Success Story → Your Turn",
+    "Secret → Why Hidden → What It Means → How to Use → Transformation → Action",
+    "Challenge → Stakes → Strategy → Execution → Victory → Your Path",
+    "Confusion → Clarity → Method → Practice → Mastery → Implementation"
   ];
   
-  return structures[(seed * 2 + attempt) % structures.length];
+  const tones = [
+    "urgent and direct", "conversational and relatable", "authoritative and confident",
+    "mysterious and intriguing", "passionate and energetic", "calm and systematic",
+    "bold and provocative", "empathetic and supportive", "analytical and precise"
+  ];
+  
+  const selectedPerspective = perspectives[seed % perspectives.length];
+  const selectedStructure = structures[(seed + attemptNumber) % structures.length];
+  const selectedTone = tones[(seed * 2 + attemptNumber) % tones.length];
+  
+  return `${selectedPerspective}. Use this structure: ${selectedStructure}. Tone: ${selectedTone}. Topic: ${data.topic}. Make this completely unique and different from typical content about this subject.`;
 };
 
-// Analyze voice patterns from reference scripts
-const analyzeVoicePatterns = (scripts: string[]): any => {
-  if (!scripts || scripts.length === 0) {
-    return {
-      avgSentenceLength: 15,
-      vocabularyComplexity: 'moderate',
-      questionFrequency: 0.1,
-      personalPronounUsage: 0.08,
-      transitionWords: ['however', 'therefore', 'but'],
-      emotionalIntensity: 'medium'
-    };
+// Call Claude API
+const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
+  if (!claudeApiKey) {
+    throw new Error('Claude API key not configured');
   }
+
+  console.log('Calling Claude API...');
   
-  let totalSentences = 0;
-  let totalWords = 0;
-  let questionCount = 0;
-  let personalPronounCount = 0;
-  const vocabulary = new Set<string>();
-  
-  scripts.forEach(script => {
-    const sentences = script.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    totalSentences += sentences.length;
-    questionCount += (script.match(/\?/g) || []).length;
-    
-    const words = script.toLowerCase().split(/\s+/);
-    totalWords += words.length;
-    
-    words.forEach(word => {
-      vocabulary.add(word);
-      if (['i', 'you', 'we', 'my', 'your', 'our'].includes(word)) {
-        personalPronounCount++;
-      }
-    });
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': claudeApiKey,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 8000,
+      temperature: 0.9,
+      system: systemPrompt,
+      messages: [{
+        role: 'user',
+        content: prompt
+      }]
+    })
   });
-  
-  return {
-    avgSentenceLength: Math.round(totalWords / Math.max(totalSentences, 1)),
-    vocabularyComplexity: vocabulary.size > 200 ? 'high' : vocabulary.size > 100 ? 'moderate' : 'simple',
-    questionFrequency: questionCount / Math.max(totalSentences, 1),
-    personalPronounUsage: personalPronounCount / Math.max(totalWords, 1),
-    transitionWords: ['however', 'therefore', 'meanwhile', 'furthermore'],
-    emotionalIntensity: questionCount > totalSentences * 0.15 ? 'high' : 'medium'
-  };
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error('Claude API error:', response.status, error);
+    throw new Error(`Claude API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.content[0].text;
 };
 
-// Calculate target word count with strict minimum enforcement
-const calculateTargetWordCount = (requestedWords: number, approach: any, complexity: string): number => {
-  // Always ensure we meet or exceed the requested minimum
-  const baseTarget = Math.max(requestedWords, 1200); // Absolute minimum
+// Call OpenAI API as fallback
+const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+
+  console.log('Calling OpenAI API as fallback...');
   
-  // Add complexity multipliers
-  const complexityMultiplier = approach.narrativeStyle.includes('investigation') ? 1.2 : 
-                              approach.narrativeStyle.includes('breakdown') ? 1.15 : 1.1;
-  
-  const finalTarget = Math.max(baseTarget, Math.ceil(baseTarget * complexityMultiplier));
-  
-  console.log(`Word count calculation: requested=${requestedWords}, base=${baseTarget}, final=${finalTarget}`);
-  return finalTarget;
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${openaiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 4000,
+      temperature: 0.9,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error('OpenAI API error:', response.status, error);
+    throw new Error(`OpenAI API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
 };
 
-// Build enhanced system prompt for maximum creativity
-const buildSystemPrompt = (approach: any, targetWords: number, voicePatterns: any): string => {
-  return `You are an elite content creator specializing in viral YouTube scripts. Your mission is to create completely original, engaging content that captures attention and drives action.
-
-CREATIVE MANDATE:
-- Perspective: ${approach.perspective}
-- Narrative Style: ${approach.narrativeStyle}
-- Emotional Tone: ${approach.emotionalTone}
-- Unique Angle: ${approach.uniqueAngle}
-- Structure: ${approach.structuralApproach}
-
-VOICE MATCHING REQUIREMENTS:
-- Average sentence length: ${voicePatterns.avgSentenceLength} words
-- Vocabulary complexity: ${voicePatterns.vocabularyComplexity}
-- Question frequency: ${Math.round(voicePatterns.questionFrequency * 100)}% of sentences
-- Personal engagement: ${Math.round(voicePatterns.personalPronounUsage * 100)}% personal pronouns
-- Emotional intensity: ${voicePatterns.emotionalIntensity}
-
-CRITICAL REQUIREMENTS:
-1. Write EXACTLY ${targetWords} words (this is non-negotiable)
-2. Create completely original content - no templates or formulas
-3. Match the specified narrative style throughout
-4. Maintain the emotional tone consistently
-5. Provide genuine value and actionable insights
-6. End with a compelling call-to-action
-
-FORBIDDEN ELEMENTS:
-- Generic business clichés or buzzwords
-- Template-based structures
-- Predictable hooks or transitions
-- Repetitive content patterns
-- Filler content to reach word count
-
-SUCCESS CRITERIA:
-- Exact word count achievement: ${targetWords} words
-- Completely unique perspective and approach
-- Authentic voice matching reference samples
-- Engaging narrative that maintains attention
-- Actionable value for the viewer
-
-Write the complete script now, ensuring every word serves a purpose and the total count is exactly ${targetWords} words.`;
-};
-
-// Build comprehensive user prompt
-const buildUserPrompt = (data: any, approach: any, targetWords: number, voicePatterns: any): string => {
-  const scriptSamples = data.scripts && data.scripts.length > 0 
-    ? data.scripts.map((script: string, index: number) => 
-        `\nREFERENCE SCRIPT ${index + 1} (${script.split(' ').length} words):\n${script}`
-      ).join('')
-    : '\nNo reference scripts provided - create in your best style.';
-
-  return `${scriptSamples}
-
-CONTENT BRIEF:
-Topic: "${data.topic}"
-Target Audience: ${data.targetAudience || 'YouTube viewers'}
-Context: ${data.description || 'No additional context'}
-Call to Action: "${data.callToAction}"
-REQUIRED WORD COUNT: EXACTLY ${targetWords} words
-
-CREATIVE DIRECTION:
-${approach.perspective}
-
-Apply this narrative approach: ${approach.narrativeStyle}
-Maintain this emotional tone: ${approach.emotionalTone}
-Focus on this unique angle: ${approach.uniqueAngle}
-Follow this structure: ${approach.structuralApproach}
-
-VOICE MATCHING:
-Based on the reference scripts, match these patterns:
-- Sentence structure and rhythm
-- Vocabulary level and complexity
-- Question usage and engagement style
-- Personal connection approach
-
-UNIQUENESS REQUIREMENT:
-This script must be completely different from any previous content. Create something fresh, authentic, and valuable that provides a genuinely new perspective on the topic.
-
-Generate the complete ${targetWords}-word script now:`;
+// Generate script with AI
+const generateWithAI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  try {
+    // Try Claude first
+    return await callClaudeAPI(prompt, systemPrompt);
+  } catch (claudeError) {
+    console.log('Claude failed, trying OpenAI:', claudeError.message);
+    try {
+      // Fallback to OpenAI
+      return await callOpenAIAPI(prompt, systemPrompt);
+    } catch (openaiError) {
+      console.error('Both AI services failed:', { claude: claudeError.message, openai: openaiError.message });
+      throw new Error('All AI services failed. Please check your API keys.');
+    }
+  }
 };
 
 serve(async (req) => {
@@ -302,103 +197,111 @@ serve(async (req) => {
 
   try {
     const requestData = await req.json();
-    const { topic, description, targetAudience, scripts, callToAction, targetWordCount } = requestData;
+    const { topic, description, targetAudience, scripts, callToAction, targetWordCount = 1400 } = requestData;
     
-    const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
-    if (!claudeApiKey) {
-      throw new Error('Claude API key not configured');
+    console.log('=== SCRIPT GENERATION REQUEST ===');
+    console.log('Topic:', topic);
+    console.log('Target Word Count:', targetWordCount);
+    console.log('Scripts provided:', scripts?.length || 0);
+    
+    if (!topic) {
+      throw new Error('Topic is required');
     }
 
-    // Generate unique session and tracking
     const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
-    let attemptNumber = 0;
     let generatedScript = '';
-    let isUnique = false;
+    let attempts = 0;
+    const maxAttempts = 3;
     
-    // Voice analysis
-    const voicePatterns = analyzeVoicePatterns(scripts || []);
-    
-    console.log(`Starting script generation for topic: ${topic}`);
-    console.log(`Requested word count: ${targetWordCount}`);
-    console.log(`Session ID: ${sessionId}`);
-
-    // Generation loop with uniqueness checking
-    while (!isUnique && attemptNumber < 3) {
-      const uniqueApproach = generateUniqueApproach(topic, targetAudience, sessionId, attemptNumber);
-      const targetWords = calculateTargetWordCount(targetWordCount || 1400, uniqueApproach, voicePatterns.vocabularyComplexity);
+    while (attempts < maxAttempts) {
+      attempts++;
+      console.log(`\n--- ATTEMPT ${attempts} ---`);
       
-      console.log(`Attempt ${attemptNumber + 1}: Targeting ${targetWords} words`);
-      console.log(`Approach: ${uniqueApproach.perspective.substring(0, 60)}...`);
+      // Generate dynamic approach for this attempt
+      const dynamicPrompt = generateDynamicPrompt(requestData, attempts);
+      console.log('Dynamic approach:', dynamicPrompt.substring(0, 100) + '...');
       
-      const systemPrompt = buildSystemPrompt(uniqueApproach, targetWords, voicePatterns);
-      const userPrompt = buildUserPrompt(requestData, uniqueApproach, targetWords, voicePatterns);
+      const systemPrompt = `You are an expert YouTube script writer. Create a compelling, unique script that meets these requirements:
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': claudeApiKey,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 8000,
-          temperature: 0.9 + (attemptNumber * 0.1), // Increase creativity with each attempt
-          top_p: 0.95,
-          system: systemPrompt,
-          messages: [{
-            role: 'user',
-            content: userPrompt
-          }]
-        })
-      });
+CRITICAL REQUIREMENTS:
+- Write EXACTLY ${targetWordCount} words (count every word precisely)
+- Create completely original content - no templates or generic phrases
+- Use the specific approach provided in the user prompt
+- Make it engaging from the first sentence
+- Include actionable value for viewers
+- End with the specified call-to-action: "${callToAction}"
 
-      if (!response.ok) {
-        throw new Error(`Claude API error: ${response.status}`);
+STYLE REQUIREMENTS:
+- Hook viewers in the first 10 seconds
+- Use conversational, engaging language
+- Include specific examples and details
+- Create curiosity and maintain attention
+- Structure for YouTube audience retention
+
+OUTPUT FORMAT:
+Return ONLY the script content, exactly ${targetWordCount} words. No metadata, no explanations, just the script.`;
+
+      const userPrompt = `Create a YouTube script about: ${topic}
+
+${description ? `Context: ${description}` : ''}
+${targetAudience ? `Target Audience: ${targetAudience}` : ''}
+
+APPROACH FOR THIS SCRIPT:
+${dynamicPrompt}
+
+${scripts && scripts.length > 0 ? `
+REFERENCE STYLE (analyze these for tone and structure, but create completely different content):
+${scripts.map((script: string, i: number) => `\nExample ${i+1}:\n${script.substring(0, 500)}...`).join('')}
+` : ''}
+
+Call to Action: "${callToAction}"
+
+Create a ${targetWordCount}-word script that is completely unique and follows the specified approach.`;
+
+      try {
+        console.log('Generating script with AI...');
+        generatedScript = await generateWithAI(userPrompt, systemPrompt);
+        
+        const actualWordCount = generatedScript.trim().split(/\s+/).length;
+        console.log(`Generated ${actualWordCount} words (target: ${targetWordCount})`);
+        
+        // Check word count
+        const wordCountMet = actualWordCount >= targetWordCount * 0.85; // Allow 15% tolerance
+        
+        // Check uniqueness
+        const isUnique = isContentUnique(generatedScript, sessionId);
+        
+        console.log(`Word count met: ${wordCountMet}, Unique: ${isUnique}`);
+        
+        if (wordCountMet && isUnique) {
+          console.log('✅ Script generation successful!');
+          break;
+        } else {
+          console.log(`❌ Attempt ${attempts} failed - regenerating...`);
+          if (attempts === maxAttempts) {
+            console.log('⚠️ Max attempts reached, using last generated script');
+          }
+        }
+        
+      } catch (error) {
+        console.error(`Attempt ${attempts} failed:`, error.message);
+        if (attempts === maxAttempts) {
+          throw error;
+        }
       }
+    }
 
-      const data = await response.json();
-      generatedScript = data.content[0].text;
-      
-      // Verify uniqueness and word count
-      isUnique = isContentUnique(generatedScript, topic, sessionId);
-      const actualWordCount = generatedScript.trim().split(/\s+/).length;
-      
-      console.log(`Attempt ${attemptNumber + 1} results:`);
-      console.log(`- Words generated: ${actualWordCount}`);
-      console.log(`- Target was: ${targetWords}`);
-      console.log(`- Content unique: ${isUnique}`);
-      
-      // If word count is significantly under target, regenerate
-      if (actualWordCount < targetWordCount * 0.9) {
-        console.log(`Word count too low (${actualWordCount} < ${targetWordCount * 0.9}), regenerating...`);
-        isUnique = false;
-      }
-      
-      if (isUnique && actualWordCount >= targetWordCount * 0.9) {
-        // Store successful generation
-        const sessionHistoryData = sessionHistory.get(sessionId) || [];
-        sessionHistoryData.push({
-          contentHash: generateContentHash(generatedScript),
-          wordCount: actualWordCount,
-          timestamp: Date.now(),
-          approach: uniqueApproach.perspective
-        });
-        sessionHistory.set(sessionId, sessionHistoryData);
-        break;
-      }
-      
-      attemptNumber++;
+    if (!generatedScript) {
+      throw new Error('Failed to generate script after maximum attempts');
     }
 
     const finalWordCount = generatedScript.trim().split(/\s+/).length;
-    const meetsWordCount = finalWordCount >= (targetWordCount || 1400) * 0.9;
+    const success = finalWordCount >= targetWordCount * 0.85;
 
-    console.log(`Final script generated:`);
-    console.log(`- Final word count: ${finalWordCount}`);
-    console.log(`- Requested minimum: ${targetWordCount || 1400}`);
-    console.log(`- Meets requirement: ${meetsWordCount}`);
-    console.log(`- Attempts needed: ${attemptNumber + 1}`);
+    console.log('=== GENERATION COMPLETE ===');
+    console.log(`Final word count: ${finalWordCount}`);
+    console.log(`Success: ${success}`);
+    console.log(`Attempts used: ${attempts}`);
 
     return new Response(
       JSON.stringify({ 
@@ -406,13 +309,12 @@ serve(async (req) => {
         success: true,
         metrics: {
           wordCount: finalWordCount,
-          targetWordCount: targetWordCount || 1400,
-          meetsRequirement: meetsWordCount,
-          attemptsNeeded: attemptNumber + 1,
-          isUnique: isUnique,
-          sessionId: sessionId
+          targetWordCount,
+          meetsRequirement: success,
+          attemptsNeeded: attempts,
+          sessionId
         },
-        message: `Script generated: ${finalWordCount} words (target: ${targetWordCount || 1400})`
+        message: `Script generated successfully: ${finalWordCount} words`
       }),
       { 
         headers: { 
@@ -423,11 +325,15 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Script generation error:', error);
+    console.error('=== SCRIPT GENERATION ERROR ===');
+    console.error('Error:', error.message);
+    console.error('Stack:', error.stack);
+    
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Script generation failed',
-        success: false 
+        error: error.message,
+        success: false,
+        details: 'Check edge function logs for more information'
       }),
       { 
         status: 500,
