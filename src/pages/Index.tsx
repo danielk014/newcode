@@ -454,7 +454,7 @@ Avoiding these mistakes alone can 10x your results.`
               const isCompleted = currentStep > step.id;
               
               return (
-                <React.Fragment key={step.id}>
+                <div key={step.id} className="flex items-center">
                   <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
                     isActive ? 'bg-blue-100 text-blue-700' : 
                     isCompleted ? 'bg-green-100 text-green-700' : 
@@ -464,9 +464,9 @@ Avoiding these mistakes alone can 10x your results.`
                     <span className="font-medium">{step.title}</span>
                   </div>
                   {index < steps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                    <ArrowRight className="w-4 h-4 text-gray-400 mx-2" />
                   )}
-                </React.Fragment>
+                </div>
               );
             })}
           </div>
@@ -644,11 +644,6 @@ Avoiding these mistakes alone can 10x your results.`
 
               {/* Sidebar with additional tools */}
               <div className="space-y-6">
-                <SavedScripts 
-                  currentScript={scriptInput.scripts.join('\n\n---\n\n')}
-                  onLoadScript={handleLoadSavedScript}
-                />
-                
                 {scriptInput.scripts.some(s => s.trim()) && (
                   <SentimentAnalyzer 
                     text={scriptInput.scripts.filter(s => s.trim()).join('\n\n')}
