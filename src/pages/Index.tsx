@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages } from 'lucide-react';
+import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Languages } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
@@ -15,7 +15,6 @@ import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { ScriptInputPanel } from '@/components/ScriptInputPanel';
 import { ScriptGenerationProgress } from '@/components/ScriptGenerationProgress';
 import { FileUploader } from '@/components/FileUploader';
-import { YouTubeScraper } from '@/components/YouTubeScraper';
 import { SentimentAnalyzer } from '@/components/SentimentAnalyzer';
 import { IndustryTemplates } from '@/components/IndustryTemplates';
 import { ScriptTranslator } from '@/components/ScriptTranslator';
@@ -106,19 +105,6 @@ const Index = () => {
   };
 
   const handleFileScriptExtracted = (script: string, filename: string) => {
-    // Find first empty script slot or add new one
-    const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
-    if (emptyIndex >= 0) {
-      updateScript(emptyIndex, script);
-    } else if (scriptInput.scripts.length < 8) {
-      setScriptInput({
-        ...scriptInput,
-        scripts: [...scriptInput.scripts, script]
-      });
-    }
-  };
-
-  const handleYouTubeScriptExtracted = (script: string, source: string) => {
     // Find first empty script slot or add new one
     const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
     if (emptyIndex >= 0) {
@@ -400,7 +386,7 @@ Avoiding these mistakes alone can 10x your results.`
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-2">
-            AI-powered YouTube script writer with file upload, YouTube scraping, sentiment analysis & translation
+            AI-powered YouTube script writer with file upload, sentiment analysis & translation
           </p>
           <p className="text-sm text-gray-500 mb-6">
             Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
@@ -458,7 +444,7 @@ Avoiding these mistakes alone can 10x your results.`
                   Input Your Reference Scripts
                 </CardTitle>
                 <CardDescription>
-                  Multiple ways to add scripts: copy-paste, upload files, extract from YouTube
+                  Multiple ways to add scripts: copy-paste, upload files
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -474,15 +460,11 @@ Avoiding these mistakes alone can 10x your results.`
 
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
+                  <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="manual">Manual Input</TabsTrigger>
                     <TabsTrigger value="upload">
                       <Upload className="w-4 h-4 mr-1" />
                       Upload Files
-                    </TabsTrigger>
-                    <TabsTrigger value="youtube">
-                      <Youtube className="w-4 h-4 mr-1" />
-                      YouTube
                     </TabsTrigger>
                   </TabsList>
 
@@ -524,10 +506,6 @@ Avoiding these mistakes alone can 10x your results.`
                       onScriptExtracted={handleFileScriptExtracted}
                       maxFiles={5}
                     />
-                  </TabsContent>
-
-                  <TabsContent value="youtube" className="mt-6">
-                    <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
                   </TabsContent>
                 </Tabs>
 
@@ -641,19 +619,12 @@ Avoiding these mistakes alone can 10x your results.`
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-4 gap-6 w-full">
+          <div className="mt-16 grid md:grid-cols-3 gap-6 w-full">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
               <p className="text-sm text-gray-600">
                 Upload TXT, PDF, DOC files for instant script extraction
-              </p>
-            </Card>
-            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Youtube className="w-12 h-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">YouTube Scraper</h3>
-              <p className="text-sm text-gray-600">
-                Extract scripts directly from YouTube video transcripts
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
