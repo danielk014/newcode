@@ -147,11 +147,6 @@ const Index = () => {
       setIsAnalyzing(false);
       setCurrentStep(1);
       
-      toast({
-        title: "Deep Analysis Complete",
-        description: "Claude AI has analyzed your scripts for psychological tactics and patterns."
-      });
-      
     } catch (error) {
       console.error('Analysis error:', error);
       setIsAnalyzing(false);
