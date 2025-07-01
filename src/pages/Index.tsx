@@ -118,30 +118,38 @@ const Index = () => {
     setIsAnalyzing(true);
     
     try {
-      // Import the actual analyzer
-      const { analyzeScript, synthesizeAnalyses } = await import('@/utils/scriptAnalyzer');
+      console.log('Starting deep script analysis with Claude AI...');
       
-      // Analyze each script
-      const scriptAnalyses = filledScripts.map(script => analyzeScript(script));
+      const { data, error } = await supabase.functions.invoke('analyze-scripts', {
+        body: { scripts: filledScripts }
+      });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Failed to analyze scripts');
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to analyze scripts');
+      }
+
+      const analysisData = data.analysis;
       
-      // Synthesize the analyses
-      const synthesis = synthesizeAnalyses(scriptAnalyses);
+      setAnalysis({
+        scriptAnalyses: analysisData.scriptAnalyses,
+        synthesizedTactics: analysisData.synthesis.commonTactics,
+        blueprint: analysisData.synthesis.blueprint,
+        insights: analysisData.synthesis.insights
+      });
       
-      setTimeout(() => {
-        setAnalysis({
-          scriptAnalyses,
-          synthesizedTactics: synthesis.commonTactics,
-          blueprint: synthesis.averageStructure,
-          insights: synthesis.insights
-        });
-        setIsAnalyzing(false);
-        setCurrentStep(1);
-        
-        toast({
-          title: "Analysis Complete",
-          description: "Your scripts have been analyzed for viral tactics and patterns."
-        });
-      }, 2000);
+      setIsAnalyzing(false);
+      setCurrentStep(1);
+      
+      toast({
+        title: "Deep Analysis Complete",
+        description: "Claude AI has analyzed your scripts for psychological tactics and patterns."
+      });
+      
     } catch (error) {
       console.error('Analysis error:', error);
       setIsAnalyzing(false);
@@ -351,7 +359,7 @@ Avoiding these mistakes alone can 10x your results.`
           <p className="text-sm text-gray-500 mb-6">
             Enhanced with DanielKCI's proven strategies • Give people what they want • Viral formats that work
           </p>
-          <Link to="/tactics">
+          <Link to="/enhanced-tactics">
             <Button variant="outline" className="mb-4">
               <BookOpen className="w-4 h-4 mr-2" />
               View Enhanced Tactics Library

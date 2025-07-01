@@ -8,6 +8,7 @@ import { AuthProvider } from "./components/AuthProvider";
 import AuthGuard from "./components/AuthGuard";
 import Index from "./pages/Index";
 import Tactics from "./pages/Tactics";
+import TacticsLibrary from "./pages/TacticsLibrary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,8 @@ const App = () => (
           <AuthGuard>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/tactics" element={<Tactics />} />
+              <Route path="/tactics" element={<TacticsLibrary />} />
+              <Route path="/enhanced-tactics" element={<Tactics />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Brain, Zap, Target, BarChart3, Clock, ArrowRight } from 'lucide-react';
+import { ClickableTactic } from './ClickableTactic';
 
 interface ScriptAnalyzerProps {
   analysis: any;
@@ -107,7 +108,9 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                     {analysis.synthesizedTactics.map((tactic: any, index: number) => (
                       <div key={index} className="p-4 border rounded-lg bg-gray-50">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{tactic.name}</h4>
+                          <ClickableTactic name={tactic.name}>
+                            <span className="font-medium">{tactic.name}</span>
+                          </ClickableTactic>
                           <Badge variant="outline">{tactic.category}</Badge>
                         </div>
                         <p className="text-sm text-gray-600">{tactic.description}</p>
@@ -141,27 +144,32 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {analysis.blueprint.map((section: any, index: number) => (
+                    {analysis.blueprint?.sections?.map((section: any, index: number) => (
                       <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                             <span className="text-blue-600 font-bold">{index + 1}</span>
                           </div>
                           <div>
-                            <h4 className="font-medium">{section.type}</h4>
-                            <p className="text-sm text-gray-600">{section.startTime} - {section.endTime}</p>
+                            <h4 className="font-medium">{section.name}</h4>
+                            <p className="text-sm text-gray-600">{section.duration}</p>
                             <p className="text-xs text-gray-500">{section.wordCount} words</p>
+                            <p className="text-xs text-gray-400">{section.purpose}</p>
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          {section.tactics.map((tactic: string, tacticIndex: number) => (
+                          {section.tactics?.map((tactic: string, tacticIndex: number) => (
                             <Badge key={tacticIndex} variant="secondary" className="text-xs">
                               {tactic}
                             </Badge>
                           ))}
                         </div>
                       </div>
-                    ))}
+                    )) || (
+                      <div className="text-center text-gray-500 py-8">
+                        No blueprint data available. Please re-analyze your scripts.
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -183,7 +191,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         <div className="text-sm text-gray-600">Tactics Ready</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">{analysis.blueprint.length}</div>
+                        <div className="text-2xl font-bold text-green-600">{analysis.blueprint?.sections?.length || 0}</div>
                         <div className="text-sm text-gray-600">Sections Planned</div>
                       </div>
                       <div className="text-center">
