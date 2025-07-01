@@ -2,8 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, TrendingUp, BookOpen, Zap, Target, Camera } from 'lucide-react';
-import { FormatRecommendationTool } from './FormatRecommendationTool';
+import { Trophy, TrendingUp, BookOpen, Zap, Target, Camera, Copy } from 'lucide-react';
 
 interface ViralFormat {
   name: string;
@@ -17,6 +16,16 @@ interface ViralFormat {
 }
 
 const viralFormats: ViralFormat[] = [
+  {
+    name: "Copy Reference Script Format",
+    description: "Use the same structure and style as your provided reference scripts",
+    whenToUse: "When you want to replicate the exact format and flow that has already proven successful in your reference scripts.",
+    structure: "Mirror Structure → Copy Hooks → Adapt Content → Maintain Flow → Keep CTA Style",
+    icon: Copy,
+    effectiveness: 92,
+    examples: ["Exactly like script #1", "Same format as reference", "Proven structure replication"],
+    bestFor: ["Script replication", "Proven formats", "Tested structures", "Safe approach"]
+  },
   {
     name: "Competition Format",
     description: "Based on proven formats like Fear Factor, Survivor - competition has worked since Roman times",
@@ -90,14 +99,8 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      {/* Add the recommendation tool */}
-      <FormatRecommendationTool 
-        selectedFormat={selectedFormat}
-        onFormatSelect={onFormatSelect}
-      />
-      
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Or Browse All Viral Formats</h3>
+        <h3 className="text-lg font-semibold mb-2">Browse All Viral Formats</h3>
         <p className="text-sm text-gray-600">Based on proven strategies that have worked for centuries</p>
       </div>
       
@@ -159,12 +162,6 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
         })}
       </div>
       
-      <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-        <h4 className="font-semibold mb-2">🧠 Pro Tip from DanielKCI:</h4>
-        <p className="text-sm text-gray-700">
-          "Don't reinvent the wheel. These formats work because they've been proven by successful creators and even ancient entertainment like the Roman Colosseum. Pick one that matches your content goal and add your unique twist!"
-        </p>
-      </div>
     </div>
   );
 };

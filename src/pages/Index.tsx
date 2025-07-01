@@ -420,7 +420,7 @@ Avoiding these mistakes alone can 10x your results.`
                       variant="outline"
                       size="sm"
                     >
-                      Add Script Panel
+                      + add script
                     </Button>
                   </div>
                   
