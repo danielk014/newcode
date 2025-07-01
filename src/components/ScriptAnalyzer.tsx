@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
@@ -217,6 +216,18 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
           </Tabs>
         </CardContent>
       </Card>
+      
+      {/* Floating Next Step Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button 
+          onClick={onGenerate}
+          size="lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-6 py-3 text-base font-medium"
+        >
+          Next Step
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+      </div>
     </div>
   );
 };

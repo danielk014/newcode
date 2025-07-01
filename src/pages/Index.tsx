@@ -48,7 +48,7 @@ const Index = () => {
 
   const generationSteps = [
     { id: 'analyzing', label: 'Analyzing reference scripts and viral tactics' },
-    { id: 'generating', label: 'Generating script with AI (Claude/OpenAI)' },
+    { id: 'generating', label: 'Generating script' },
     { id: 'validating', label: 'Validating content quality and uniqueness' },
     { id: 'finalizing', label: 'Finalizing and formatting your script' }
   ];
