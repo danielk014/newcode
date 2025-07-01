@@ -119,6 +119,8 @@ const Index = () => {
     
     try {
       console.log('Starting deep script analysis with Claude AI...');
+      console.log('Scripts to analyze:', filledScripts.length);
+      console.log('Topic:', scriptInput.topic);
       
       const { data, error } = await supabase.functions.invoke('analyze-scripts', {
         body: { scripts: filledScripts }
@@ -422,14 +424,6 @@ Avoiding these mistakes alone can 10x your results.`
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
-                    <Button 
-                      onClick={addScriptPanel}
-                      disabled={scriptInput.scripts.length >= 8}
-                      variant="outline"
-                      size="sm"
-                    >
-                      + add script
-                    </Button>
                   </div>
                   
                   <div className="grid gap-4">
@@ -443,6 +437,17 @@ Avoiding these mistakes alone can 10x your results.`
                         canRemove={scriptInput.scripts.length > 2}
                       />
                     ))}
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={addScriptPanel}
+                      disabled={scriptInput.scripts.length >= 8}
+                      variant="outline"
+                      size="sm"
+                    >
+                      + add script
+                    </Button>
                   </div>
                 </div>
 
