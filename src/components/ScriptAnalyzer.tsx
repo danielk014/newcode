@@ -26,7 +26,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
   };
 
   return (
-    <div className="space-y-6 relative">
+    <div className="space-y-6">
       <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
@@ -92,6 +92,17 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                   </Card>
                 ))}
               </div>
+              
+              {/* Next Step Button for Analysis Tab */}
+              <div className="flex justify-end mt-6">
+                <Button 
+                  onClick={onGenerate}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                >
+                  Next Step
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </TabsContent>
 
             <TabsContent value="synthesis" className="mt-6">
@@ -131,6 +142,17 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                   )}
                 </CardContent>
               </Card>
+              
+              {/* Next Step Button for Synthesis Tab */}
+              <div className="flex justify-end mt-6">
+                <Button 
+                  onClick={onGenerate}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                >
+                  Next Step
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </TabsContent>
 
             <TabsContent value="blueprint" className="mt-6">
@@ -172,6 +194,17 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Next Step Button for Blueprint Tab */}
+              <div className="flex justify-end mt-6">
+                <Button 
+                  onClick={onGenerate}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                >
+                  Next Step
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </TabsContent>
 
             <TabsContent value="generate" className="mt-6">
@@ -212,22 +245,21 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                   </Button>
                 </CardContent>
               </Card>
+              
+              {/* Generate Script Button for Generate Tab */}
+              <div className="flex justify-end mt-6">
+                <Button 
+                  onClick={onGenerate}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Generate Script
+                </Button>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-      
-      {/* Floating Next Step Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button 
-          onClick={onGenerate}
-          size="lg"
-          className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-6 py-3 text-base font-medium"
-        >
-          Next Step
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
-      </div>
     </div>
   );
 };
