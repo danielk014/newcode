@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import Index from "./pages/Index";
 import Tactics from "./pages/Tactics";
 import TacticsLibrary from "./pages/TacticsLibrary";
 import NotFound from "./pages/NotFound";
+import SavedScriptsPage from "./pages/SavedScripts";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +25,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/tactics" element={<TacticsLibrary />} />
               <Route path="/enhanced-tactics" element={<Tactics />} />
+              <Route path="/saved-scripts" element={<SavedScriptsPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

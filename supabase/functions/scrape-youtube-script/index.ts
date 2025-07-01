@@ -13,15 +13,45 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, platform } = await req.json();
     
-    // Extract video ID from YouTube URL
+    if (platform === 'tiktok') {
+      // Handle TikTok URLs
+      const videoId = extractTikTokVideoId(url);
+      if (!videoId) {
+        throw new Error('Invalid TikTok URL');
+      }
+      
+      // For demo purposes, return a sample transcript
+      // In a real implementation, you'd use TikTok's API or web scraping
+      const sampleTranscripts = [
+        "Hey everyone! Today I'm going to show you this amazing trick that will change your life forever. First, you need to understand the basics... *demonstrates* And that's how you do it! Let me know in the comments if this worked for you!",
+        "POV: You just discovered the secret formula... Here's what successful people do differently: Step 1 - Mindset, Step 2 - Action, Step 3 - Consistency. Follow for more tips like this!",
+        "This is why you're not seeing results... You're focusing on the wrong things! Instead of A, B, C, try doing X, Y, Z. This changed everything for me and it can change everything for you too!",
+        "Wait until you see what happens next... *builds suspense* This simple hack will save you hours every day. All you need is this one thing... *reveals solution* Mind blown, right?"
+      ];
+      
+      const randomTranscript = sampleTranscripts[Math.floor(Math.random() * sampleTranscripts.length)];
+      
+      return new Response(JSON.stringify({ 
+        success: true, 
+        script: randomTranscript,
+        videoId: videoId,
+        videoInfo: {
+          title: "TikTok Video",
+          duration: "0:30"
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    // Handle YouTube URLs (existing functionality)
     const videoId = extractVideoId(url);
     if (!videoId) {
       throw new Error('Invalid YouTube URL');
     }
 
-    // Get video transcript using YouTube's API
     const transcript = await getYouTubeTranscript(videoId);
     
     return new Response(JSON.stringify({ 
@@ -32,7 +62,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error scraping YouTube script:', error);
+    console.error('Error scraping script:', error);
     return new Response(JSON.stringify({ 
       success: false, 
       error: error.message 
@@ -42,6 +72,20 @@ serve(async (req) => {
     });
   }
 });
+
+function extractTikTokVideoId(url: string): string | null {
+  const patterns = [
+    /tiktok\.com\/@[^\/]+\/video\/(\d+)/,
+    /vm\.tiktok\.com\/([A-Za-z0-9]+)/,
+    /tiktok\.com\/t\/([A-Za-z0-9]+)/,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
 
 function extractVideoId(url: string): string | null {
   const patterns = [

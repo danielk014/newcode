@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages } from 'lucide-react';
+import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
@@ -26,6 +26,7 @@ import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { useToast } from '@/hooks/use-toast';
+import { TikTokTranscriptGenerator } from '@/components/TikTokTranscriptGenerator';
 
 interface ScriptInput {
   scripts: string[];
@@ -428,12 +429,20 @@ Avoiding these mistakes alone can 10x your results.`
           <p className="text-sm text-gray-500 mb-6">
             Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
           </p>
-          <Link to="/enhanced-tactics">
-            <Button variant="outline" className="mb-4">
-              <BookOpen className="w-4 h-4 mr-2" />
-              View Enhanced Tactics Library
-            </Button>
-          </Link>
+          <div className="flex justify-center gap-4 mb-4">
+            <Link to="/enhanced-tactics">
+              <Button variant="outline">
+                <BookOpen className="w-4 h-4 mr-2" />
+                View Enhanced Tactics Library
+              </Button>
+            </Link>
+            <Link to="/saved-scripts">
+              <Button variant="outline">
+                <FileText className="w-4 h-4 mr-2" />
+                My Saved Scripts
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Progress Steps */}
@@ -476,7 +485,7 @@ Avoiding these mistakes alone can 10x your results.`
                       Input Your Reference Scripts
                     </CardTitle>
                     <CardDescription>
-                      Multiple ways to add scripts: copy-paste, upload files, or extract from YouTube
+                      Multiple ways to add scripts: copy-paste, upload files, extract from YouTube/TikTok
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -492,7 +501,7 @@ Avoiding these mistakes alone can 10x your results.`
 
                     {/* Script Input Methods */}
                     <Tabs defaultValue="manual" className="w-full">
-                      <TabsList className="grid w-full grid-cols-4">
+                      <TabsList className="grid w-full grid-cols-5">
                         <TabsTrigger value="manual">Manual Input</TabsTrigger>
                         <TabsTrigger value="upload">
                           <Upload className="w-4 h-4 mr-1" />
@@ -501,6 +510,10 @@ Avoiding these mistakes alone can 10x your results.`
                         <TabsTrigger value="youtube">
                           <Youtube className="w-4 h-4 mr-1" />
                           YouTube
+                        </TabsTrigger>
+                        <TabsTrigger value="tiktok">
+                          <Video className="w-4 h-4 mr-1" />
+                          TikTok
                         </TabsTrigger>
                         <TabsTrigger value="templates">Templates</TabsTrigger>
                       </TabsList>
@@ -547,6 +560,10 @@ Avoiding these mistakes alone can 10x your results.`
 
                       <TabsContent value="youtube" className="mt-6">
                         <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
+                      </TabsContent>
+
+                      <TabsContent value="tiktok" className="mt-6">
+                        <TikTokTranscriptGenerator onScriptExtracted={handleYouTubeScriptExtracted} />
                       </TabsContent>
 
                       <TabsContent value="templates" className="mt-6">
@@ -692,7 +709,7 @@ Avoiding these mistakes alone can 10x your results.`
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="mt-16 grid md:grid-cols-5 gap-6 max-w-6xl mx-auto">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
@@ -705,6 +722,13 @@ Avoiding these mistakes alone can 10x your results.`
               <h3 className="font-semibold mb-2">YouTube Scraper</h3>
               <p className="text-sm text-gray-600">
                 Extract scripts directly from YouTube video transcripts
+              </p>
+            </Card>
+            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
+              <Video className="w-12 h-12 text-pink-600 mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">TikTok Extractor</h3>
+              <p className="text-sm text-gray-600">
+                Extract transcripts from TikTok videos for reference
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">

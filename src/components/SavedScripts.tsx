@@ -3,13 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Save, FileText, Trash2, Eye, Calendar, Hash } from 'lucide-react';
+import { FileText, Eye, Calendar, Hash, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from './AuthProvider';
+import { Link } from 'react-router-dom';
 
 interface SavedScript {
   id: string;
@@ -28,15 +27,10 @@ interface SavedScriptsProps {
 }
 
 export const SavedScripts: React.FC<SavedScriptsProps> = ({ 
-  currentScript, 
   onLoadScript 
 }) => {
   const [savedScripts, setSavedScripts] = useState<SavedScript[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saveTitle, setSaveTitle] = useState('');
-  const [saveIndustry, setSaveIndustry] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [selectedScript, setSelectedScript] = useState<SavedScript | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -51,7 +45,8 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
       const { data, error } = await supabase
         .from('saved_scripts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(5); // Only show recent 5 scripts
 
       if (error) throw error;
       setSavedScripts(data || []);
@@ -64,86 +59,6 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const saveScript = async () => {
-    if (!currentScript?.trim() || !saveTitle.trim()) {
-      toast({
-        title: "Missing Information",
-        description: "Please provide both a title and script content",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to save scripts",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      const { error } = await supabase
-        .from('saved_scripts')
-        .insert({
-          user_id: user.id,
-          title: saveTitle,
-          content: currentScript,
-          industry: saveIndustry || null,
-          language: 'en',
-          word_count: currentScript.split(' ').length
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Script Saved!",
-        description: `"${saveTitle}" has been saved to your library`
-      });
-
-      setSaveTitle('');
-      setSaveIndustry('');
-      fetchSavedScripts();
-    } catch (error) {
-      console.error('Error saving script:', error);
-      toast({
-        title: "Save Failed",
-        description: "Could not save script",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const deleteScript = async (id: string, title: string) => {
-    try {
-      const { error } = await supabase
-        .from('saved_scripts')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Script Deleted",
-        description: `"${title}" has been removed`
-      });
-
-      fetchSavedScripts();
-    } catch (error) {
-      console.error('Error deleting script:', error);
-      toast({
-        title: "Delete Failed",
-        description: "Could not delete script",
-        variant: "destructive"
-      });
     }
   };
 
@@ -169,36 +84,20 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-blue-600" />
-          My Saved Scripts
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText className="w-5 h-5 text-blue-600" />
+            Recent Scripts
+          </div>
+          <Link to="/saved-scripts">
+            <Button variant="outline" size="sm">
+              <ExternalLink className="w-3 h-3 mr-1" />
+              View All
+            </Button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Save Current Script */}
-        {currentScript && (
-          <div className="space-y-3 p-3 border rounded-lg bg-blue-50">
-            <h3 className="font-medium text-sm">Save Current Script</h3>
-            <div className="space-y-2">
-              <Input
-                placeholder="Script title..."
-                value={saveTitle}
-                onChange={(e) => setSaveTitle(e.target.value)}
-              />
-              <Input
-                placeholder="Industry (optional)"
-                value={saveIndustry}
-                onChange={(e) => setSaveIndustry(e.target.value)}
-              />
-              <Button onClick={saveScript} disabled={isSaving} size="sm" className="w-full">
-                <Save className="w-3 h-3 mr-1" />
-                {isSaving ? 'Saving...' : 'Save Script'}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Saved Scripts List */}
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {loading ? (
             <div className="text-center py-4">Loading scripts...</div>
@@ -206,6 +105,11 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
             <div className="text-center py-8 text-gray-500">
               <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>No saved scripts yet</p>
+              <Link to="/saved-scripts">
+                <Button variant="outline" size="sm" className="mt-2">
+                  Create Your First Script
+                </Button>
+              </Link>
             </div>
           ) : (
             savedScripts.map((script) => (
@@ -226,65 +130,35 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
                               {script.word_count} words
                             </Badge>
                           )}
-                          {script.industry && (
-                            <Badge variant="secondary" className="text-xs">
-                              {script.industry}
-                            </Badge>
-                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="flex gap-1">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="outline" className="flex-1">
-                            <Eye className="w-3 h-3 mr-1" />
-                            View
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>{script.title}</DialogTitle>
-                          </DialogHeader>
-                          <Textarea
-                            value={script.content}
-                            readOnly
-                            className="min-h-[400px] text-sm"
-                          />
-                          <div className="flex gap-2">
-                            {onLoadScript && (
-                              <Button onClick={() => onLoadScript(script.content, script.title)}>
-                                Load Script
-                              </Button>
-                            )}
-                            <Button 
-                              variant="outline" 
-                              onClick={() => navigator.clipboard.writeText(script.content)}
-                            >
-                              Copy
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-
                       {onLoadScript && (
                         <Button
                           size="sm"
                           onClick={() => onLoadScript(script.content, script.title)}
                           className="flex-1"
                         >
-                          Load
+                          Load Script
                         </Button>
                       )}
-
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => deleteScript(script.id, script.title)}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline">
+                            <Eye className="w-3 h-3" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>{script.title}</DialogTitle>
+                          </DialogHeader>
+                          <div className="max-h-60 overflow-y-auto">
+                            <p className="text-sm whitespace-pre-wrap">{script.content}</p>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </CardContent>
