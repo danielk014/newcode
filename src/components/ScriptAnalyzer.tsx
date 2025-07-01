@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,8 @@ interface ScriptAnalyzerProps {
 }
 
 export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate }) => {
+  const [activeTab, setActiveTab] = useState('analysis');
+
   const getTacticColor = (tactic: string) => {
     const colors = [
       'bg-blue-100 text-blue-800',
@@ -25,6 +28,32 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
     return colors[tactic.length % colors.length];
   };
 
+  const handleNextStep = () => {
+    if (activeTab === 'analysis') {
+      setActiveTab('synthesis');
+    } else if (activeTab === 'synthesis') {
+      setActiveTab('blueprint');
+    } else if (activeTab === 'blueprint') {
+      setActiveTab('generate');
+    } else if (activeTab === 'generate') {
+      onGenerate();
+    }
+  };
+
+  const getButtonText = () => {
+    if (activeTab === 'generate') {
+      return 'Generate Script';
+    }
+    return 'Next Step';
+  };
+
+  const getButtonColor = () => {
+    if (activeTab === 'generate') {
+      return 'bg-green-600 hover:bg-green-700';
+    }
+    return 'bg-blue-600 hover:bg-blue-700';
+  };
+
   return (
     <div className="space-y-6">
       <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -35,7 +64,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="analysis" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="analysis">Analysis</TabsTrigger>
               <TabsTrigger value="synthesis">Synthesis</TabsTrigger>
@@ -96,11 +125,11 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               {/* Next Step Button for Analysis Tab */}
               <div className="flex justify-end mt-6">
                 <Button 
-                  onClick={onGenerate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                  onClick={handleNextStep}
+                  className={`${getButtonColor()} text-white px-6 py-2`}
                 >
-                  Next Step
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {getButtonText()}
+                  {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </div>
             </TabsContent>
@@ -146,11 +175,11 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               {/* Next Step Button for Synthesis Tab */}
               <div className="flex justify-end mt-6">
                 <Button 
-                  onClick={onGenerate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                  onClick={handleNextStep}
+                  className={`${getButtonColor()} text-white px-6 py-2`}
                 >
-                  Next Step
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {getButtonText()}
+                  {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </div>
             </TabsContent>
@@ -198,11 +227,11 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               {/* Next Step Button for Blueprint Tab */}
               <div className="flex justify-end mt-6">
                 <Button 
-                  onClick={onGenerate}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+                  onClick={handleNextStep}
+                  className={`${getButtonColor()} text-white px-6 py-2`}
                 >
-                  Next Step
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {getButtonText()}
+                  {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </div>
             </TabsContent>
@@ -249,11 +278,11 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               {/* Generate Script Button for Generate Tab */}
               <div className="flex justify-end mt-6">
                 <Button 
-                  onClick={onGenerate}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
+                  onClick={handleNextStep}
+                  className={`${getButtonColor()} text-white px-6 py-2`}
                 >
-                  <Zap className="w-4 h-4 mr-2" />
-                  Generate Script
+                  {getButtonText()}
+                  <Zap className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </TabsContent>
