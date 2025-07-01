@@ -59,10 +59,8 @@ export const YouTubeScraper: React.FC<YouTubeScraperProps> = ({ onScriptExtracte
       const script = data.script;
       if (script && script.length > 50) {
         onScriptExtracted(script, `YouTube: ${url}`);
-        toast({
-          title: "Script Extracted!",
-          description: `Successfully extracted ${script.length} characters from YouTube video`
-        });
+        // Simplified success message
+        console.log('Script extracted successfully');
         setUrl('');
       } else {
         throw new Error('No meaningful transcript found for this video');
@@ -125,7 +123,7 @@ export const YouTubeScraper: React.FC<YouTubeScraperProps> = ({ onScriptExtracte
         <div className="flex items-start gap-2 text-sm text-gray-600">
           <AlertCircle className="w-4 h-4 mt-0.5 text-amber-500" />
           <p>
-            This will attempt to extract the transcript/captions from the YouTube video. 
+            This will extract the official transcript/captions from the YouTube video. 
             Some videos may not have transcripts available.
           </p>
         </div>

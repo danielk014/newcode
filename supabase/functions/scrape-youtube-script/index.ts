@@ -16,41 +16,7 @@ serve(async (req) => {
     const { url, platform } = await req.json();
     console.log('Processing URL:', url, 'Platform:', platform);
     
-    if (platform === 'tiktok') {
-      // Handle TikTok URLs
-      const videoId = extractTikTokVideoId(url);
-      if (!videoId) {
-        throw new Error('Invalid TikTok URL');
-      }
-      
-      console.log('TikTok Video ID:', videoId);
-      
-      // For demo purposes, return a sample transcript
-      const sampleTranscripts = [
-        "Hey everyone! Today I'm going to show you this amazing trick that will change your life forever. First, you need to understand the basics... *demonstrates* And that's how you do it! Let me know in the comments if this worked for you!",
-        "POV: You just discovered the secret formula... Here's what successful people do differently: Step 1 - Mindset, Step 2 - Action, Step 3 - Consistency. Follow for more tips like this!",
-        "This is why you're not seeing results... You're focusing on the wrong things! Instead of A, B, C, try doing X, Y, Z. This changed everything for me and it can change everything for you too!",
-        "Wait until you see what happens next... *builds suspense* This simple hack will save you hours every day. All you need is this one thing... *reveals solution* Mind blown, right?"
-      ];
-      
-      const randomTranscript = sampleTranscripts[Math.floor(Math.random() * sampleTranscripts.length)];
-      
-      console.log('Generated TikTok transcript:', randomTranscript.substring(0, 100) + '...');
-      
-      return new Response(JSON.stringify({ 
-        success: true, 
-        script: randomTranscript,
-        videoId: videoId,
-        videoInfo: {
-          title: "TikTok Video",
-          duration: "0:30"
-        }
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    
-    // Handle YouTube URLs (existing functionality)
+    // Handle YouTube URLs
     const videoId = extractVideoId(url);
     if (!videoId) {
       throw new Error('Invalid YouTube URL');
@@ -80,25 +46,6 @@ serve(async (req) => {
   }
 });
 
-function extractTikTokVideoId(url: string): string | null {
-  console.log('Extracting TikTok video ID from:', url);
-  const patterns = [
-    /tiktok\.com\/@[^\/]+\/video\/(\d+)/,
-    /vm\.tiktok\.com\/([A-Za-z0-9]+)/,
-    /tiktok\.com\/t\/([A-Za-z0-9]+)/,
-  ];
-  
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) {
-      console.log('Found TikTok video ID:', match[1]);
-      return match[1];
-    }
-  }
-  console.log('No TikTok video ID found');
-  return null;
-}
-
 function extractVideoId(url: string): string | null {
   console.log('Extracting YouTube video ID from:', url);
   const patterns = [
@@ -121,9 +68,7 @@ async function getYouTubeTranscript(videoId: string): Promise<string> {
   try {
     console.log('Attempting to get YouTube transcript for:', videoId);
     
-    // Try multiple approaches to get transcript
-    
-    // Method 1: Try to get transcript from YouTube's transcript API
+    // Method 1: Try to get transcript from YouTube's timedtext API
     try {
       const apiUrl = `https://www.youtube.com/api/timedtext?v=${videoId}&lang=en&fmt=json3`;
       console.log('Trying API URL:', apiUrl);
@@ -160,9 +105,9 @@ async function getYouTubeTranscript(videoId: string): Promise<string> {
       console.log('API method failed:', apiError.message);
     }
     
-    // Method 2: Fallback - scrape from video page
-    console.log('Trying fallback method - scraping from video page');
-    return await scrapeFromVideoPage(videoId);
+    // Method 2: Extract from video page HTML
+    console.log('Trying HTML extraction method');
+    return await extractFromVideoPage(videoId);
     
   } catch (error) {
     console.error('Error in getYouTubeTranscript:', error);
@@ -170,9 +115,9 @@ async function getYouTubeTranscript(videoId: string): Promise<string> {
   }
 }
 
-async function scrapeFromVideoPage(videoId: string): Promise<string> {
+async function extractFromVideoPage(videoId: string): Promise<string> {
   try {
-    console.log('Scraping from video page for:', videoId);
+    console.log('Extracting transcript from video page for:', videoId);
     const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -184,15 +129,15 @@ async function scrapeFromVideoPage(videoId: string): Promise<string> {
     }
     
     const html = await response.text();
-    console.log('Got video page HTML, searching for captions');
+    console.log('Got video page HTML, searching for transcript data');
     
     // Look for transcript data in the page HTML
     const transcriptMatch = html.match(/"captions":\s*\{"playerCaptionsTracklistRenderer":\s*\{"captionTracks":\s*\[([^\]]+)\]/);
     
     if (transcriptMatch) {
-      console.log('Found caption data, processing...');
+      console.log('Found caption data in HTML, processing...');
       try {
-        // Extract and process caption data
+        // Extract caption track URL
         const captionDataStr = '[' + transcriptMatch[1] + ']';
         const captionData = JSON.parse(captionDataStr);
         
@@ -225,7 +170,7 @@ async function scrapeFromVideoPage(videoId: string): Promise<string> {
               .replace(/\s+/g, ' ')
               .trim();
             
-            console.log('Successfully parsed transcript, length:', transcript.length);
+            console.log('Successfully parsed transcript from XML, length:', transcript.length);
             if (transcript.length > 50) {
               return transcript;
             }
@@ -236,10 +181,20 @@ async function scrapeFromVideoPage(videoId: string): Promise<string> {
       }
     }
     
-    console.log('No captions found in video page');
-    throw new Error('No transcript found');
+    // Method 3: Try to find transcript button and extract manually available transcripts
+    console.log('Looking for transcript button in HTML');
+    const transcriptButtonMatch = html.match(/"transcriptCommand":\s*\{[^}]*"clickTrackingParams":"([^"]+)"/);
+    
+    if (transcriptButtonMatch) {
+      console.log('Found transcript button, but manual extraction needed');
+      // For now, we'll throw an error to indicate transcript exists but needs manual extraction
+      throw new Error('Transcript is available but requires manual extraction. Please check the video\'s transcript manually.');
+    }
+    
+    console.log('No transcript found in video page');
+    throw new Error('No transcript found for this video. The video may not have captions enabled.');
   } catch (error) {
-    console.error('Error in scrapeFromVideoPage:', error);
-    throw new Error('Unable to scrape transcript from video page');
+    console.error('Error in extractFromVideoPage:', error);
+    throw new Error('Unable to extract transcript from video page: ' + error.message);
   }
 }

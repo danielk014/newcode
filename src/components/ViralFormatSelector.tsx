@@ -159,7 +159,7 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
 
         {industries.map(industry => (
           <TabsContent key={industry} value={industry.toLowerCase()}>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
               {allFormats
                 .filter(format => 
                   industry === 'All' || 
@@ -173,50 +173,50 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
                   return (
                     <Card 
                       key={index} 
-                      className={`cursor-pointer transition-all hover:shadow-lg ${
+                      className={`cursor-pointer transition-all hover:shadow-md ${
                         isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                      }`}
+                      } p-3`}
                       onClick={() => onFormatSelect(format.name)}
                     >
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <Icon className="w-8 h-8 text-blue-600" />
+                      <CardHeader className="pb-2 p-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <Icon className="w-5 h-5 text-blue-600" />
                           <div className="flex gap-1">
-                            <Badge variant="secondary">{format.effectiveness}% effective</Badge>
-                            {format.isTemplate && <Badge variant="outline">Template</Badge>}
+                            <Badge variant="secondary" className="text-xs px-1 py-0">{format.effectiveness}%</Badge>
+                            {format.isTemplate && <Badge variant="outline" className="text-xs px-1 py-0">Template</Badge>}
                           </div>
                         </div>
-                        <CardTitle className="text-lg">{format.name}</CardTitle>
+                        <CardTitle className="text-sm font-medium leading-tight">{format.name}</CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-600 mb-3">{format.description}</p>
+                      <CardContent className="p-0">
+                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{format.description}</p>
                         
-                        <div className="mb-3">
-                          <h4 className="font-medium text-sm mb-1 text-green-700">When to Use:</h4>
-                          <p className="text-xs text-gray-600">{format.whenToUse}</p>
+                        <div className="mb-2">
+                          <h4 className="font-medium text-xs mb-1 text-green-700">When to Use:</h4>
+                          <p className="text-xs text-gray-600 line-clamp-2">{format.whenToUse}</p>
                         </div>
                         
-                        <div className="mb-3">
-                          <h4 className="font-medium text-sm mb-1">Best For:</h4>
+                        <div className="mb-2">
+                          <h4 className="font-medium text-xs mb-1">Best For:</h4>
                           <div className="flex flex-wrap gap-1">
-                            {format.bestFor.map((item, idx) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
+                            {format.bestFor.slice(0, 2).map((item, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs px-1 py-0">
                                 {item}
                               </Badge>
                             ))}
                           </div>
                         </div>
                         
-                        <div className="mb-3">
-                          <h4 className="font-medium text-sm mb-1">Structure:</h4>
-                          <p className="text-xs text-gray-500">{format.structure}</p>
+                        <div className="mb-2">
+                          <h4 className="font-medium text-xs mb-1">Structure:</h4>
+                          <p className="text-xs text-gray-500 line-clamp-1">{format.structure}</p>
                         </div>
                         
                         <div>
-                          <h4 className="font-medium text-sm mb-1">Examples:</h4>
+                          <h4 className="font-medium text-xs mb-1">Examples:</h4>
                           <ul className="text-xs text-gray-500 space-y-1">
-                            {format.examples.slice(0, 2).map((example, idx) => (
-                              <li key={idx}>• {example}</li>
+                            {format.examples.slice(0, 1).map((example, idx) => (
+                              <li key={idx} className="line-clamp-1">• {example}</li>
                             ))}
                           </ul>
                         </div>

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages, Video } from 'lucide-react';
+import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
@@ -26,7 +26,6 @@ import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { useToast } from '@/hooks/use-toast';
-import { TikTokTranscriptGenerator } from '@/components/TikTokTranscriptGenerator';
 
 interface ScriptInput {
   scripts: string[];
@@ -68,11 +67,6 @@ const Index = () => {
     },
     onError: (error) => {
       console.error('Progress tracking error:', error);
-      toast({
-        title: "Generation Error",
-        description: error,
-        variant: "destructive"
-      });
     }
   });
 
@@ -122,10 +116,6 @@ const Index = () => {
         scripts: [...scriptInput.scripts, script]
       });
     }
-    toast({
-      title: "Script Added",
-      description: `Added script from ${filename}`
-    });
   };
 
   const handleYouTubeScriptExtracted = (script: string, source: string) => {
@@ -139,10 +129,6 @@ const Index = () => {
         scripts: [...scriptInput.scripts, script]
       });
     }
-    toast({
-      title: "Script Added",
-      description: "Successfully extracted and added script from " + (source.includes('TikTok') ? 'TikTok' : 'YouTube')
-    });
   };
 
   const handleTemplateSelect = (content: string, title: string) => {
@@ -155,10 +141,6 @@ const Index = () => {
         scripts: [...scriptInput.scripts, content]
       });
     }
-    toast({
-      title: "Template Added",
-      description: `Added "${title}" template`
-    });
   };
 
   const handleLoadSavedScript = (script: string, title: string) => {
@@ -171,10 +153,6 @@ const Index = () => {
         scripts: [...scriptInput.scripts, script]
       });
     }
-    toast({
-      title: "Script Loaded",
-      description: `Loaded "${title}"`
-    });
   };
 
   const handleAnalyze = async () => {
@@ -283,10 +261,7 @@ const Index = () => {
       
       progressTracking.completeStep('finalizing');
       
-      toast({
-        title: "Script Generated!",
-        description: `Generated ${data.metrics?.wordCount || 'N/A'} words in ${Math.round((data.metrics?.generationTimeMs || 0) / 1000)}s`
-      });
+      // Removed toast notification for successful generation
       
     } catch (error) {
       console.error('Error generating script:', error);
@@ -299,9 +274,10 @@ const Index = () => {
       setGeneratedScript(mockScript);
       setCurrentStep(3);
       
+      // Reduced toast notification
       toast({
         title: "Using Fallback Generation",
-        description: "Generated script using local fallback due to API issues.",
+        description: "Generated script using local fallback.",
         variant: "destructive"
       });
     } finally {
@@ -482,7 +458,7 @@ Avoiding these mistakes alone can 10x your results.`
                   Input Your Reference Scripts
                 </CardTitle>
                 <CardDescription>
-                  Multiple ways to add scripts: copy-paste, upload files, extract from YouTube/TikTok
+                  Multiple ways to add scripts: copy-paste, upload files, extract from YouTube
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -498,7 +474,7 @@ Avoiding these mistakes alone can 10x your results.`
 
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
+                  <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="manual">Manual Input</TabsTrigger>
                     <TabsTrigger value="upload">
                       <Upload className="w-4 h-4 mr-1" />
@@ -507,10 +483,6 @@ Avoiding these mistakes alone can 10x your results.`
                     <TabsTrigger value="youtube">
                       <Youtube className="w-4 h-4 mr-1" />
                       YouTube
-                    </TabsTrigger>
-                    <TabsTrigger value="tiktok">
-                      <Video className="w-4 h-4 mr-1" />
-                      TikTok
                     </TabsTrigger>
                   </TabsList>
 
@@ -556,10 +528,6 @@ Avoiding these mistakes alone can 10x your results.`
 
                   <TabsContent value="youtube" className="mt-6">
                     <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
-                  </TabsContent>
-
-                  <TabsContent value="tiktok" className="mt-6">
-                    <TikTokTranscriptGenerator onScriptExtracted={handleYouTubeScriptExtracted} />
                   </TabsContent>
                 </Tabs>
 
@@ -673,7 +641,7 @@ Avoiding these mistakes alone can 10x your results.`
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-5 gap-6 w-full">
+          <div className="mt-16 grid md:grid-cols-4 gap-6 w-full">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
@@ -686,13 +654,6 @@ Avoiding these mistakes alone can 10x your results.`
               <h3 className="font-semibold mb-2">YouTube Scraper</h3>
               <p className="text-sm text-gray-600">
                 Extract scripts directly from YouTube video transcripts
-              </p>
-            </Card>
-            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Video className="w-12 h-12 text-pink-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">TikTok Extractor</h3>
-              <p className="text-sm text-gray-600">
-                Extract transcripts from TikTok videos for reference
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
