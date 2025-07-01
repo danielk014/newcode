@@ -1,8 +1,11 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, TrendingUp, BookOpen, Zap, Target, Camera, Copy } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Trophy, TrendingUp, BookOpen, Zap, Target, Camera, Copy, FileText } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ViralFormat {
   name: string;
@@ -13,9 +16,11 @@ interface ViralFormat {
   effectiveness: number;
   examples: string[];
   bestFor: string[];
+  content?: string;
+  isTemplate?: boolean;
 }
 
-const viralFormats: ViralFormat[] = [
+const baseViralFormats: ViralFormat[] = [
   {
     name: "Copy Reference Script Format",
     description: "Use the same structure and style as your provided reference scripts",
@@ -97,71 +102,132 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
   selectedFormat, 
   onFormatSelect 
 }) => {
+  const [allFormats, setAllFormats] = useState<ViralFormat[]>(baseViralFormats);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+
+  const fetchTemplates = async () => {
+    try {
+      const { data: templates, error } = await supabase
+        .from('industry_templates')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) throw error;
+
+      const templateFormats: ViralFormat[] = templates?.map(template => ({
+        name: template.title,
+        description: template.description || "Industry-specific template",
+        whenToUse: `Perfect for ${template.industry.toLowerCase()} content`,
+        structure: "Hook → Problem → Solution → Proof → CTA",
+        icon: FileText,
+        effectiveness: 85,
+        examples: [template.title],
+        bestFor: [template.industry, "Industry-specific content"],
+        content: template.template_content,
+        isTemplate: true
+      })) || [];
+
+      setAllFormats([...baseViralFormats, ...templateFormats]);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const industries = ['All', 'Business', 'Fitness', 'Education', 'Technology'];
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Browse All Viral Formats</h3>
+        <h3 className="text-lg font-semibold mb-2">Browse All Viral Formats & Templates</h3>
         <p className="text-sm text-gray-600">Based on proven strategies that have worked for centuries</p>
       </div>
       
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {viralFormats.map((format, index) => {
-          const Icon = format.icon;
-          const isSelected = selectedFormat === format.name;
-          
-          return (
-            <Card 
-              key={index} 
-              className={`cursor-pointer transition-all hover:shadow-lg ${
-                isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-              }`}
-              onClick={() => onFormatSelect(format.name)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <Icon className="w-8 h-8 text-blue-600" />
-                  <Badge variant="secondary">{format.effectiveness}% effective</Badge>
-                </div>
-                <CardTitle className="text-lg">{format.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 mb-3">{format.description}</p>
-                
-                <div className="mb-3">
-                  <h4 className="font-medium text-sm mb-1 text-green-700">When to Use:</h4>
-                  <p className="text-xs text-gray-600">{format.whenToUse}</p>
-                </div>
-                
-                <div className="mb-3">
-                  <h4 className="font-medium text-sm mb-1">Best For:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {format.bestFor.map((item, idx) => (
-                      <Badge key={idx} variant="outline" className="text-xs">
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="mb-3">
-                  <h4 className="font-medium text-sm mb-1">Structure:</h4>
-                  <p className="text-xs text-gray-500">{format.structure}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-sm mb-1">Examples:</h4>
-                  <ul className="text-xs text-gray-500 space-y-1">
-                    {format.examples.slice(0, 2).map((example, idx) => (
-                      <li key={idx}>• {example}</li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-      
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          {industries.map(industry => (
+            <TabsTrigger key={industry} value={industry.toLowerCase()}>
+              {industry}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {industries.map(industry => (
+          <TabsContent key={industry} value={industry.toLowerCase()}>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {allFormats
+                .filter(format => 
+                  industry === 'All' || 
+                  format.bestFor.some(bf => bf.toLowerCase().includes(industry.toLowerCase())) ||
+                  format.name.toLowerCase().includes(industry.toLowerCase())
+                )
+                .map((format, index) => {
+                  const Icon = format.icon;
+                  const isSelected = selectedFormat === format.name;
+                  
+                  return (
+                    <Card 
+                      key={index} 
+                      className={`cursor-pointer transition-all hover:shadow-lg ${
+                        isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                      }`}
+                      onClick={() => onFormatSelect(format.name)}
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <Icon className="w-8 h-8 text-blue-600" />
+                          <div className="flex gap-1">
+                            <Badge variant="secondary">{format.effectiveness}% effective</Badge>
+                            {format.isTemplate && <Badge variant="outline">Template</Badge>}
+                          </div>
+                        </div>
+                        <CardTitle className="text-lg">{format.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-gray-600 mb-3">{format.description}</p>
+                        
+                        <div className="mb-3">
+                          <h4 className="font-medium text-sm mb-1 text-green-700">When to Use:</h4>
+                          <p className="text-xs text-gray-600">{format.whenToUse}</p>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <h4 className="font-medium text-sm mb-1">Best For:</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {format.bestFor.map((item, idx) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {item}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <h4 className="font-medium text-sm mb-1">Structure:</h4>
+                          <p className="text-xs text-gray-500">{format.structure}</p>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium text-sm mb-1">Examples:</h4>
+                          <ul className="text-xs text-gray-500 space-y-1">
+                            {format.examples.slice(0, 2).map((example, idx) => (
+                              <li key={idx}>• {example}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 };

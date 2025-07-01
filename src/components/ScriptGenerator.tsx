@@ -1,12 +1,19 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages } from 'lucide-react';
 import { TacticMapper } from './TacticMapper';
 import { ScriptImprovement } from './ScriptImprovement';
+import { ScriptTranslator } from './ScriptTranslator';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './AuthProvider';
+import { useToast } from '@/hooks/use-toast';
 
 interface ScriptGeneratorProps {
   script: string;
@@ -24,6 +31,10 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     changesSummary: string;
   }>>([]);
   const [activeTab, setActiveTab] = useState("script");
+  const [saveTitle, setSaveTitle] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(editedScript);
@@ -38,6 +49,56 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     a.href = url;
     a.download = 'generated-script.txt';
     a.click();
+  };
+
+  const saveScript = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to save scripts",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!saveTitle.trim()) {
+      toast({
+        title: "Title Required",
+        description: "Please enter a title for your script",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('saved_scripts')
+        .insert({
+          user_id: user.id,
+          title: saveTitle,
+          content: editedScript,
+          word_count: editedScript.split(' ').length,
+          language: 'en'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Script Saved!",
+        description: "Your script has been saved successfully"
+      });
+      setSaveTitle('');
+    } catch (error) {
+      console.error('Error saving script:', error);
+      toast({
+        title: "Save Failed",
+        description: "Could not save script. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleImprovedScript = (improvedScript: string, improvementType: string, changesSummary: string) => {
@@ -57,6 +118,15 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     setActiveTab("script");
   };
 
+  const handleTranslatedScript = (translatedScript: string, language: string) => {
+    setEditedScript(translatedScript);
+    setActiveTab("script");
+    toast({
+      title: "Translation Applied",
+      description: `Script translated to ${language}`
+    });
+  };
+
   const tacticMap = [
     { tactic: "Pattern Interrupt", location: "Hook", timestamp: "0:00-0:05" },
     { tactic: "Curiosity Gap", location: "Hook", timestamp: "0:05-0:15" },
@@ -66,34 +136,6 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     { tactic: "Social Proof", location: "Solution", timestamp: "1:15-1:45" },
     { tactic: "Future Pacing", location: "Details", timestamp: "2:00-3:00" },
     { tactic: "Scarcity", location: "CTA", timestamp: "4:00-4:30" }
-  ];
-
-  const revisionSuggestions = [
-    {
-      title: "Strengthen the Hook",
-      description: "Consider adding a specific statistic or surprising fact in the first 10 seconds",
-      impact: "High"
-    },
-    {
-      title: "Add Personal Story",
-      description: "Include a brief personal anecdote in the problem section for better connection",
-      impact: "Medium"
-    },
-    {
-      title: "Clarify Value Proposition",
-      description: "Make the unique benefit more explicit in the solution introduction",
-      impact: "High"
-    },
-    {
-      title: "Enhance CTA Urgency",
-      description: "Add time-sensitive language to increase immediate action",
-      impact: "Medium"
-    },
-    {
-      title: "Include Social Validation",
-      description: "Add testimonial snippets or success metrics throughout",
-      impact: "High"
-    }
   ];
 
   return (
@@ -112,10 +154,11 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="script">Generated Script</TabsTrigger>
               <TabsTrigger value="mapping">Tactic Mapping</TabsTrigger>
               <TabsTrigger value="revisions">Improve Script</TabsTrigger>
+              <TabsTrigger value="translate">Translate</TabsTrigger>
               <TabsTrigger value="versions">Versions</TabsTrigger>
               <TabsTrigger value="export">Export & Share</TabsTrigger>
             </TabsList>
@@ -134,7 +177,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                   onChange={(e) => setEditedScript(e.target.value)}
                   className="min-h-[500px] font-mono text-sm"
                 />
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button onClick={copyToClipboard} variant="outline">
                     <Copy className="w-4 h-4 mr-2" />
                     {copied ? 'Copied!' : 'Copy Script'}
@@ -143,6 +186,20 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                     <Download className="w-4 h-4 mr-2" />
                     Download
                   </Button>
+                  {user && (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Enter title to save..."
+                        value={saveTitle}
+                        onChange={(e) => setSaveTitle(e.target.value)}
+                        className="w-48"
+                      />
+                      <Button onClick={saveScript} disabled={isSaving || !saveTitle.trim()}>
+                        <Save className="w-4 h-4 mr-2" />
+                        {isSaving ? 'Saving...' : 'Save Script'}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
@@ -175,6 +232,13 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
               <ScriptImprovement 
                 originalScript={editedScript}
                 onImprovedScript={handleImprovedScript}
+              />
+            </TabsContent>
+
+            <TabsContent value="translate" className="mt-6">
+              <ScriptTranslator 
+                originalScript={editedScript}
+                onTranslatedScript={handleTranslatedScript}
               />
             </TabsContent>
 

@@ -473,7 +473,7 @@ Avoiding these mistakes alone can 10x your results.`
         </div>
 
         {/* Main Content - Full Width */}
-        <div className="max-w-6xl mx-auto">
+        <div className="w-full">
           {currentStep === 0 && (
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm w-full">
               <CardHeader className="text-center">
@@ -498,7 +498,7 @@ Avoiding these mistakes alone can 10x your results.`
 
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-5">
+                  <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="manual">Manual Input</TabsTrigger>
                     <TabsTrigger value="upload">
                       <Upload className="w-4 h-4 mr-1" />
@@ -512,7 +512,6 @@ Avoiding these mistakes alone can 10x your results.`
                       <Video className="w-4 h-4 mr-1" />
                       TikTok
                     </TabsTrigger>
-                    <TabsTrigger value="templates">Templates</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="manual" className="mt-6">
@@ -561,10 +560,6 @@ Avoiding these mistakes alone can 10x your results.`
 
                   <TabsContent value="tiktok" className="mt-6">
                     <TikTokTranscriptGenerator onScriptExtracted={handleYouTubeScriptExtracted} />
-                  </TabsContent>
-
-                  <TabsContent value="templates" className="mt-6">
-                    <IndustryTemplates onTemplateSelect={handleTemplateSelect} />
                   </TabsContent>
                 </Tabs>
 
@@ -678,7 +673,7 @@ Avoiding these mistakes alone can 10x your results.`
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-5 gap-6 max-w-6xl mx-auto">
+          <div className="mt-16 grid md:grid-cols-5 gap-6 w-full">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
               <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
