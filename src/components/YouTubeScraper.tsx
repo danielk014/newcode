@@ -40,11 +40,15 @@ export const YouTubeScraper: React.FC<YouTubeScraperProps> = ({ onScriptExtracte
     setIsLoading(true);
 
     try {
+      console.log('Calling YouTube scraper function with URL:', url);
       const { data, error } = await supabase.functions.invoke('scrape-youtube-script', {
-        body: { url }
+        body: { url, platform: 'youtube' }
       });
 
+      console.log('YouTube scraper response:', data, error);
+
       if (error) {
+        console.error('Supabase function error:', error);
         throw new Error(error.message);
       }
 
@@ -67,7 +71,7 @@ export const YouTubeScraper: React.FC<YouTubeScraperProps> = ({ onScriptExtracte
       console.error('YouTube scraping error:', error);
       toast({
         title: "Extraction Failed",
-        description: error.message || "Could not extract script from this YouTube video",
+        description: error.message || "Could not extract script from this YouTube video. The video may not have captions available.",
         variant: "destructive"
       });
     } finally {

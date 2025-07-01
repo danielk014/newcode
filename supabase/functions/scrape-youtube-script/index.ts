@@ -26,7 +26,6 @@ serve(async (req) => {
       console.log('TikTok Video ID:', videoId);
       
       // For demo purposes, return a sample transcript
-      // In a real implementation, you'd use TikTok's API or web scraping
       const sampleTranscripts = [
         "Hey everyone! Today I'm going to show you this amazing trick that will change your life forever. First, you need to understand the basics... *demonstrates* And that's how you do it! Let me know in the comments if this worked for you!",
         "POV: You just discovered the secret formula... Here's what successful people do differently: Step 1 - Mindset, Step 2 - Action, Step 3 - Consistency. Follow for more tips like this!",
@@ -122,87 +121,122 @@ async function getYouTubeTranscript(videoId: string): Promise<string> {
   try {
     console.log('Attempting to get YouTube transcript for:', videoId);
     
-    // Try to get transcript from YouTube's transcript API
-    const apiUrl = `https://www.youtube.com/api/timedtext?v=${videoId}&lang=en&fmt=json3`;
-    console.log('Trying API URL:', apiUrl);
+    // Try multiple approaches to get transcript
     
-    const response = await fetch(apiUrl);
-    console.log('API Response status:', response.status);
-    
-    if (!response.ok) {
-      console.log('API failed, trying fallback method');
-      // Fallback: scrape from video page
-      return await scrapeFromVideoPage(videoId);
-    }
-    
-    const data = await response.json();
-    console.log('API response received, processing events');
-    
-    if (data.events) {
-      const transcript = data.events
-        .filter((event: any) => event.segs)
-        .map((event: any) => 
-          event.segs.map((seg: any) => seg.utf8).join('')
-        )
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    // Method 1: Try to get transcript from YouTube's transcript API
+    try {
+      const apiUrl = `https://www.youtube.com/api/timedtext?v=${videoId}&lang=en&fmt=json3`;
+      console.log('Trying API URL:', apiUrl);
       
-      console.log('Transcript extracted, length:', transcript.length);
-      return transcript;
+      const response = await fetch(apiUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      
+      console.log('API Response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API response received, processing events');
+        
+        if (data.events && data.events.length > 0) {
+          const transcript = data.events
+            .filter((event: any) => event.segs)
+            .map((event: any) => 
+              event.segs.map((seg: any) => seg.utf8).join('')
+            )
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+          
+          console.log('Transcript extracted via API, length:', transcript.length);
+          if (transcript.length > 50) {
+            return transcript;
+          }
+        }
+      }
+    } catch (apiError) {
+      console.log('API method failed:', apiError.message);
     }
     
-    throw new Error('No transcript available');
+    // Method 2: Fallback - scrape from video page
+    console.log('Trying fallback method - scraping from video page');
+    return await scrapeFromVideoPage(videoId);
+    
   } catch (error) {
     console.error('Error in getYouTubeTranscript:', error);
-    throw new Error('Unable to extract transcript from this video');
+    throw new Error('Unable to extract transcript from this video. The video may not have captions available.');
   }
 }
 
 async function scrapeFromVideoPage(videoId: string): Promise<string> {
   try {
     console.log('Scraping from video page for:', videoId);
-    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
-    const html = await response.text();
+    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
     
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video page: ${response.status}`);
+    }
+    
+    const html = await response.text();
     console.log('Got video page HTML, searching for captions');
     
     // Look for transcript data in the page HTML
-    const transcriptMatch = html.match(/"captions":\{"playerCaptionsTracklistRenderer":\{"captionTracks":\[([^\]]+)\]/);
+    const transcriptMatch = html.match(/"captions":\s*\{"playerCaptionsTracklistRenderer":\s*\{"captionTracks":\s*\[([^\]]+)\]/);
     
     if (transcriptMatch) {
       console.log('Found caption data, processing...');
-      // Extract and process caption data
-      const captionData = JSON.parse(`[${transcriptMatch[1]}]`);
-      
-      if (captionData.length > 0) {
-        const transcriptUrl = captionData[0].baseUrl;
-        console.log('Fetching transcript from:', transcriptUrl);
+      try {
+        // Extract and process caption data
+        const captionDataStr = '[' + transcriptMatch[1] + ']';
+        const captionData = JSON.parse(captionDataStr);
         
-        const transcriptResponse = await fetch(transcriptUrl);
-        const transcriptXml = await transcriptResponse.text();
-        
-        console.log('Got transcript XML, parsing...');
-        
-        // Parse XML and extract text
-        const textMatches = transcriptXml.match(/<text[^>]*>([^<]+)</g);
-        if (textMatches) {
-          const transcript = textMatches
-            .map(match => match.replace(/<text[^>]*>/, '').replace(/<\/text>/, ''))
-            .join(' ')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&quot;/g, '"')
-            .replace(/\s+/g, ' ')
-            .trim();
+        if (captionData.length > 0) {
+          const transcriptUrl = captionData[0].baseUrl;
+          console.log('Fetching transcript from:', transcriptUrl);
           
-          console.log('Successfully parsed transcript, length:', transcript.length);
-          return transcript;
+          const transcriptResponse = await fetch(transcriptUrl);
+          if (!transcriptResponse.ok) {
+            throw new Error(`Failed to fetch transcript: ${transcriptResponse.status}`);
+          }
+          
+          const transcriptXml = await transcriptResponse.text();
+          console.log('Got transcript XML, parsing...');
+          
+          // Parse XML and extract text
+          const textMatches = transcriptXml.match(/<text[^>]*>([^<]+)<\/text>/g);
+          if (textMatches && textMatches.length > 0) {
+            const transcript = textMatches
+              .map(match => {
+                const textContent = match.replace(/<text[^>]*>/, '').replace(/<\/text>/, '');
+                return textContent
+                  .replace(/&amp;/g, '&')
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&quot;/g, '"')
+                  .replace(/&#39;/g, "'");
+              })
+              .join(' ')
+              .replace(/\s+/g, ' ')
+              .trim();
+            
+            console.log('Successfully parsed transcript, length:', transcript.length);
+            if (transcript.length > 50) {
+              return transcript;
+            }
+          }
         }
+      } catch (parseError) {
+        console.error('Error parsing caption data:', parseError);
       }
     }
     
+    console.log('No captions found in video page');
     throw new Error('No transcript found');
   } catch (error) {
     console.error('Error in scrapeFromVideoPage:', error);

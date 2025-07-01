@@ -140,8 +140,8 @@ const Index = () => {
       });
     }
     toast({
-      title: "YouTube Script Added",
-      description: "Successfully extracted and added script"
+      title: "Script Added",
+      description: "Successfully extracted and added script from " + (source.includes('TikTok') ? 'TikTok' : 'YouTube')
     });
   };
 
@@ -472,197 +472,171 @@ Avoiding these mistakes alone can 10x your results.`
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Full Width */}
         <div className="max-w-6xl mx-auto">
           {currentStep === 0 && (
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Main Script Input */}
-              <div className="lg:col-span-2">
-                <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                      <FileText className="w-6 h-6 text-blue-600" />
-                      Input Your Reference Scripts
-                    </CardTitle>
-                    <CardDescription>
-                      Multiple ways to add scripts: copy-paste, upload files, extract from YouTube/TikTok
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Format Selection */}
-                    <div className="mb-6">
-                      <ViralFormatSelector 
-                        selectedFormat={selectedFormat}
-                        onFormatSelect={setSelectedFormat}
-                      />
-                    </div>
+            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm w-full">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                  <FileText className="w-6 h-6 text-blue-600" />
+                  Input Your Reference Scripts
+                </CardTitle>
+                <CardDescription>
+                  Multiple ways to add scripts: copy-paste, upload files, extract from YouTube/TikTok
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Format Selection */}
+                <div className="mb-6">
+                  <ViralFormatSelector 
+                    selectedFormat={selectedFormat}
+                    onFormatSelect={setSelectedFormat}
+                  />
+                </div>
 
-                    <Separator />
+                <Separator />
 
-                    {/* Script Input Methods */}
-                    <Tabs defaultValue="manual" className="w-full">
-                      <TabsList className="grid w-full grid-cols-5">
-                        <TabsTrigger value="manual">Manual Input</TabsTrigger>
-                        <TabsTrigger value="upload">
-                          <Upload className="w-4 h-4 mr-1" />
-                          Upload Files
-                        </TabsTrigger>
-                        <TabsTrigger value="youtube">
-                          <Youtube className="w-4 h-4 mr-1" />
-                          YouTube
-                        </TabsTrigger>
-                        <TabsTrigger value="tiktok">
-                          <Video className="w-4 h-4 mr-1" />
-                          TikTok
-                        </TabsTrigger>
-                        <TabsTrigger value="templates">Templates</TabsTrigger>
-                      </TabsList>
+                {/* Script Input Methods */}
+                <Tabs defaultValue="manual" className="w-full">
+                  <TabsList className="grid w-full grid-cols-5">
+                    <TabsTrigger value="manual">Manual Input</TabsTrigger>
+                    <TabsTrigger value="upload">
+                      <Upload className="w-4 h-4 mr-1" />
+                      Upload Files
+                    </TabsTrigger>
+                    <TabsTrigger value="youtube">
+                      <Youtube className="w-4 h-4 mr-1" />
+                      YouTube
+                    </TabsTrigger>
+                    <TabsTrigger value="tiktok">
+                      <Video className="w-4 h-4 mr-1" />
+                      TikTok
+                    </TabsTrigger>
+                    <TabsTrigger value="templates">Templates</TabsTrigger>
+                  </TabsList>
 
-                      <TabsContent value="manual" className="mt-6">
-                        {/* Dynamic Script Inputs */}
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
-                          </div>
-                          
-                          <div className="grid gap-4">
-                            {scriptInput.scripts.map((script, index) => (
-                              <ScriptInputPanel
-                                key={index}
-                                index={index}
-                                value={script}
-                                onChange={(value) => updateScript(index, value)}
-                                onRemove={() => removeScriptPanel(index)}
-                                canRemove={scriptInput.scripts.length > 2}
-                              />
-                            ))}
-                          </div>
-                          
-                          <div className="flex justify-end">
-                            <Button 
-                              onClick={addScriptPanel}
-                              disabled={scriptInput.scripts.length >= 8}
-                              variant="outline"
-                              size="sm"
-                            >
-                              + add script
-                            </Button>
-                          </div>
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="upload" className="mt-6">
-                        <FileUploader 
-                          onScriptExtracted={handleFileScriptExtracted}
-                          maxFiles={5}
-                        />
-                      </TabsContent>
-
-                      <TabsContent value="youtube" className="mt-6">
-                        <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
-                      </TabsContent>
-
-                      <TabsContent value="tiktok" className="mt-6">
-                        <TikTokTranscriptGenerator onScriptExtracted={handleYouTubeScriptExtracted} />
-                      </TabsContent>
-
-                      <TabsContent value="templates" className="mt-6">
-                        <IndustryTemplates onTemplateSelect={handleTemplateSelect} />
-                      </TabsContent>
-                    </Tabs>
-
-                    <Separator />
-
-                    {/* Video Details */}
+                  <TabsContent value="manual" className="mt-6">
+                    {/* Dynamic Script Inputs */}
                     <div className="space-y-4">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
-                          <Input
-                            id="topic"
-                            placeholder="e.g., How to make money online"
-                            value={scriptInput.topic}
-                            onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
-                          <Input
-                            id="cta"
-                            placeholder="Subscribe to my course"
-                            value={scriptInput.callToAction}
-                            onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
-                          />
-                        </div>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
                       </div>
                       
-                      <div className="space-y-2">
-                        <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
-                        <Textarea
-                          id="description"
-                          placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
-                          className="min-h-[80px]"
-                          value={scriptInput.description}
-                          onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
-                        />
+                      <div className="grid gap-4">
+                        {scriptInput.scripts.map((script, index) => (
+                          <ScriptInputPanel
+                            key={index}
+                            index={index}
+                            value={script}
+                            onChange={(value) => updateScript(index, value)}
+                            onRemove={() => removeScriptPanel(index)}
+                            canRemove={scriptInput.scripts.length > 2}
+                          />
+                        ))}
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
-                        <Input
-                          id="length"
-                          type="number"
-                          placeholder="1400"
-                          value={scriptInput.targetLength}
-                          onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
-                        />
+                      
+                      <div className="flex justify-end">
+                        <Button 
+                          onClick={addScriptPanel}
+                          disabled={scriptInput.scripts.length >= 8}
+                          variant="outline"
+                          size="sm"
+                        >
+                          + add script
+                        </Button>
                       </div>
                     </div>
+                  </TabsContent>
 
-                    <div className="flex justify-center pt-4">
-                      <Button 
-                        onClick={handleAnalyze}
-                        disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                        className="px-8 py-3 text-lg"
-                      >
-                        {isAnalyzing ? (
-                          <>
-                            <Brain className="w-5 h-5 mr-2 animate-pulse" />
-                            Analyzing Your Scripts...
-                          </>
-                        ) : (
-                          <>
-                            <Brain className="w-5 h-5 mr-2" />
-                            Analyze Scripts for Viral Tactics
-                          </>
-                        )}
-                      </Button>
+                  <TabsContent value="upload" className="mt-6">
+                    <FileUploader 
+                      onScriptExtracted={handleFileScriptExtracted}
+                      maxFiles={5}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="youtube" className="mt-6">
+                    <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
+                  </TabsContent>
+
+                  <TabsContent value="tiktok" className="mt-6">
+                    <TikTokTranscriptGenerator onScriptExtracted={handleYouTubeScriptExtracted} />
+                  </TabsContent>
+
+                  <TabsContent value="templates" className="mt-6">
+                    <IndustryTemplates onTemplateSelect={handleTemplateSelect} />
+                  </TabsContent>
+                </Tabs>
+
+                <Separator />
+
+                {/* Video Details */}
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
+                      <Input
+                        id="topic"
+                        placeholder="e.g., How to make money online"
+                        value={scriptInput.topic}
+                        onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                      />
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
+                      <Input
+                        id="cta"
+                        placeholder="Subscribe to my course"
+                        value={scriptInput.callToAction}
+                        onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
+                      className="min-h-[80px]"
+                      value={scriptInput.description}
+                      onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
+                    />
+                  </div>
 
-              {/* Sidebar with additional tools */}
-              <div className="space-y-6">
-                {scriptInput.scripts.some(s => s.trim()) && (
-                  <SentimentAnalyzer 
-                    text={scriptInput.scripts.filter(s => s.trim()).join('\n\n')}
-                  />
-                )}
-                
-                {generatedScript && (
-                  <ScriptTranslator 
-                    originalScript={generatedScript}
-                    onTranslatedScript={(translated, language) => {
-                      toast({
-                        title: "Translation Ready",
-                        description: `Script translated to ${language}`
-                      });
-                    }}
-                  />
-                )}
-              </div>
-            </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
+                    <Input
+                      id="length"
+                      type="number"
+                      placeholder="1400"
+                      value={scriptInput.targetLength}
+                      onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    onClick={handleAnalyze}
+                    disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
+                    className="px-8 py-3 text-lg"
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <Brain className="w-5 h-5 mr-2 animate-pulse" />
+                        Analyzing Your Scripts...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-5 h-5 mr-2" />
+                        Analyze Scripts for Viral Tactics
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {currentStep === 1 && analysis && (

@@ -46,12 +46,15 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
     setIsLoading(true);
 
     try {
-      // Use the existing YouTube scraper function but adapt it for TikTok
+      console.log('Calling TikTok scraper function with URL:', url);
       const { data, error } = await supabase.functions.invoke('scrape-youtube-script', {
         body: { url, platform: 'tiktok' }
       });
 
+      console.log('TikTok scraper response:', data, error);
+
       if (error) {
+        console.error('Supabase function error:', error);
         throw new Error(error.message);
       }
 
@@ -61,7 +64,7 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
 
       const extractedTranscript = data.script;
       setTranscript(extractedTranscript);
-      setVideoInfo(data.videoInfo || {});
+      setVideoInfo(data.videoInfo || { title: "TikTok Video", duration: "0:30" });
       
       toast({
         title: "Transcript Extracted!",
@@ -69,17 +72,16 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
       });
     } catch (error) {
       console.error('TikTok extraction error:', error);
+      toast({
+        title: "Extraction Failed",
+        description: "TikTok transcript extraction is currently in demo mode. Using sample transcript.",
+        variant: "default"
+      });
       
-      // Fallback: Generate a sample transcript for demo purposes
+      // Generate sample transcript for demo
       const sampleTranscript = generateSampleTikTokTranscript();
       setTranscript(sampleTranscript);
       setVideoInfo({ title: "Sample TikTok Video", duration: "0:30" });
-      
-      toast({
-        title: "Demo Mode",
-        description: "Generated sample transcript for demonstration",
-        variant: "default"
-      });
     } finally {
       setIsLoading(false);
     }
@@ -111,19 +113,29 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
         title: "Added to References",
         description: "TikTok transcript added as reference script"
       });
+      // Clear the transcript after using it
+      setTranscript('');
+      setVideoInfo(null);
+      setUrl('');
     }
   };
 
   const handleDownload = () => {
     const blob = new Blob([transcript], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    const downloadUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
+    a.href = downloadUrl;
     a.download = `tiktok-transcript-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(downloadUrl);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleExtract();
+    }
   };
 
   return (
@@ -140,6 +152,7 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
             placeholder="Paste TikTok URL here (e.g., https://www.tiktok.com/@username/video/...)"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            onKeyPress={handleKeyPress}
             disabled={isLoading}
             className="flex-1"
           />
@@ -170,7 +183,7 @@ export const TikTokTranscriptGenerator: React.FC<TikTokTranscriptGeneratorProps>
               <li>Copy any TikTok video URL</li>
               <li>Paste it above and click Extract</li>
               <li>Get the transcript to use as reference</li>
-              <li>Works with most TikTok videos that have captions</li>
+              <li>Currently in demo mode with sample transcripts</li>
             </ul>
           </div>
         </div>
