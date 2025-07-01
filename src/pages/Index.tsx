@@ -7,13 +7,19 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { Brain, FileText, Zap, Target, Lightbulb, BarChart3, CheckCircle, ArrowRight, BookOpen, Upload, Youtube, Languages } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { TacticMapper } from '@/components/TacticMapper';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { ScriptInputPanel } from '@/components/ScriptInputPanel';
 import { ScriptGenerationProgress } from '@/components/ScriptGenerationProgress';
+import { FileUploader } from '@/components/FileUploader';
+import { YouTubeScraper } from '@/components/YouTubeScraper';
+import { SentimentAnalyzer } from '@/components/SentimentAnalyzer';
+import { IndustryTemplates } from '@/components/IndustryTemplates';
+import { ScriptTranslator } from '@/components/ScriptTranslator';
+import { SavedScripts } from '@/components/SavedScripts';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
@@ -101,6 +107,72 @@ const Index = () => {
     setScriptInput({
       ...scriptInput,
       scripts: newScripts
+    });
+  };
+
+  const handleFileScriptExtracted = (script: string, filename: string) => {
+    // Find first empty script slot or add new one
+    const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
+    if (emptyIndex >= 0) {
+      updateScript(emptyIndex, script);
+    } else if (scriptInput.scripts.length < 8) {
+      setScriptInput({
+        ...scriptInput,
+        scripts: [...scriptInput.scripts, script]
+      });
+    }
+    toast({
+      title: "Script Added",
+      description: `Added script from ${filename}`
+    });
+  };
+
+  const handleYouTubeScriptExtracted = (script: string, source: string) => {
+    // Find first empty script slot or add new one
+    const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
+    if (emptyIndex >= 0) {
+      updateScript(emptyIndex, script);
+    } else if (scriptInput.scripts.length < 8) {
+      setScriptInput({
+        ...scriptInput,
+        scripts: [...scriptInput.scripts, script]
+      });
+    }
+    toast({
+      title: "YouTube Script Added",
+      description: "Successfully extracted and added script"
+    });
+  };
+
+  const handleTemplateSelect = (content: string, title: string) => {
+    const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
+    if (emptyIndex >= 0) {
+      updateScript(emptyIndex, content);
+    } else if (scriptInput.scripts.length < 8) {
+      setScriptInput({
+        ...scriptInput,
+        scripts: [...scriptInput.scripts, content]
+      });
+    }
+    toast({
+      title: "Template Added",
+      description: `Added "${title}" template`
+    });
+  };
+
+  const handleLoadSavedScript = (script: string, title: string) => {
+    const emptyIndex = scriptInput.scripts.findIndex(s => !s.trim());
+    if (emptyIndex >= 0) {
+      updateScript(emptyIndex, script);
+    } else if (scriptInput.scripts.length < 8) {
+      setScriptInput({
+        ...scriptInput,
+        scripts: [...scriptInput.scripts, script]
+      });
+    }
+    toast({
+      title: "Script Loaded",
+      description: `Loaded "${title}"`
     });
   };
 
@@ -351,10 +423,10 @@ Avoiding these mistakes alone can 10x your results.`
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-2">
-            AI-powered YouTube script writer using proven viral tactics from successful creators
+            AI-powered YouTube script writer with file upload, YouTube scraping, sentiment analysis & translation
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Enhanced with DanielKCI's proven strategies • Give people what they want • Viral formats that work
+            Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
           </p>
           <Link to="/enhanced-tactics">
             <Button variant="outline" className="mb-4">
@@ -394,127 +466,191 @@ Avoiding these mistakes alone can 10x your results.`
         {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           {currentStep === 0 && (
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                  <FileText className="w-6 h-6 text-blue-600" />
-                  Input Your Reference Scripts
-                </CardTitle>
-                <CardDescription>
-                  Provide 2-8 high-performing scripts and your video details. We'll analyze viral tactics and generate content that gives people what they want.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Format Selection */}
-                <div className="mb-6">
-                  <ViralFormatSelector 
-                    selectedFormat={selectedFormat}
-                    onFormatSelect={setSelectedFormat}
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Main Script Input */}
+              <div className="lg:col-span-2">
+                <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                      <FileText className="w-6 h-6 text-blue-600" />
+                      Input Your Reference Scripts
+                    </CardTitle>
+                    <CardDescription>
+                      Multiple ways to add scripts: copy-paste, upload files, or extract from YouTube
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Format Selection */}
+                    <div className="mb-6">
+                      <ViralFormatSelector 
+                        selectedFormat={selectedFormat}
+                        onFormatSelect={setSelectedFormat}
+                      />
+                    </div>
+
+                    <Separator />
+
+                    {/* Script Input Methods */}
+                    <Tabs defaultValue="manual" className="w-full">
+                      <TabsList className="grid w-full grid-cols-4">
+                        <TabsTrigger value="manual">Manual Input</TabsTrigger>
+                        <TabsTrigger value="upload">
+                          <Upload className="w-4 h-4 mr-1" />
+                          Upload Files
+                        </TabsTrigger>
+                        <TabsTrigger value="youtube">
+                          <Youtube className="w-4 h-4 mr-1" />
+                          YouTube
+                        </TabsTrigger>
+                        <TabsTrigger value="templates">Templates</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="manual" className="mt-6">
+                        {/* Dynamic Script Inputs */}
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
+                          </div>
+                          
+                          <div className="grid gap-4">
+                            {scriptInput.scripts.map((script, index) => (
+                              <ScriptInputPanel
+                                key={index}
+                                index={index}
+                                value={script}
+                                onChange={(value) => updateScript(index, value)}
+                                onRemove={() => removeScriptPanel(index)}
+                                canRemove={scriptInput.scripts.length > 2}
+                              />
+                            ))}
+                          </div>
+                          
+                          <div className="flex justify-end">
+                            <Button 
+                              onClick={addScriptPanel}
+                              disabled={scriptInput.scripts.length >= 8}
+                              variant="outline"
+                              size="sm"
+                            >
+                              + add script
+                            </Button>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="upload" className="mt-6">
+                        <FileUploader 
+                          onScriptExtracted={handleFileScriptExtracted}
+                          maxFiles={5}
+                        />
+                      </TabsContent>
+
+                      <TabsContent value="youtube" className="mt-6">
+                        <YouTubeScraper onScriptExtracted={handleYouTubeScriptExtracted} />
+                      </TabsContent>
+
+                      <TabsContent value="templates" className="mt-6">
+                        <IndustryTemplates onTemplateSelect={handleTemplateSelect} />
+                      </TabsContent>
+                    </Tabs>
+
+                    <Separator />
+
+                    {/* Video Details */}
+                    <div className="space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
+                          <Input
+                            id="topic"
+                            placeholder="e.g., How to make money online"
+                            value={scriptInput.topic}
+                            onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
+                          <Input
+                            id="cta"
+                            placeholder="Subscribe to my course"
+                            value={scriptInput.callToAction}
+                            onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
+                        <Textarea
+                          id="description"
+                          placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
+                          className="min-h-[80px]"
+                          value={scriptInput.description}
+                          onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
+                        <Input
+                          id="length"
+                          type="number"
+                          placeholder="1400"
+                          value={scriptInput.targetLength}
+                          onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center pt-4">
+                      <Button 
+                        onClick={handleAnalyze}
+                        disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
+                        className="px-8 py-3 text-lg"
+                      >
+                        {isAnalyzing ? (
+                          <>
+                            <Brain className="w-5 h-5 mr-2 animate-pulse" />
+                            Analyzing Your Scripts...
+                          </>
+                        ) : (
+                          <>
+                            <Brain className="w-5 h-5 mr-2" />
+                            Analyze Scripts for Viral Tactics
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Sidebar with additional tools */}
+              <div className="space-y-6">
+                <SavedScripts 
+                  currentScript={scriptInput.scripts.join('\n\n---\n\n')}
+                  onLoadScript={handleLoadSavedScript}
+                />
+                
+                {scriptInput.scripts.some(s => s.trim()) && (
+                  <SentimentAnalyzer 
+                    text={scriptInput.scripts.filter(s => s.trim()).join('\n\n')}
                   />
-                </div>
-
-                <Separator />
-
-                {/* Dynamic Script Inputs */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
-                  </div>
-                  
-                  <div className="grid gap-4">
-                    {scriptInput.scripts.map((script, index) => (
-                      <ScriptInputPanel
-                        key={index}
-                        index={index}
-                        value={script}
-                        onChange={(value) => updateScript(index, value)}
-                        onRemove={() => removeScriptPanel(index)}
-                        canRemove={scriptInput.scripts.length > 2}
-                      />
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button 
-                      onClick={addScriptPanel}
-                      disabled={scriptInput.scripts.length >= 8}
-                      variant="outline"
-                      size="sm"
-                    >
-                      + add script
-                    </Button>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Video Details */}
-                <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
-                      <Input
-                        id="topic"
-                        placeholder="e.g., How to make money online"
-                        value={scriptInput.topic}
-                        onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
-                      <Input
-                        id="cta"
-                        placeholder="Subscribe to my course"
-                        value={scriptInput.callToAction}
-                        onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
-                      className="min-h-[80px]"
-                      value={scriptInput.description}
-                      onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
-                    <Input
-                      id="length"
-                      type="number"
-                      placeholder="1400"
-                      value={scriptInput.targetLength}
-                      onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-center pt-4">
-                  <Button 
-                    onClick={handleAnalyze}
-                    disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                    className="px-8 py-3 text-lg"
-                  >
-                    {isAnalyzing ? (
-                      <>
-                        <Brain className="w-5 h-5 mr-2 animate-pulse" />
-                        Analyzing Your Scripts...
-                      </>
-                    ) : (
-                      <>
-                        <Brain className="w-5 h-5 mr-2" />
-                        Analyze Scripts for Viral Tactics
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                )}
+                
+                {generatedScript && (
+                  <ScriptTranslator 
+                    originalScript={generatedScript}
+                    onTranslatedScript={(translated, language) => {
+                      toast({
+                        title: "Translation Ready",
+                        description: `Script translated to ${language}`
+                      });
+                    }}
+                  />
+                )}
+              </div>
+            </div>
           )}
 
           {currentStep === 1 && analysis && (
@@ -556,26 +692,33 @@ Avoiding these mistakes alone can 10x your results.`
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="mt-16 grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Target className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Viral Tactics Analysis</h3>
+              <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">File Upload</h3>
               <p className="text-sm text-gray-600">
-                Identifies 25+ proven psychological tactics used by successful creators
+                Upload TXT, PDF, DOC files for instant script extraction
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <BarChart3 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Format-Based Generation</h3>
+              <Youtube className="w-12 h-12 text-red-600 mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">YouTube Scraper</h3>
               <p className="text-sm text-gray-600">
-                Uses proven formats that have worked since ancient times
+                Extract scripts directly from YouTube video transcripts
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Lightbulb className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Algorithm Optimization</h3>
+              <Brain className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Sentiment Analysis</h3>
               <p className="text-sm text-gray-600">
-                Collaborates with platform algorithms for maximum reach
+                Analyze emotional tone and engagement potential
+              </p>
+            </Card>
+            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
+              <Languages className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Translation</h3>
+              <p className="text-sm text-gray-600">
+                Translate scripts to 15+ languages while preserving impact
               </p>
             </Card>
           </div>

@@ -9,7 +9,111 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      industry_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          industry: string
+          is_active: boolean | null
+          tags: string[] | null
+          template_content: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry: string
+          is_active?: boolean | null
+          tags?: string[] | null
+          template_content: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: string
+          is_active?: boolean | null
+          tags?: string[] | null
+          template_content?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          industry: string | null
+          preferred_language: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          industry?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          industry?: string | null
+          preferred_language?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saved_scripts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          industry: string | null
+          language: string | null
+          sentiment_score: Json | null
+          title: string
+          updated_at: string
+          user_id: string
+          word_count: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          industry?: string | null
+          language?: string | null
+          sentiment_score?: Json | null
+          title: string
+          updated_at?: string
+          user_id: string
+          word_count?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          industry?: string | null
+          language?: string | null
+          sentiment_score?: Json | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          word_count?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
