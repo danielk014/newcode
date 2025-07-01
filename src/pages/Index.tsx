@@ -488,7 +488,7 @@ Avoiding these mistakes alone can 10x your results.`
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="length" className="text-sm font-medium">Target Length (words)</Label>
+                    <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
                     <Input
                       id="length"
                       type="number"
