@@ -1,5 +1,4 @@
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,13 +9,13 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 250 100% 97%;
+    --background: 0 0% 100%;
     --foreground: 250 15% 11%;
 
-    --card: 250 100% 100%;
+    --card: 0 0% 100%;
     --card-foreground: 250 15% 11%;
 
-    --popover: 250 100% 100%;
+    --popover: 0 0% 100%;
     --popover-foreground: 250 15% 11%;
 
     --primary: 250 100% 60%;
@@ -40,7 +39,7 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    --sidebar-background: 250 100% 100%;
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 250 15% 11%;
     --sidebar-primary: 250 100% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
