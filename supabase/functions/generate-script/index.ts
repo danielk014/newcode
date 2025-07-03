@@ -86,59 +86,101 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation. Your task is to generate high-converting scripts that maximize engagement, retention, and conversion rates.
+    const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation.
 
-CRITICAL WORD COUNT REQUIREMENT:
-- The script MUST be EXACTLY ${targetWordCount} words or MORE
-- This is NON-NEGOTIABLE - count every single word carefully
-- If your script is under ${targetWordCount} words, you MUST expand it immediately
-- Add detailed explanations, examples, stories, and additional content until you reach the target
+🚨 CRITICAL WORD COUNT REQUIREMENT 🚨
+- MINIMUM ${targetWordCount} WORDS - THIS IS MANDATORY
+- COUNT EVERY SINGLE WORD - NO EXCEPTIONS
+- IF UNDER ${targetWordCount} WORDS, THE SCRIPT IS INCOMPLETE
+- ADD MORE CONTENT UNTIL YOU REACH EXACTLY ${targetWordCount} WORDS OR MORE
 
-STRUCTURE REQUIREMENTS:
-1. Hook (0-15s): Attention-grabbing opening with curiosity gap
-2. Problem/Setup (15s-1m): Establish the problem and emotional stakes  
-3. Solution/Content (1m-80% of video): Detailed main content with examples
-4. Proof/Stories (Middle section): Case studies and social proof
-5. Advanced Insights: Deep dive into mechanisms and psychology
-6. Payoff/CTA (Final 20%): Strong resolution and call-to-action
+CONTENT REQUIREMENTS:
+1. Hook (0-15s): Strong attention-grabbing opening
+2. Problem Setup (15s-45s): Establish stakes and pain points
+3. Solution Framework (45s-4m): Detailed step-by-step content
+4. Proof & Examples (Throughout): Multiple case studies and stories
+5. Advanced Insights (4m-5m): Deep mechanisms and psychology
+6. Call to Action (Final 30s): Strong conversion-focused ending
 
-EXPANSION STRATEGIES (use these to reach word count):
-- Add detailed step-by-step breakdowns
-- Include multiple specific examples and case studies
-- Add psychological explanations for why tactics work
-- Include objection handling and common mistakes
-- Add storytelling elements and personal anecdotes
-- Provide additional context and background information
-- Include advanced tips and insider secrets
+TO REACH ${targetWordCount} WORDS, INCLUDE:
+- Detailed explanations for every point (minimum 100 words per major point)
+- Multiple specific examples with full context
+- Step-by-step breakdowns with sub-steps
+- Psychology explanations for why each tactic works
+- Common mistakes and how to avoid them
+- Success stories with specific details
+- Advanced strategies and insider tips
+- Objection handling sections
 
-The final script must be conversational, engaging, and MINIMUM ${targetWordCount} words.`;
+WORD COUNT VALIDATION: Before finishing, count your words. If under ${targetWordCount}, immediately add more content sections.`;
 
-    const userPrompt = `Generate a viral YouTube script with these specifications:
+    const userPrompt = `🚨 URGENT: Generate a ${targetWordCount}+ word viral YouTube script 🚨
 
-**Topic:** ${topic}
-**Description:** ${description || 'Not specified'}
-**Target Audience:** ${targetAudience || 'General YouTube audience'}
-**Video Length:** ${videoLength || 'Not specified'} minutes
-**Format Style:** ${format || 'Not specified'}
-**Call to Action:** ${callToAction || 'Subscribe and like'}
-**MINIMUM WORD COUNT:** ${targetWordCount} words (THIS IS MANDATORY)
+**MANDATORY SPECIFICATIONS:**
+• Topic: ${topic}
+• Description: ${description || 'Not specified'}
+• Target Audience: ${targetAudience || 'General YouTube audience'}
+• Video Length: ${videoLength || 'Not specified'} minutes
+• Format Style: ${format || 'Copy Reference Script Format'}
+• Call to Action: ${callToAction || 'Subscribe and like'}
 
-${scripts.length > 0 ? `**Reference Scripts for Style (use as inspiration but create original content):**
+🎯 **CRITICAL SUCCESS METRICS:**
+✅ MINIMUM ${targetWordCount} WORDS (COUNT EVERY WORD)
+✅ Viral psychological triggers throughout
+✅ High retention structure with hooks every 30 seconds
+✅ Detailed examples and case studies
+✅ Step-by-step breakdowns for each major point
+
+${scripts.length > 0 ? `📚 **REFERENCE SCRIPTS FOR STYLE ANALYSIS:**
 ${scripts.map((script, index) => `
-Reference Script ${index + 1}:
-${script.substring(0, 500)}...
-`).join('\n')}` : ''}
+=== REFERENCE SCRIPT ${index + 1} ===
+${script.substring(0, 800)}...
+===========================
+`).join('\n')}
 
-**Instructions:**
-1. Create a completely original script - do not copy from references
-2. The script MUST be at least ${targetWordCount} words - count them and expand if needed
-3. Use viral psychological tactics and engagement techniques
-4. Include timing markers and clear structure
-5. Make it conversational and engaging
-6. Include specific examples and storytelling elements
-7. If the script is under ${targetWordCount} words, expand it with more content, examples, and details
+📋 **ANALYSIS INSTRUCTIONS:**
+1. Study the hook patterns from reference scripts
+2. Mirror the tone and energy level
+3. Adapt the structure but create 100% original content
+4. Include similar psychological triggers and engagement tactics` : ''}
 
-**Output the complete script with word count verification.**`;
+🔥 **CONTENT EXPANSION REQUIREMENTS:**
+Since you need ${targetWordCount}+ words, include ALL of these sections:
+
+1. **VIRAL HOOK (0-15s)** - 100+ words
+   - Pattern interrupt + curiosity gap
+   - Specific numbers or shocking claims
+   - Promise of transformation
+
+2. **PROBLEM AGITATION (15-45s)** - 200+ words  
+   - Emotional pain points
+   - Common frustrations
+   - Why current solutions fail
+
+3. **SOLUTION FRAMEWORK (45s-4m)** - 800+ words
+   - Step-by-step methodology  
+   - Detailed explanations for each step
+   - Multiple specific examples per step
+   - Psychology behind why it works
+
+4. **PROOF & CASE STUDIES (Throughout)** - 300+ words
+   - Success stories with specific details
+   - Before/after scenarios
+   - Testimonial-style narratives
+
+5. **ADVANCED INSIGHTS (4-5m)** - 200+ words
+   - Hidden mechanisms
+   - Common mistakes to avoid
+   - Advanced optimization tips
+
+6. **STRONG CTA (Final 30s)** - 100+ words
+   - Urgency and scarcity
+   - Clear next steps
+   - Benefit reinforcement
+
+WORD COUNT VERIFICATION: After writing, count your words. If under ${targetWordCount}, immediately expand each section with more examples, details, and insights.
+
+CREATE THE COMPLETE ${targetWordCount}+ WORD SCRIPT NOW:`;
 
     console.log(`Generating script with minimum ${targetWordCount} words...`);
 
