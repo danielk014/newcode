@@ -272,100 +272,168 @@ const Index = () => {
   };
 
   const generateFallbackScript = (topic: string, cta: string, targetWords: number): string => {
-    // Generate a script that meets the minimum word count requirement
+    // Generate a comprehensive script that meets the minimum word count requirement
     const baseScript = `**VIRAL HOOK (0-3s)**
-"Stop scrolling! What I'm about to show you about ${topic.toLowerCase()} will completely change how you think about this forever."
+"Stop scrolling! What I'm about to reveal about ${topic.toLowerCase()} will completely transform your understanding and results forever. But first, let me show you why 97% of people fail at this."
 
 **PROMISE & SETUP (3-15s)**
-"By the end of this video, you'll have the exact blueprint that took my student from zero to hero in just 30 days. But first, let me show you why everything you've been told is wrong."
+"By the end of this video, you'll have the exact step-by-step blueprint that took my student from complete beginner to achieving incredible results in just 30 days. But here's the thing - everything you've been told about ${topic.toLowerCase()} is probably wrong, and I'm going to prove it to you right now."
 
-**MAIN CONTENT (15s-4m)**
-"Here's the thing nobody talks about - 97% of people fail at ${topic.toLowerCase()} because they're missing this one crucial element.
+**PROBLEM REVELATION (15s-45s)**
+"Here's the shocking truth that nobody talks about - 97% of people who try ${topic.toLowerCase()} fail not because they don't work hard enough, but because they're following outdated strategies that were designed to keep them stuck.
 
-But wait, it gets worse...
+The industry doesn't want you to know this, but there's a specific reason why some people succeed while others struggle for years without results. And it all comes down to one crucial element that most people completely ignore.
 
-Most 'experts' are actually keeping you stuck on purpose. Here's why: they profit from your confusion. When you're constantly searching for the next big secret, you're constantly buying their products.
+But wait, it gets worse. Most so-called 'experts' are actually profiting from your confusion. When you're constantly searching for the next secret or tactic, you're constantly buying their products, courses, and services. They have a vested interest in keeping you on this endless hamster wheel of frustration."
 
-Now here's the crazy part - when I discovered this simple framework, everything changed. Let me break it down step by step:
+**SOLUTION FRAMEWORK (45s-3m)**
+"Now here's where everything changes. When I discovered this simple but powerful framework, my entire approach to ${topic.toLowerCase()} was revolutionized. Let me break down this game-changing system step by step:
 
-Step 1: Understanding the Foundation
-The first thing you need to realize is that ${topic.toLowerCase()} isn't about what most people think. It's about understanding the underlying psychology and mechanics that drive real results.
+**Step 1: Foundation Mastery**
+The first thing you need to understand is that ${topic.toLowerCase()} isn't about what most people think. It's about understanding the underlying psychology and mechanics that drive real, sustainable results. Most people skip this foundational step, which is why they struggle.
 
-Step 2: Building Your System
-Once you understand the foundation, you need to build a systematic approach. This isn't about random tactics - it's about creating a repeatable process that works every single time.
+Think about it this way - you wouldn't build a house without a solid foundation, yet that's exactly what most people do with ${topic.toLowerCase()}. They jump straight to tactics and strategies without understanding the core principles that make everything work.
 
-Step 3: Advanced Implementation
-This is where most people get stuck. They understand the theory but fail at implementation. The secret is in the details that nobody talks about.
+**Step 2: Strategic System Building**
+Once you have the foundation in place, you need to build a systematic approach that works every single time. This isn't about random tactics or hoping for the best - it's about creating a repeatable process that generates consistent results.
 
-Step 4: Scaling and Optimization
-Once you have the basics working, it's time to scale. This is where the real magic happens, and where you can achieve results that seem impossible to others.
+The key here is understanding that success in ${topic.toLowerCase()} follows predictable patterns. When you know these patterns and how to leverage them, you can achieve results that seem impossible to others.
 
-Just like my student Sarah, who used this exact system to achieve incredible results. She went from struggling for months to seeing breakthrough results in her first week.
+**Step 3: Advanced Implementation Secrets**
+This is where most people get stuck. They understand the theory but fail at implementation. The secret lies in the specific details that nobody talks about - the micro-adjustments, the timing, the psychological triggers that make all the difference.
 
-But here's what makes this different from everything else you've tried...
+For example, there's a specific sequence you need to follow, and if you get it wrong, nothing else matters. But when you get it right, the results are almost immediate and dramatic.
 
-The secret isn't about working harder - it's about working smarter. It's about understanding the hidden patterns that successful people use but never talk about.
+**Step 4: Scaling and Optimization**
+Once you have the basics working, it's time to scale and optimize for maximum impact. This is where the real magic happens, and where you can achieve results that completely transform your situation.
 
-Let me give you a real example. Last month, I worked with someone who was stuck exactly where you might be right now. They were doing everything they thought was right, but nothing was working.
+The scaling process involves specific leverage points that multiply your efforts. Instead of working harder, you're working smarter by understanding these hidden accelerators that most people never discover."
 
-Within 48 hours of implementing this system, they saw their first breakthrough. Within a week, they had results they'd been chasing for months.
+**PROOF AND SOCIAL VALIDATION (3m-4m)**
+"Just like my student Sarah, who used this exact system to achieve incredible results. She went from struggling for months with traditional approaches to seeing breakthrough results in her first week of implementing this framework.
 
-The difference? They stopped following generic advice and started using the specific framework I'm sharing with you today."
+But Sarah isn't the only one. I've worked with hundreds of people who were stuck exactly where you might be right now. They were doing everything they thought was right, following all the conventional advice, but nothing was working.
 
-**PAYOFF & CTA (4-5m)**
-"Look, I've given you the foundation, but this is just the beginning. ${cta}. 
+Within 48 hours of implementing this system, they saw their first breakthrough. Within a week, they had results they'd been chasing for months or even years. The difference? They stopped following generic advice and started using this specific framework.
 
-But here's the thing - I'm only sharing the advanced version with the first 100 people who take action today. Don't let this opportunity pass you by like all the others.
+Let me give you another real example. Last month, I worked with someone who had tried everything - spent thousands on courses, watched countless videos, followed every guru's advice. They were frustrated, exhausted, and ready to give up.
 
-Your transformation starts now. What are you waiting for?"`;
+But then they discovered this approach. Within the first 48 hours, they had their first major breakthrough. Within two weeks, they had completely transformed their results. The transformation was so dramatic that their friends and family couldn't believe it was the same person.
 
-    // If the script is shorter than target, add more content
-    const currentWordCount = baseScript.trim().split(/\s+/).length;
+The secret isn't about working harder - it's about working smarter. It's about understanding the hidden patterns and psychological triggers that successful people use but rarely talk about openly."
+
+**ADVANCED INSIGHTS (4m-4m30s)**
+"Here's something most people don't realize - the difference between those who succeed and those who don't isn't talent, luck, or even hard work. It's about having the right information and applying it in the right sequence.
+
+Think about the most successful people in ${topic.toLowerCase()} - they all follow similar patterns, use similar psychological principles, and implement similar strategic frameworks. The difference is they understand the underlying mechanics that drive results.
+
+When you understand these mechanics, you can reverse-engineer success and create your own breakthrough results. It's like having a blueprint that shows you exactly what to do, when to do it, and how to do it for maximum impact."
+
+**CALL TO ACTION (4m30s-5m)**
+"Look, I've given you the foundation and framework, but this is just the beginning. ${cta}.
+
+Here's the thing - I'm only sharing the complete, advanced version of this system with people who are serious about creating real change in their lives. This isn't for everyone. It's only for people who are committed to taking action and implementing what they learn.
+
+But if you're ready to stop struggling and start seeing real results, if you're tired of trying things that don't work and ready for a proven system that does, then this is your moment.
+
+Don't let this opportunity pass you by like all the others. Your transformation starts right now. The question is: are you ready to take action, or are you going to let fear and hesitation keep you stuck where you are?
+
+The choice is yours, but choose quickly. Success in ${topic.toLowerCase()} isn't about someday - it's about today. What are you waiting for?"`;
+
+    // Calculate current word count and add more content if needed
+    let currentWordCount = baseScript.trim().split(/\s+/).length;
+    let finalScript = baseScript;
+
     if (currentWordCount < targetWords) {
-      const additionalContent = generateAdditionalContent(topic, targetWords - currentWordCount);
-      return baseScript.replace('**PAYOFF & CTA (4-5m)**', additionalContent + '\n\n**PAYOFF & CTA (4-5m)**');
+      const additionalContent = generateDetailedAdditionalContent(topic, targetWords - currentWordCount);
+      finalScript = baseScript.replace('**CALL TO ACTION (4m30s-5m)**', additionalContent + '\n\n**CALL TO ACTION (4m30s-5m)**');
     }
 
-    return baseScript;
+    return finalScript;
   };
 
-  const generateAdditionalContent = (topic: string, wordsNeeded: number): string => {
-    const additionalSections = [
+  const generateDetailedAdditionalContent = (topic: string, wordsNeeded: number): string => {
+    const expansionSections = [
       `**DEEP DIVE: The Psychology Behind ${topic}**
-Understanding the psychological triggers that make ${topic.toLowerCase()} work is crucial for your success. Most people skip this step, which is why they fail.
+Understanding the psychological triggers that make ${topic.toLowerCase()} work is absolutely crucial for your success. This isn't just theory - this is the practical psychology that separates those who succeed from those who struggle.
 
-The human brain is wired to respond to certain patterns and triggers. When you understand these patterns, you can use them to your advantage.
+The human brain is wired to respond to certain patterns and triggers. When you understand these patterns, you can use them to your advantage in ways that feel almost unfair. Research shows that successful implementation of ${topic.toLowerCase()} strategies depends heavily on psychological factors that most people completely ignore.
 
-Research shows that successful implementation of ${topic.toLowerCase()} strategies depends heavily on psychological factors that most people ignore.`,
+For instance, there's a specific cognitive bias that affects how people perceive value and make decisions. When you understand how to leverage this bias ethically, you can dramatically improve your results. Most people fight against human psychology instead of working with it, which is why they struggle.
 
-      `**CASE STUDY: Real Results**
-Let me share another success story that perfectly illustrates these principles in action. 
+The most successful practitioners of ${topic.toLowerCase()} understand that it's not just about the tactics - it's about the psychological framework that makes those tactics effective. They know how to trigger the right mental states, create the right associations, and guide people through predictable psychological processes.`,
 
-My client John was skeptical when he first started. He'd tried everything and nothing worked. But when he applied this exact framework, his results were immediate and dramatic.
+      `**CASE STUDY: Advanced Implementation**
+Let me share a detailed case study that perfectly illustrates these principles in action. This story will show you exactly how powerful this approach can be when implemented correctly.
 
-The key was understanding that ${topic.toLowerCase()} isn't just about the tactics - it's about the mindset and systematic approach that makes those tactics effective.`,
+My client John was extremely skeptical when he first started. He'd been burned before by promises that didn't deliver, and he'd tried virtually everything available in the ${topic.toLowerCase()} space. He was frustrated, cynical, and honestly ready to give up completely.
 
-      `**COMMON MISTAKES TO AVOID**
-Before we wrap up, let me share the three biggest mistakes I see people make when implementing ${topic.toLowerCase()} strategies:
+But when he applied this exact framework - not just the surface-level tactics, but the deep psychological principles and systematic approach - his results were immediate and dramatic. Within the first 72 hours, he saw changes that he hadn't experienced in months of previous effort.
 
-Mistake #1: Trying to do everything at once instead of focusing on the fundamentals
-Mistake #2: Not tracking and measuring results properly
-Mistake #3: Giving up too early before the compound effect kicks in
+The key was understanding that ${topic.toLowerCase()} isn't just about the obvious strategies everyone talks about. It's about the subtle psychological elements, the timing, the sequence, and the mindset that makes everything else work.
 
-Avoiding these mistakes alone can 10x your results.`
+John's breakthrough came when he realized he'd been focusing on the wrong things entirely. Instead of chasing tactics, he started focusing on the underlying psychology and systematic approach. The results spoke for themselves - within two weeks, he had completely transformed his situation.
+
+What made John's case particularly interesting was how quickly he was able to scale his results once he understood the core principles. Because he wasn't just copying tactics, but truly understood the psychology behind why things work, he could adapt and optimize in real-time.`,
+
+      `**COMMON MISTAKES AND HOW TO AVOID THEM**
+Before we wrap up, let me share the five biggest mistakes I see people make when implementing ${topic.toLowerCase()} strategies. Avoiding these mistakes alone can 10x your results, and I see people make them over and over again.
+
+**Mistake #1: Trying to do everything at once instead of focusing on the fundamentals**
+Most people try to implement every tactic they've ever heard about simultaneously. This creates confusion, overwhelm, and ultimately failure. The key is to master the fundamentals first, then layer on advanced strategies once you have a solid foundation.
+
+**Mistake #2: Not tracking and measuring results properly**
+You can't improve what you don't measure. Most people operate on feelings and assumptions instead of hard data. When you start tracking the right metrics and making data-driven decisions, your results improve dramatically.
+
+**Mistake #3: Giving up too early before the compound effect kicks in**
+Success in ${topic.toLowerCase()} often follows a compound curve - slow at first, then exponential. Most people give up during the slow phase, right before they would have seen breakthrough results. Understanding this timeline is crucial for long-term success.
+
+**Mistake #4: Following generic advice instead of understanding core principles**
+Generic advice rarely works because it doesn't account for individual situations and psychology. When you understand the core principles, you can adapt them to your specific circumstances for maximum effectiveness.
+
+**Mistake #5: Focusing on tactics instead of psychology**
+The biggest mistake is thinking that ${topic.toLowerCase()} is about tactics and strategies. The real secret is understanding the psychology that makes those tactics work. When you focus on psychology first, the tactics become much more effective.`,
+
+      `**THE TRANSFORMATION MINDSET**
+Here's what I want you to understand about transformation in ${topic.toLowerCase()} - it's not just about changing what you do, it's about changing how you think about what you do.
+
+Most people approach ${topic.toLowerCase()} with a scarcity mindset, focused on what they lack and what they can't do. But the most successful practitioners operate from an abundance mindset, focused on possibilities and opportunities.
+
+This mindset shift isn't just motivational fluff - it has practical, measurable impacts on your results. When you approach ${topic.toLowerCase()} from the right psychological frame, you make better decisions, take more effective actions, and persist through challenges that stop other people.
+
+The transformation process involves rewiring your brain's default patterns and responses. This isn't as complicated as it sounds, but it does require understanding how your brain works and how to consciously direct its focus and energy.
+
+When you master this psychological transformation, everything else becomes easier. The tactics work better, the strategies are more effective, and the results come faster and more consistently. This is why psychology is the foundation of everything else.`,
+
+      `**IMPLEMENTATION ROADMAP**
+Let me give you a clear roadmap for implementing everything we've discussed. This isn't just theory - this is your practical action plan for the next 30 days.
+
+**Week 1: Foundation Building**
+Focus entirely on mastering the psychological fundamentals. Don't worry about advanced tactics yet. Your goal is to rewire your mindset and establish the right mental framework.
+
+**Week 2: System Implementation**
+Start implementing the systematic approach we discussed. Focus on consistency and building sustainable habits rather than trying to achieve perfect results immediately.
+
+**Week 3: Optimization and Refinement**
+Begin tracking your results and making data-driven adjustments. This is where you start to see the compound effect beginning to take hold.
+
+**Week 4: Scaling and Acceleration**
+Start implementing the advanced scaling strategies. By this point, you should have solid momentum and be ready to amplify your results.
+
+Remember, this is a process, not an event. Each week builds on the previous one, creating a compound effect that leads to breakthrough results.`
     ];
 
     let additionalContent = '';
     let wordsAdded = 0;
     
-    for (const section of additionalSections) {
+    for (const section of expansionSections) {
       const sectionWords = section.trim().split(/\s+/).length;
-      if (wordsAdded + sectionWords <= wordsNeeded + 50) { // Allow some buffer
+      if (wordsAdded + sectionWords <= wordsNeeded + 100) {
         additionalContent += '\n\n' + section;
         wordsAdded += sectionWords;
+        
+        if (wordsAdded >= wordsNeeded) break;
       }
-      
-      if (wordsAdded >= wordsNeeded) break;
     }
 
     return additionalContent;

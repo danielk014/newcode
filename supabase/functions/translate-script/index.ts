@@ -16,7 +16,7 @@ const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<stri
   console.log('Calling OpenAI API for translation...');
   
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 45000); // Increased timeout
   
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -40,15 +40,21 @@ const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<stri
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('OpenAI API error:', response.status, error);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from OpenAI API');
+    }
+    
     return data.choices[0].message.content;
   } catch (error) {
     clearTimeout(timeoutId);
+    console.error('Translation API error:', error);
     throw error;
   }
 };
@@ -59,13 +65,20 @@ serve(async (req) => {
   }
 
   try {
-    const { text, targetLanguage, preserveStructure = true } = await req.json();
+    const requestBody = await req.json();
+    const { text, targetLanguage, preserveStructure = true } = requestBody;
 
     if (!text || !targetLanguage) {
-      throw new Error('Text and target language are required');
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Text and target language are required'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    console.log(`Translating to ${targetLanguage}...`);
+    console.log(`Starting translation to ${targetLanguage}...`);
 
     const systemPrompt = `You are a professional translator specializing in video scripts and viral content. 
     Translate the given text to ${targetLanguage} while:

@@ -7,8 +7,59 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+
+  console.log('Calling OpenAI API for script improvement...');
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+  
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 4000,
+        temperature: 0.7,
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from OpenAI API');
+    }
+    
+    return data.choices[0].message.content;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.error('Script improvement API error:', error);
+    throw error;
+  }
+};
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,9 +67,14 @@ serve(async (req) => {
   try {
     const { originalScript, improvementType, improvementInstruction, description } = await req.json();
     
-    const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
-    if (!claudeApiKey) {
-      throw new Error('Claude API key not configured');
+    if (!originalScript || !improvementType) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Original script and improvement type are required'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const systemPrompt = `You are an expert YouTube script editor who specializes in applying specific improvements to existing scripts. You understand viral content strategies and how to enhance scripts for better engagement and conversion.
@@ -49,39 +105,11 @@ ${originalScript}
 **Output Format:**
 Provide the complete improved script with **[IMPROVED]** markers around the enhanced sections.`;
 
-    console.log('Calling Claude API for script improvement...');
+    console.log('Processing script improvement...');
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': claudeApiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        temperature: 0.7,
-        system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: userPrompt
-          }
-        ]
-      })
-    });
+    const improvedScript = await callOpenAIAPI(userPrompt, systemPrompt);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Claude API Error:', errorText);
-      throw new Error(`Claude API error: ${response.status}`);
-    }
-
-    const data = await response.json();
     console.log('Script improvement generated successfully');
-    
-    const improvedScript = data.content[0].text;
 
     return new Response(
       JSON.stringify({ 
