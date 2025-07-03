@@ -440,44 +440,46 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen w-full">
-      <div className="w-full px-6 py-8">
+    <div className="min-h-screen w-full bg-white">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="text-center mb-12 relative">
-          <div className="absolute top-0 right-0">
-            <UserMenu />
-          </div>
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Brain className="w-8 h-8 text-purple-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
-              PitchArchitect
-            </h1>
-          </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-2">
-            AI-powered YouTube script writer with file upload, sentiment analysis & translation
-          </p>
-          <p className="text-sm text-gray-500 mb-6">
-            Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
-          </p>
-          <div className="flex justify-center gap-4 mb-4">
-            <Link to="/enhanced-tactics">
-              <Button variant="outline">
-                <BookOpen className="w-4 h-4 mr-2" />
-                View Enhanced Tactics Library
+        <div className="bg-white border-b border-gray-200 -mx-6 px-6 py-6 mb-8">
+          <div className="max-w-4xl mx-auto text-center relative">
+            <div className="absolute top-0 right-0">
+              <UserMenu />
+            </div>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Target className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-bold text-foreground">
+                PitchArchitect
+              </h1>
+            </div>
+            <p className="text-lg text-muted-foreground mb-2">
+              AI-powered YouTube script writer with file upload, sentiment analysis & translation
+            </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
+            </p>
+            <div className="flex justify-center gap-3">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/enhanced-tactics">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  View Enhanced Tactics Library
+                </Link>
               </Button>
-            </Link>
-            <Link to="/saved-scripts">
-              <Button variant="outline">
-                <FileText className="w-4 h-4 mr-2" />
-                My Saved Scripts
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/saved-scripts">
+                  <FileText className="w-4 h-4 mr-2" />
+                  My Saved Scripts
+                </Link>
               </Button>
-            </Link>
+            </div>
           </div>
         </div>
 
         {/* Progress Steps */}
         <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const isActive = currentStep === step.id;
@@ -485,16 +487,16 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               
               return (
                 <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-                    isActive ? 'bg-purple-100 text-purple-700' : 
-                    isCompleted ? 'bg-green-100 text-green-700' : 
-                    'bg-gray-100 text-gray-500'
+                  <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all border ${
+                    isActive ? 'bg-primary text-primary-foreground border-primary' : 
+                    isCompleted ? 'bg-accent text-accent-foreground border-accent' : 
+                    'bg-secondary text-secondary-foreground border-border'
                   }`}>
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{step.title}</span>
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{step.title}</span>
                   </div>
                   {index < steps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-gray-400 mx-2" />
+                    <ArrowRight className="w-4 h-4 text-muted-foreground mx-1" />
                   )}
                 </div>
               );
@@ -502,20 +504,20 @@ Remember, this is a process, not an event. Each week builds on the previous one,
           </div>
         </div>
 
-        {/* Main Content - Full Width */}
-        <div className="w-full">
+        {/* Main Content */}
+        <div className="max-w-5xl mx-auto">
           {currentStep === 0 && (
-            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm w-full">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                  <FileText className="w-6 h-6 text-purple-600" />
+            <Card className="shadow-lg border border-gray-200 bg-white">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="text-xl flex items-center justify-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
                   Input Your Reference Scripts
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Multiple ways to add scripts: copy-paste, upload files
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 px-6 pb-6">
                 {/* Format Selection */}
                 <div className="mb-6">
                   <ViralFormatSelector 
@@ -570,8 +572,9 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                           disabled={scriptInput.scripts.length >= 8}
                           variant="outline"
                           size="sm"
+                          className="text-gray-600 border-gray-300 hover:bg-gray-50"
                         >
-                          + add script
+                          + Add Script
                         </Button>
                       </div>
                     </div>
@@ -633,11 +636,12 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                   </div>
                 </div>
 
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center pt-6">
                   <Button 
                     onClick={handleAnalyze}
                     disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                    className="px-8 py-3 text-lg"
+                    className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground"
+                    size="lg"
                   >
                     {isAnalyzing ? (
                       <>
@@ -695,28 +699,30 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 grid md:grid-cols-3 gap-6 w-full">
-            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
-              <Upload className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">File Upload</h3>
-              <p className="text-sm text-gray-600">
-                Upload TXT, PDF, DOC files for instant script extraction
-              </p>
-            </Card>
-            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
-              <Brain className="w-12 h-12 text-violet-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Sentiment Analysis</h3>
-              <p className="text-sm text-gray-600">
-                Analyze emotional tone and engagement potential
-              </p>
-            </Card>
-            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
-              <Languages className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Translation</h3>
-              <p className="text-sm text-gray-600">
-                Translate scripts to 15+ languages while preserving impact
-              </p>
-            </Card>
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
+                <Upload className="w-10 h-10 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">File Upload</h3>
+                <p className="text-sm text-muted-foreground">
+                  Upload TXT, PDF, DOC files for instant script extraction
+                </p>
+              </Card>
+              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
+                <Brain className="w-10 h-10 text-accent mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">Sentiment Analysis</h3>
+                <p className="text-sm text-muted-foreground">
+                  Analyze emotional tone and engagement potential
+                </p>
+              </Card>
+              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
+                <Languages className="w-10 h-10 text-accent mx-auto mb-4" />
+                <h3 className="font-semibold mb-2 text-foreground">Translation</h3>
+                <p className="text-sm text-muted-foreground">
+                  Translate scripts to 15+ languages while preserving impact
+                </p>
+              </Card>
+            </div>
           </div>
         )}
       </div>
