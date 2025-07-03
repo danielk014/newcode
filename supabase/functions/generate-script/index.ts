@@ -203,7 +203,7 @@ serve(async (req) => {
     const requestData = await req.json();
     const { topic, description, targetAudience, scripts, callToAction, targetWordCount = 1400 } = requestData;
     
-    console.log('=== PROFESSIONAL YOUTUBE SCRIPT GENERATION ===');
+    console.log('=== SCRIPT GENERATION WITH REFERENCE STYLE ANALYSIS ===');
     console.log('Topic:', topic);
     console.log('Target Word Count:', targetWordCount);
     console.log('Scripts provided:', scripts?.length || 0);
@@ -214,94 +214,76 @@ serve(async (req) => {
 
     const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
     
-    console.log('Generating with professional YouTube standards...');
+    console.log('Generating script based on reference styles...');
     
     const dynamicPrompt = generateDynamicPrompt(requestData, 1);
     
-    const systemPrompt = `You are a professional YouTube script writer following industry-standard best practices. Create a compelling, viral-ready script that strictly adheres to these professional guidelines:
+    const systemPrompt = `You are an expert YouTube script writer who specializes in analyzing successful viral scripts and replicating their winning patterns. Your job is to create a compelling script that captures the essence and style of the provided reference scripts while creating completely new content.
 
-1. DEFINE THE GOAL BEFORE WRITING
-- Core promise: One crisp sentence that will appear in thumbnail/title
-- Video type: Educational "How-to/Explainer" (default), Challenge/Competition, or Commentary
-- Single-line payoff: Must not fully happen until final 15% of runtime
+CORE APPROACH:
+1. Analyze the reference scripts for their successful patterns
+2. Identify the structure, pacing, and stylistic elements that make them effective
+3. Create a new script that follows these proven patterns but with completely different content
+4. Maintain the same energy, flow, and psychological triggers as the reference scripts
 
-2. SCRIPT SKELETON (MANDATORY STRUCTURE)
-A) Cold-Open Hook (0-30s)
-   1) WHAT – statement of the topic
-   2) WHY – immediate personal benefit to viewer  
-   3) TENSION – open loop/question
+SCRIPT REQUIREMENTS:
+- Target length: Approximately ${targetWordCount} words
+- Topic: ${topic}
+- Call to action: ${callToAction}
+- Style: Match the tone and pacing of the reference scripts
+- Structure: Follow the successful pattern from the reference scripts
 
-B) Rising Value Segments (≈90s blocks, repeat as needed)
-   - Facts/demos/stories that inch toward payoff
-   - Engagement pulse every ≤120s (mini-challenge, reveal, joke, visual stunt)
-   - Visual change every 2-7s; micro-change every 1-3s
+WRITING STYLE GUIDELINES:
+- Use active voice and direct address ("you")
+- Create strong hooks that grab attention immediately
+- Build tension and curiosity throughout
+- Use psychological triggers like urgency, scarcity, and social proof
+- Include specific examples and stories when relevant
+- Maintain high energy and engagement
+- End with a clear, compelling call to action
 
-C) Climax & Payoff
-   - Resolve main tension; deliver promised result
-   - Flash a reward (bonus tip, discount code, etc.)
+FORMATTING:
+- Use clear section breaks
+- Include [VISUAL: description] tags for important visual elements
+- Add [CUT] tags where pacing changes or visual breaks are needed
+- Structure the script for easy reading and production
 
-D) Outro (≤15s)
-   - Tease related video that extends the journey
-   - 1-line CTA; no long self-talk
+Your goal is to create a script that feels authentic to the reference style while being completely unique and tailored to the new topic.`;
 
-3. WRITING & STYLE DIRECTIVES (MANDATORY RULES)
-- Tone: Active voice, second person ("you")
-- Length: Script equals 85-90% of final runtime (leave room for pauses/edits)
-- Cuts: Insert [CUT] or [VISUAL: description] tags every 2-7s
-- Jargon: Explain any term <5s after first use
-- Personality: Focus on viewer benefits, not host
-- Psychology: Weave "dream" or "greed" appeal every major segment
+    const userPrompt = `Create a compelling YouTube script about: ${topic}
 
-4. ALGORITHM COLLABORATION RULES
-- Retention First: Never sacrifice tension for completeness
-- Payoff withheld until final 15%
-- No section longer than 120s without engagement pulse
-
-5. QUALITY CHECKLIST (ALL MUST BE MET)
-✓ Payoff withheld until final 15%
-✓ Hook uses 3-piece formula with tension question
-✓ No section >120s without engagement pulse
-✓ At least one audience dream/aspiration trigger
-✓ Script length matches target runtime ±10%
-✓ [VISUAL] and [CUT] tags inserted every 2-7s
-
-CRITICAL REQUIREMENTS:
-- Write approximately ${targetWordCount} words (aim for 90-110% of target)
-- Follow the exact skeleton structure above
-- Include [VISUAL: description] tags for B-roll/graphics
-- Add [CUT] tags where pacing would drop
-- End with specified call-to-action: "${callToAction}"
-- Use curiosity gaps and open loops throughout
-- Maintain tension until final 15% payoff
-
-OUTPUT FORMAT:
-Return ONLY the script content with proper formatting, visual cues, and cut tags. No metadata, no explanations, just the professional script following all guidelines above.`;
-
-    const userPrompt = `Create a professional YouTube script about: ${topic}
-
-${description ? `Context: ${description}` : ''}
+${description ? `Additional Context: ${description}` : ''}
 ${targetAudience ? `Target Audience: ${targetAudience}` : ''}
 
-APPROACH FOR THIS SCRIPT:
+CREATIVE APPROACH FOR THIS SCRIPT:
 ${dynamicPrompt}
 
 ${scripts && scripts.length > 0 ? `
-REFERENCE STYLE (analyze for tone and structure, create completely different content):
-${scripts.map((script: string, i: number) => `\nExample ${i+1}:\n${script.substring(0, 300)}...`).join('')}
+REFERENCE SCRIPTS TO ANALYZE AND REPLICATE STYLE FROM:
+${scripts.map((script: string, i: number) => `\n--- Reference Script ${i+1} ---\n${script.substring(0, 1500)}${script.length > 1500 ? '...' : ''}\n`).join('')}
+
+INSTRUCTIONS:
+1. Carefully study the reference scripts above
+2. Identify their successful patterns: structure, pacing, tone, psychological triggers
+3. Create a NEW script about "${topic}" that follows these same successful patterns
+4. DO NOT copy content - create completely original material that matches the STYLE and STRUCTURE
+5. Maintain the same energy and engagement level as the reference scripts
+6. Use similar psychological triggers and persuasion techniques
+7. Follow the same general flow and pacing patterns
 ` : ''}
 
-MANDATORY REQUIREMENTS:
-1. Follow the exact 4-part skeleton structure (Hook → Rising Value → Climax → Outro)
-2. Include [VISUAL: description] tags every 2-7 seconds
-3. Add [CUT] tags where pacing needs breaks
-4. Withhold main payoff until final 15% of script
-5. Use active voice, second person throughout
-6. Include engagement pulses every 120 seconds max
-7. End with call-to-action: "${callToAction}"
+REQUIREMENTS:
+- Write approximately ${targetWordCount} words
+- Create original content (no copying from reference scripts)
+- Match the successful style and structure patterns from the references
+- Include engaging hooks, stories, and examples
+- Build tension and curiosity throughout
+- End with call-to-action: "${callToAction}"
+- Add [VISUAL: description] and [CUT] tags where appropriate
 
-Create a ${targetWordCount}-word professional YouTube script that meets ALL quality checklist requirements.`;
+Create a script that captures the viral essence of the reference materials while being completely unique and focused on the new topic.`;
 
-    console.log('Starting professional AI generation...');
+    console.log('Starting AI generation with reference style analysis...');
     const startTime = Date.now();
     
     const generatedScript = await generateWithAI(userPrompt, systemPrompt);
@@ -316,16 +298,16 @@ Create a ${targetWordCount}-word professional YouTube script that meets ALL qual
     const isUnique = isContentUnique(generatedScript, sessionId);
     console.log(`Content uniqueness: ${isUnique}`);
     
-    // Professional script acceptance (80-120% of target)
-    const wordCountMet = actualWordCount >= targetWordCount * 0.8 && actualWordCount <= targetWordCount * 1.2;
+    // Accept scripts within reasonable range (70-130% of target)
+    const wordCountMet = actualWordCount >= targetWordCount * 0.7 && actualWordCount <= targetWordCount * 1.3;
     
     if (!generatedScript) {
       throw new Error('Failed to generate script content');
     }
 
-    console.log('=== PROFESSIONAL GENERATION COMPLETE ===');
+    console.log('=== SCRIPT GENERATION COMPLETE ===');
     console.log(`Final word count: ${actualWordCount}`);
-    console.log(`Professional standards met: ${wordCountMet}`);
+    console.log(`Word count requirement met: ${wordCountMet}`);
     console.log(`Generation time: ${generationTime}ms`);
 
     return new Response(
@@ -339,9 +321,9 @@ Create a ${targetWordCount}-word professional YouTube script that meets ALL qual
           generationTimeMs: generationTime,
           isUnique,
           sessionId,
-          professionalStandards: true
+          styleBasedGeneration: true
         },
-        message: `Professional YouTube script generated: ${actualWordCount} words in ${Math.round(generationTime/1000)}s`
+        message: `Script generated based on reference styles: ${actualWordCount} words in ${Math.round(generationTime/1000)}s`
       }),
       { 
         headers: { 
@@ -352,7 +334,7 @@ Create a ${targetWordCount}-word professional YouTube script that meets ALL qual
     );
 
   } catch (error) {
-    console.error('=== PROFESSIONAL SCRIPT GENERATION ERROR ===');
+    console.error('=== SCRIPT GENERATION ERROR ===');
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
     
