@@ -528,9 +528,17 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="manual">Manual Input</TabsTrigger>
-                    <TabsTrigger value="upload">
+                  <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                    <TabsTrigger 
+                      value="manual"
+                      className="data-[state=active]:bg-gray-600 data-[state=active]:text-white text-gray-700"
+                    >
+                      Manual Input
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="upload"
+                      className="data-[state=active]:bg-gray-600 data-[state=active]:text-white text-gray-700"
+                    >
                       <Upload className="w-4 h-4 mr-1" />
                       Upload Files
                     </TabsTrigger>

@@ -150,9 +150,13 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
       </div>
       
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-5 bg-gray-100">
           {industries.map(industry => (
-            <TabsTrigger key={industry} value={industry.toLowerCase()}>
+            <TabsTrigger 
+              key={industry} 
+              value={industry.toLowerCase()}
+              className="data-[state=active]:bg-gray-600 data-[state=active]:text-white text-gray-700"
+            >
               {industry}
             </TabsTrigger>
           ))}
