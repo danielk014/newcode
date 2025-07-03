@@ -7,32 +7,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
-  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-  if (!openaiApiKey) {
-    throw new Error('OpenAI API key not configured');
+const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
+  if (!claudeApiKey) {
+    throw new Error('Claude API key not configured');
   }
 
-  console.log('Calling OpenAI API for translation...');
+  console.log('Calling Claude API for translation...');
   
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 45000); // Increased timeout
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
   
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'x-api-key': claudeApiKey,
         'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt }
-        ],
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 4000,
-        temperature: 0.3,
+        system: systemPrompt,
+        messages: [
+          { role: 'user', content: prompt }
+        ]
       }),
       signal: controller.signal
     });
@@ -41,17 +41,17 @@ const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<stri
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      console.error('Claude API error:', response.status, errorText);
+      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response from OpenAI API');
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      throw new Error('Invalid response from Claude API');
     }
     
-    return data.choices[0].message.content;
+    return data.content[0].text;
   } catch (error) {
     clearTimeout(timeoutId);
     console.error('Translation API error:', error);
@@ -91,7 +91,7 @@ serve(async (req) => {
     
     Return only the translated text, maintaining the exact same format as the input.`;
 
-    const translatedText = await callOpenAIAPI(text, systemPrompt);
+    const translatedText = await callClaudeAPI(text, systemPrompt);
 
     console.log('Translation completed successfully');
 
