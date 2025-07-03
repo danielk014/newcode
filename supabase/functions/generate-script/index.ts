@@ -88,27 +88,30 @@ serve(async (req) => {
 
     const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation. Your task is to generate high-converting scripts that maximize engagement, retention, and conversion rates.
 
-CRITICAL REQUIREMENTS:
-1. The script MUST be at least ${targetWordCount} words long - this is non-negotiable
-2. Use the provided reference scripts as style guides but create completely original content
-3. Apply proven psychological tactics and viral elements
-4. Structure the script for maximum retention and engagement
-5. Include clear formatting with timing markers
+CRITICAL WORD COUNT REQUIREMENT:
+- The script MUST be EXACTLY ${targetWordCount} words or MORE
+- This is NON-NEGOTIABLE - count every single word carefully
+- If your script is under ${targetWordCount} words, you MUST expand it immediately
+- Add detailed explanations, examples, stories, and additional content until you reach the target
 
-Your script must include:
-- Hook (0-15s): Attention-grabbing opening
-- Problem/Setup (15s-1m): Establish the problem or context
-- Solution/Content (1m-80% of video): Main content delivery
-- Payoff/CTA (Final 20%): Resolution and call-to-action
+STRUCTURE REQUIREMENTS:
+1. Hook (0-15s): Attention-grabbing opening with curiosity gap
+2. Problem/Setup (15s-1m): Establish the problem and emotional stakes  
+3. Solution/Content (1m-80% of video): Detailed main content with examples
+4. Proof/Stories (Middle section): Case studies and social proof
+5. Advanced Insights: Deep dive into mechanisms and psychology
+6. Payoff/CTA (Final 20%): Strong resolution and call-to-action
 
-WORD COUNT ENFORCEMENT: If your initial script is under ${targetWordCount} words, you MUST expand it by:
-- Adding more detailed explanations
-- Including additional examples and case studies
-- Expanding on psychological triggers
-- Adding more storytelling elements
-- Including more social proof and testimonials
+EXPANSION STRATEGIES (use these to reach word count):
+- Add detailed step-by-step breakdowns
+- Include multiple specific examples and case studies
+- Add psychological explanations for why tactics work
+- Include objection handling and common mistakes
+- Add storytelling elements and personal anecdotes
+- Provide additional context and background information
+- Include advanced tips and insider secrets
 
-The final script must be engaging, conversational, and feel natural while meeting the exact word count requirement.`;
+The final script must be conversational, engaging, and MINIMUM ${targetWordCount} words.`;
 
     const userPrompt = `Generate a viral YouTube script with these specifications:
 
@@ -140,39 +143,53 @@ ${script.substring(0, 500)}...
     console.log(`Generating script with minimum ${targetWordCount} words...`);
 
     let generatedScript = await callClaudeAPI(userPrompt, systemPrompt);
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    // Check word count and regenerate if needed
-    const wordCount = generatedScript.trim().split(/\s+/).length;
-    console.log(`Initial script generated with ${wordCount} words`);
+    // Robust word count validation with multiple expansion attempts
+    while (attempts < maxAttempts) {
+      const wordCount = generatedScript.trim().split(/\s+/).length;
+      console.log(`Attempt ${attempts + 1}: Script generated with ${wordCount} words (target: ${targetWordCount})`);
 
-    if (wordCount < targetWordCount) {
-      console.log(`Script too short (${wordCount} words), expanding...`);
+      if (wordCount >= targetWordCount) {
+        console.log(`✅ Word count requirement met: ${wordCount} words`);
+        break;
+      }
+
+      attempts++;
+      console.log(`⚠️ Script too short (${wordCount} words), expanding... (Attempt ${attempts}/${maxAttempts})`);
       
-      const expansionPrompt = `The previous script only has ${wordCount} words but needs to be at least ${targetWordCount} words. 
+      const wordsNeeded = targetWordCount - wordCount;
+      const expansionPrompt = `CRITICAL: The current script has only ${wordCount} words but MUST have at least ${targetWordCount} words. You need to add approximately ${wordsNeeded} more words.
 
-EXPAND this script to meet the word count requirement by:
-1. Adding more detailed explanations and examples
-2. Including additional case studies and success stories
-3. Expanding psychological elements and storytelling
-4. Adding more specific details and actionable advice
-5. Including more social proof and testimonials
-
-Current script:
+CURRENT SCRIPT:
 ${generatedScript}
 
-REQUIREMENTS:
-- Expand to AT LEAST ${targetWordCount} words
-- Maintain the same quality and engagement level
-- Keep the original structure but add substantial content
-- Make expansions feel natural and valuable, not just filler
+EXPANSION REQUIREMENTS:
+- Add EXACTLY ${wordsNeeded} or more words to reach the ${targetWordCount} word minimum
+- Include detailed step-by-step explanations
+- Add specific examples, case studies, and success stories  
+- Include psychological explanations for why tactics work
+- Add more storytelling elements and personal anecdotes
+- Include objection handling and common mistakes sections
+- Add advanced tips and insider secrets
+- Provide additional context and background information
 
-Return the complete expanded script.`;
+STRUCTURE TO ADD:
+1. More detailed breakdown of each main point
+2. Additional examples for each concept
+3. "Common Mistakes" section
+4. "Advanced Strategies" section  
+5. More social proof and testimonials
+6. Deeper psychological explanations
+
+Return the COMPLETE expanded script that is AT LEAST ${targetWordCount} words. Count carefully and ensure you meet this requirement.`;
 
       generatedScript = await callClaudeAPI(expansionPrompt, systemPrompt);
-      
-      const finalWordCount = generatedScript.trim().split(/\s+/).length;
-      console.log(`Final script generated with ${finalWordCount} words`);
     }
+
+    const finalWordCount = generatedScript.trim().split(/\s+/).length;
+    console.log(`Final script completed with ${finalWordCount} words after ${attempts + 1} attempts`);
 
     console.log('Script generation completed successfully');
 
