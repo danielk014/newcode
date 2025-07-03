@@ -440,8 +440,8 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-purple-200">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen w-full">
+      <div className="w-full px-6 py-8">
         {/* Header */}
         <div className="text-center mb-12 relative">
           <div className="absolute top-0 right-0">
