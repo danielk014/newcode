@@ -203,7 +203,7 @@ serve(async (req) => {
     const requestData = await req.json();
     const { topic, description, targetAudience, scripts, callToAction, targetWordCount = 1400 } = requestData;
     
-    console.log('=== OPTIMIZED SCRIPT GENERATION ===');
+    console.log('=== PROFESSIONAL YOUTUBE SCRIPT GENERATION ===');
     console.log('Topic:', topic);
     console.log('Target Word Count:', targetWordCount);
     console.log('Scripts provided:', scripts?.length || 0);
@@ -214,32 +214,70 @@ serve(async (req) => {
 
     const sessionId = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
     
-    // Single attempt with optimized parameters
-    console.log('Generating with optimized approach...');
+    console.log('Generating with professional YouTube standards...');
     
     const dynamicPrompt = generateDynamicPrompt(requestData, 1);
     
-    const systemPrompt = `You are an expert YouTube script writer. Create a compelling, unique script that meets these requirements:
+    const systemPrompt = `You are a professional YouTube script writer following industry-standard best practices. Create a compelling, viral-ready script that strictly adheres to these professional guidelines:
+
+1. DEFINE THE GOAL BEFORE WRITING
+- Core promise: One crisp sentence that will appear in thumbnail/title
+- Video type: Educational "How-to/Explainer" (default), Challenge/Competition, or Commentary
+- Single-line payoff: Must not fully happen until final 15% of runtime
+
+2. SCRIPT SKELETON (MANDATORY STRUCTURE)
+A) Cold-Open Hook (0-30s)
+   1) WHAT – statement of the topic
+   2) WHY – immediate personal benefit to viewer  
+   3) TENSION – open loop/question
+
+B) Rising Value Segments (≈90s blocks, repeat as needed)
+   - Facts/demos/stories that inch toward payoff
+   - Engagement pulse every ≤120s (mini-challenge, reveal, joke, visual stunt)
+   - Visual change every 2-7s; micro-change every 1-3s
+
+C) Climax & Payoff
+   - Resolve main tension; deliver promised result
+   - Flash a reward (bonus tip, discount code, etc.)
+
+D) Outro (≤15s)
+   - Tease related video that extends the journey
+   - 1-line CTA; no long self-talk
+
+3. WRITING & STYLE DIRECTIVES (MANDATORY RULES)
+- Tone: Active voice, second person ("you")
+- Length: Script equals 85-90% of final runtime (leave room for pauses/edits)
+- Cuts: Insert [CUT] or [VISUAL: description] tags every 2-7s
+- Jargon: Explain any term <5s after first use
+- Personality: Focus on viewer benefits, not host
+- Psychology: Weave "dream" or "greed" appeal every major segment
+
+4. ALGORITHM COLLABORATION RULES
+- Retention First: Never sacrifice tension for completeness
+- Payoff withheld until final 15%
+- No section longer than 120s without engagement pulse
+
+5. QUALITY CHECKLIST (ALL MUST BE MET)
+✓ Payoff withheld until final 15%
+✓ Hook uses 3-piece formula with tension question
+✓ No section >120s without engagement pulse
+✓ At least one audience dream/aspiration trigger
+✓ Script length matches target runtime ±10%
+✓ [VISUAL] and [CUT] tags inserted every 2-7s
 
 CRITICAL REQUIREMENTS:
 - Write approximately ${targetWordCount} words (aim for 90-110% of target)
-- Create completely original content with engaging hooks
-- Use the specific approach provided in the user prompt
-- Make it viral and attention-grabbing from the first sentence
-- Include actionable value for viewers
-- End with the specified call-to-action: "${callToAction}"
-
-STYLE REQUIREMENTS:
-- Hook viewers in the first 10 seconds with a strong pattern interrupt
-- Use conversational, engaging language that builds rapport
-- Include specific examples and concrete details
-- Create curiosity gaps and maintain attention throughout
-- Structure for YouTube audience retention and engagement
+- Follow the exact skeleton structure above
+- Include [VISUAL: description] tags for B-roll/graphics
+- Add [CUT] tags where pacing would drop
+- End with specified call-to-action: "${callToAction}"
+- Use curiosity gaps and open loops throughout
+- Maintain tension until final 15% payoff
 
 OUTPUT FORMAT:
-Return ONLY the script content, approximately ${targetWordCount} words. No metadata, no explanations, just the compelling script.`;
+Return ONLY the script content with proper formatting, visual cues, and cut tags. No metadata, no explanations, just the professional script following all guidelines above.`;
 
-    const userPrompt = `Create a YouTube script about: ${topic}
+    const userPrompt = `Create a professional YouTube script about: ${topic}
 
 ${description ? `Context: ${description}` : ''}
 ${targetAudience ? `Target Audience: ${targetAudience}` : ''}
@@ -248,15 +286,22 @@ APPROACH FOR THIS SCRIPT:
 ${dynamicPrompt}
 
 ${scripts && scripts.length > 0 ? `
-REFERENCE STYLE (analyze these for tone and structure, but create completely different content):
+REFERENCE STYLE (analyze for tone and structure, create completely different content):
 ${scripts.map((script: string, i: number) => `\nExample ${i+1}:\n${script.substring(0, 300)}...`).join('')}
 ` : ''}
 
-Call to Action: "${callToAction}"
+MANDATORY REQUIREMENTS:
+1. Follow the exact 4-part skeleton structure (Hook → Rising Value → Climax → Outro)
+2. Include [VISUAL: description] tags every 2-7 seconds
+3. Add [CUT] tags where pacing needs breaks
+4. Withhold main payoff until final 15% of script
+5. Use active voice, second person throughout
+6. Include engagement pulses every 120 seconds max
+7. End with call-to-action: "${callToAction}"
 
-Create a ${targetWordCount}-word script that is completely unique and follows the specified approach.`;
+Create a ${targetWordCount}-word professional YouTube script that meets ALL quality checklist requirements.`;
 
-    console.log('Starting AI generation...');
+    console.log('Starting professional AI generation...');
     const startTime = Date.now();
     
     const generatedScript = await generateWithAI(userPrompt, systemPrompt);
@@ -271,16 +316,16 @@ Create a ${targetWordCount}-word script that is completely unique and follows th
     const isUnique = isContentUnique(generatedScript, sessionId);
     console.log(`Content uniqueness: ${isUnique}`);
     
-    // More lenient word count acceptance (80-120% of target)
+    // Professional script acceptance (80-120% of target)
     const wordCountMet = actualWordCount >= targetWordCount * 0.8 && actualWordCount <= targetWordCount * 1.2;
     
     if (!generatedScript) {
       throw new Error('Failed to generate script content');
     }
 
-    console.log('=== GENERATION COMPLETE ===');
+    console.log('=== PROFESSIONAL GENERATION COMPLETE ===');
     console.log(`Final word count: ${actualWordCount}`);
-    console.log(`Word count acceptable: ${wordCountMet}`);
+    console.log(`Professional standards met: ${wordCountMet}`);
     console.log(`Generation time: ${generationTime}ms`);
 
     return new Response(
@@ -293,9 +338,10 @@ Create a ${targetWordCount}-word script that is completely unique and follows th
           meetsRequirement: wordCountMet,
           generationTimeMs: generationTime,
           isUnique,
-          sessionId
+          sessionId,
+          professionalStandards: true
         },
-        message: `Script generated successfully: ${actualWordCount} words in ${Math.round(generationTime/1000)}s`
+        message: `Professional YouTube script generated: ${actualWordCount} words in ${Math.round(generationTime/1000)}s`
       }),
       { 
         headers: { 
@@ -306,7 +352,7 @@ Create a ${targetWordCount}-word script that is completely unique and follows th
     );
 
   } catch (error) {
-    console.error('=== SCRIPT GENERATION ERROR ===');
+    console.error('=== PROFESSIONAL SCRIPT GENERATION ERROR ===');
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
     
