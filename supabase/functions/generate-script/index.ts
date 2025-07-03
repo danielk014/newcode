@@ -86,7 +86,7 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation.
+    const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation and precise style replication.
 
 🚨 CRITICAL WORD COUNT REQUIREMENT 🚨
 - MINIMUM ${targetWordCount} WORDS - THIS IS MANDATORY
@@ -94,25 +94,43 @@ serve(async (req) => {
 - IF UNDER ${targetWordCount} WORDS, THE SCRIPT IS INCOMPLETE
 - ADD MORE CONTENT UNTIL YOU REACH EXACTLY ${targetWordCount} WORDS OR MORE
 
+🎯 STYLE REPLICATION PRIORITY 🎯
+When reference scripts are provided, your PRIMARY objective is to PRECISELY replicate:
+1. EXACT formatting patterns (headers, bullet points, spacing, capitalization)
+2. Writing tone and voice (casual/formal, energy level, personality)
+3. Sentence structure and length patterns
+4. Specific psychological triggers used
+5. Hook patterns and opening styles
+6. Transition phrases and connectors
+7. Call-to-action language and placement
+8. Storytelling approach and narrative flow
+
+DEEP ANALYSIS REQUIREMENTS:
+- Study EVERY sentence structure in reference scripts
+- Mirror the EXACT emotional progression
+- Copy specific trigger words and phrases
+- Replicate formatting patterns precisely
+- Match the storytelling cadence and rhythm
+- Use identical psychological frameworks
+
 CONTENT REQUIREMENTS:
-1. Hook (0-15s): Strong attention-grabbing opening
-2. Problem Setup (15s-45s): Establish stakes and pain points
-3. Solution Framework (45s-4m): Detailed step-by-step content
-4. Proof & Examples (Throughout): Multiple case studies and stories
-5. Advanced Insights (4m-5m): Deep mechanisms and psychology
-6. Call to Action (Final 30s): Strong conversion-focused ending
+1. Hook (0-15s): Mirror reference script opening patterns exactly
+2. Problem Setup (15s-45s): Copy emotional language and pain point style
+3. Solution Framework (45s-4m): Replicate explanation methodology
+4. Proof & Examples (Throughout): Match storytelling and evidence style
+5. Advanced Insights (4m-5m): Copy depth and psychological approach
+6. Call to Action (Final 30s): Mirror conversion language precisely
 
 TO REACH ${targetWordCount} WORDS, INCLUDE:
-- Detailed explanations for every point (minimum 100 words per major point)
-- Multiple specific examples with full context
-- Step-by-step breakdowns with sub-steps
-- Psychology explanations for why each tactic works
-- Common mistakes and how to avoid them
-- Success stories with specific details
-- Advanced strategies and insider tips
-- Objection handling sections
+- Detailed explanations matching reference script depth
+- Multiple examples in the same style as references
+- Step-by-step breakdowns using reference formatting
+- Psychology explanations using reference script language patterns
+- Stories and case studies in reference narrative style
+- Advanced strategies using reference complexity level
+- Objection handling in reference script tone
 
-WORD COUNT VALIDATION: Before finishing, count your words. If under ${targetWordCount}, immediately add more content sections.`;
+WORD COUNT VALIDATION: Before finishing, count your words. If under ${targetWordCount}, immediately add more content sections using reference script expansion patterns.`;
 
     const userPrompt = `🚨 URGENT: Generate a ${targetWordCount}+ word viral YouTube script 🚨
 
@@ -131,18 +149,58 @@ WORD COUNT VALIDATION: Before finishing, count your words. If under ${targetWord
 ✅ Detailed examples and case studies
 ✅ Step-by-step breakdowns for each major point
 
-${scripts.length > 0 ? `📚 **REFERENCE SCRIPTS FOR STYLE ANALYSIS:**
+${scripts.length > 0 ? `📚 **REFERENCE SCRIPTS FOR DEEP STYLE REPLICATION:**
 ${scripts.map((script, index) => `
-=== REFERENCE SCRIPT ${index + 1} ===
-${script.substring(0, 800)}...
+=== REFERENCE SCRIPT ${index + 1} - COMPLETE TEXT ===
+${script}
 ===========================
 `).join('\n')}
 
-📋 **ANALYSIS INSTRUCTIONS:**
-1. Study the hook patterns from reference scripts
-2. Mirror the tone and energy level
-3. Adapt the structure but create 100% original content
-4. Include similar psychological triggers and engagement tactics` : ''}
+🔬 **MANDATORY DEEP ANALYSIS PROTOCOL:**
+
+**FORMATTING PATTERNS TO COPY EXACTLY:**
+• Study line breaks, spacing, and paragraph structure
+• Notice capitalization patterns (ALL CAPS, Title Case, etc.)
+• Replicate bullet point styles and numbering systems
+• Copy header formatting and section dividers
+• Mirror any special characters or symbols used
+
+**WRITING STYLE TO MIRROR PRECISELY:**
+• Sentence length patterns (short vs long sentences)
+• Punctuation style and frequency
+• Use of questions, exclamations, and statements
+• Repetition patterns and emphasis techniques
+• Vocabulary level and complexity
+
+**PSYCHOLOGICAL TRIGGERS TO REPLICATE:**
+• Identify fear-based language patterns
+• Copy curiosity gaps and pattern interrupts  
+• Mirror social proof and authority language
+• Replicate urgency and scarcity techniques
+• Use identical emotional progression sequences
+
+**NARRATIVE STRUCTURE TO FOLLOW:**
+• Opening hook style and approach
+• Problem presentation methodology
+• Solution revelation patterns
+• Story integration and placement
+• Call-to-action positioning and language
+
+**VOICE AND TONE TO MATCH:**
+• Energy level (high/medium/low intensity)
+• Personality traits (friendly/authoritative/casual)
+• Speaking rhythm and cadence
+• Use of personal pronouns and direct address
+• Emotional undertones and mood
+
+**SPECIFIC ELEMENTS TO COPY:**
+• Transition phrases between sections
+• Specific trigger words and power phrases
+• Metaphors and analogies used
+• Examples and case study presentation style
+• Objection handling approach
+
+CRITICAL: Your script must feel like it was written by the SAME PERSON who wrote the reference scripts. Copy their DNA, not just their content.` : ''}
 
 🔥 **CONTENT EXPANSION REQUIREMENTS:**
 Since you need ${targetWordCount}+ words, include ALL of these sections:
