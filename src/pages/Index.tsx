@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -373,7 +372,7 @@ Avoiding these mistakes alone can 10x your results.`
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-purple-200">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 relative">
@@ -438,10 +437,10 @@ Avoiding these mistakes alone can 10x your results.`
         {/* Main Content - Full Width */}
         <div className="w-full">
           {currentStep === 0 && (
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm w-full">
+            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm w-full">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                  <FileText className="w-6 h-6 text-blue-600" />
+                  <FileText className="w-6 h-6 text-purple-600" />
                   Input Your Reference Scripts
                 </CardTitle>
                 <CardDescription>
@@ -621,21 +620,21 @@ Avoiding these mistakes alone can 10x your results.`
         {/* Features Section */}
         {currentStep === 0 && (
           <div className="mt-16 grid md:grid-cols-3 gap-6 w-full">
-            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
               <Upload className="w-12 h-12 text-purple-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
               <p className="text-sm text-gray-600">
                 Upload TXT, PDF, DOC files for instant script extraction
               </p>
             </Card>
-            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
               <Brain className="w-12 h-12 text-violet-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Sentiment Analysis</h3>
               <p className="text-sm text-gray-600">
                 Analyze emotional tone and engagement potential
               </p>
             </Card>
-            <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="text-center p-6 border-0 bg-white/80 backdrop-blur-sm">
               <Languages className="w-12 h-12 text-green-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Translation</h3>
               <p className="text-sm text-gray-600">

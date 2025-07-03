@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +17,7 @@ interface ViralFormat {
   bestFor: string[];
   content?: string;
   isTemplate?: boolean;
+  isRecommended?: boolean;
 }
 
 const baseViralFormats: ViralFormat[] = [
@@ -29,7 +29,8 @@ const baseViralFormats: ViralFormat[] = [
     icon: Copy,
     effectiveness: 92,
     examples: ["Exactly like script #1", "Same format as reference", "Proven structure replication"],
-    bestFor: ["Script replication", "Proven formats", "Tested structures", "Safe approach"]
+    bestFor: ["Script replication", "Proven formats", "Tested structures", "Safe approach"],
+    isRecommended: true
   },
   {
     name: "Competition Format",
@@ -174,16 +175,17 @@ export const ViralFormatSelector: React.FC<ViralFormatSelectorProps> = ({
                     <Card 
                       key={index} 
                       className={`cursor-pointer transition-all hover:shadow-md ${
-                        isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                        isSelected ? 'ring-2 ring-purple-500 bg-purple-50' : ''
                       } p-3`}
                       onClick={() => onFormatSelect(format.name)}
                     >
                       <CardHeader className="pb-2 p-0">
                         <div className="flex items-center justify-between mb-2">
-                          <Icon className="w-5 h-5 text-blue-600" />
+                          <Icon className="w-5 h-5 text-purple-600" />
                           <div className="flex gap-1">
                             <Badge variant="secondary" className="text-xs px-1 py-0">{format.effectiveness}%</Badge>
                             {format.isTemplate && <Badge variant="outline" className="text-xs px-1 py-0">Template</Badge>}
+                            {format.isRecommended && <Badge className="text-xs px-1 py-0 bg-purple-600 text-white">Recommended</Badge>}
                           </div>
                         </div>
                         <CardTitle className="text-sm font-medium leading-tight">{format.name}</CardTitle>
