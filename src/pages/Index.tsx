@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -372,7 +373,7 @@ Avoiding these mistakes alone can 10x your results.`
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 relative">
@@ -380,8 +381,8 @@ Avoiding these mistakes alone can 10x your results.`
             <UserMenu />
           </div>
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Brain className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <Brain className="w-8 h-8 text-purple-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
               PitchArchitect
             </h1>
           </div>
@@ -418,7 +419,7 @@ Avoiding these mistakes alone can 10x your results.`
               return (
                 <div key={step.id} className="flex items-center">
                   <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-                    isActive ? 'bg-blue-100 text-blue-700' : 
+                    isActive ? 'bg-purple-100 text-purple-700' : 
                     isCompleted ? 'bg-green-100 text-green-700' : 
                     'bg-gray-100 text-gray-500'
                   }`}>
@@ -621,14 +622,14 @@ Avoiding these mistakes alone can 10x your results.`
         {currentStep === 0 && (
           <div className="mt-16 grid md:grid-cols-3 gap-6 w-full">
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+              <Upload className="w-12 h-12 text-purple-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">File Upload</h3>
               <p className="text-sm text-gray-600">
                 Upload TXT, PDF, DOC files for instant script extraction
               </p>
             </Card>
             <Card className="text-center p-6 border-0 bg-white/60 backdrop-blur-sm">
-              <Brain className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+              <Brain className="w-12 h-12 text-violet-600 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Sentiment Analysis</h3>
               <p className="text-sm text-gray-600">
                 Analyze emotional tone and engagement potential

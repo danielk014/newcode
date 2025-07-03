@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Lightbulb, Loader2, CheckCircle, ArrowRight, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 
 interface ScriptImprovementProps {
   originalScript: string;
@@ -24,38 +25,67 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
     preview: string;
   } | null>(null);
 
-  const improvements = [
-    {
-      title: "Strengthen the Hook",
-      description: "Consider adding a specific statistic or surprising fact in the first 10 seconds",
-      impact: "High",
-      instruction: "Add a compelling statistic, surprising fact, or bold statement to the opening 10 seconds to grab attention immediately"
-    },
-    {
-      title: "Add Personal Story",
-      description: "Include a brief personal anecdote in the problem section for better connection",
-      impact: "Medium",
-      instruction: "Incorporate a personal story or relatable anecdote in the problem/challenge section to build emotional connection"
-    },
-    {
-      title: "Clarify Value Proposition",
-      description: "Make the unique benefit more explicit in the solution introduction",
-      impact: "High",
-      instruction: "Make the unique value proposition clearer and more explicit in the solution section - tell viewers exactly what they'll gain"
-    },
-    {
-      title: "Enhance CTA Urgency",
-      description: "Add time-sensitive language to increase immediate action",
-      impact: "Medium",
-      instruction: "Add urgency and scarcity language to the call-to-action to encourage immediate action"
-    },
-    {
-      title: "Include Social Validation",
-      description: "Add testimonial snippets or success metrics throughout",
-      impact: "High",
-      instruction: "Add social proof elements like testimonials, success stories, or metrics throughout the script"
-    }
-  ];
+  // Generate improvements based on enhanced tactics library
+  const generateImprovements = () => {
+    const hookTactics = psychologicalTactics.filter(t => t.category === 'Hook');
+    const retentionTactics = psychologicalTactics.filter(t => t.category === 'Retention');
+    const emotionalTactics = psychologicalTactics.filter(t => t.category === 'Emotional');
+    const persuasionTactics = psychologicalTactics.filter(t => t.category === 'Persuasion');
+    const algorithmTactics = psychologicalTactics.filter(t => t.category === 'Algorithm');
+
+    return [
+      {
+        title: "Apply Information Gap Hook",
+        description: hookTactics.find(t => t.name === "Information Gap Hook")?.description || "Creates curiosity by revealing partial information",
+        impact: "High",
+        instruction: `Apply the Information Gap Hook tactic: ${hookTactics.find(t => t.name === "Information Gap Hook")?.description}. Use examples like: ${hookTactics.find(t => t.name === "Information Gap Hook")?.examples.join(', ')}`
+      },
+      {
+        title: "Add Micro-Hook Escalation",
+        description: retentionTactics.find(t => t.name === "Micro-Hook Escalation")?.description || "Use escalating phrases every 15-30 seconds",
+        impact: "High",
+        instruction: `Implement Micro-Hook Escalation: ${retentionTactics.find(t => t.name === "Micro-Hook Escalation")?.description}. Add phrases like: ${retentionTactics.find(t => t.name === "Micro-Hook Escalation")?.examples.join(', ')}`
+      },
+      {
+        title: "Strengthen Dream Selling",
+        description: emotionalTactics.find(t => t.name === "Dream Selling")?.description || "Paint a picture of the desired outcome",
+        impact: "High",
+        instruction: `Apply Dream Selling technique: ${emotionalTactics.find(t => t.name === "Dream Selling")?.description}. Use examples like: ${emotionalTactics.find(t => t.name === "Dream Selling")?.examples.join(', ')}`
+      },
+      {
+        title: "Add Social Proof Elements",
+        description: persuasionTactics.find(t => t.name === "Social Proof")?.description || "Uses testimonials and success stories",
+        impact: "High",
+        instruction: `Integrate Social Proof: ${persuasionTactics.find(t => t.name === "Social Proof")?.description}. Include elements like: ${persuasionTactics.find(t => t.name === "Social Proof")?.examples.join(', ')}`
+      },
+      {
+        title: "Optimize for Watch Time",
+        description: algorithmTactics.find(t => t.name === "Watch Time Optimization")?.description || "Structure content to maximize view duration",
+        impact: "Medium",
+        instruction: `Apply Watch Time Optimization: ${algorithmTactics.find(t => t.name === "Watch Time Optimization")?.description}. Use techniques like: ${algorithmTactics.find(t => t.name === "Watch Time Optimization")?.examples.join(', ')}`
+      },
+      {
+        title: "Add Pattern Interrupts",
+        description: retentionTactics.find(t => t.name === "Pattern Interrupt")?.description || "Sudden changes in tone, pace, or topic",
+        impact: "Medium",
+        instruction: `Implement Pattern Interrupts: ${retentionTactics.find(t => t.name === "Pattern Interrupt")?.description}. Use phrases like: ${retentionTactics.find(t => t.name === "Pattern Interrupt")?.examples.join(', ')}`
+      },
+      {
+        title: "Enhance Financial Freedom Appeal",
+        description: emotionalTactics.find(t => t.name === "Financial Freedom Appeal")?.description || "Tap into desires for financial independence",
+        impact: "High",
+        instruction: `Apply Financial Freedom Appeal: ${emotionalTactics.find(t => t.name === "Financial Freedom Appeal")?.description}. Use concepts like: ${emotionalTactics.find(t => t.name === "Financial Freedom Appeal")?.examples.join(', ')}`
+      },
+      {
+        title: "Add Scarcity Elements",
+        description: persuasionTactics.find(t => t.name === "Scarcity")?.description || "Creates urgency through limited availability",
+        impact: "Medium",
+        instruction: `Implement Scarcity: ${persuasionTactics.find(t => t.name === "Scarcity")?.description}. Use phrases like: ${persuasionTactics.find(t => t.name === "Scarcity")?.examples.join(', ')}`
+      }
+    ];
+  };
+
+  const improvements = generateImprovements();
 
   const handleImprovement = async (improvement: any) => {
     setIsImproving(true);
@@ -77,7 +107,6 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       }
 
       if (data.success) {
-        // Extract the changes summary and preview
         const changesSummary = extractChangesSummary(data.improvedScript, improvement.title);
         const preview = extractPreview(data.improvedScript);
         
@@ -91,7 +120,6 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       }
     } catch (error) {
       console.error('Error improving script:', error);
-      // Generate a simple improvement as fallback
       const improvedScript = applyBasicImprovement(originalScript, improvement);
       const changesSummary = `Applied ${improvement.title}: ${improvement.description}`;
       
@@ -109,7 +137,6 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
   };
 
   const extractChangesSummary = (improvedScript: string, improvementType: string): string => {
-    // Extract content between [IMPROVED] tags
     const improvedSections = improvedScript.match(/\*\*\[IMPROVED\]\*\*(.*?)(?=\*\*\[IMPROVED\]\*\*|$)/gs);
     
     if (improvedSections && improvedSections.length > 0) {
@@ -122,7 +149,6 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
   };
 
   const extractPreview = (improvedScript: string): string => {
-    // Find the first [IMPROVED] section for preview
     const firstImproved = improvedScript.match(/\*\*\[IMPROVED\]\*\*(.*?)(?=\n\n|\*\*\[IMPROVED\]\*\*|$)/s);
     
     if (firstImproved) {
@@ -133,17 +159,19 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
   };
 
   const applyBasicImprovement = (script: string, improvement: any): string => {
-    // Basic fallback improvements with clear markers
     switch (improvement.title) {
-      case "Strengthen the Hook":
-        return `**[IMPROVED HOOK]**\n"Did you know that 97% of people fail at this because they're missing one crucial element? What I'm about to show you will change everything."\n\n${script}`;
-      case "Add Personal Story":
+      case "Apply Information Gap Hook":
+        return `**[IMPROVED HOOK]**\n"What I'm about to reveal will completely change how you see this topic - but first, let me show you why 97% of people get this wrong."\n\n${script}`;
+      case "Add Micro-Hook Escalation":
         return script.replace(
-          /(problem|challenge|issue)/i,
-          `$1\n\n**[IMPROVED - PERSONAL STORY ADDED]**\nJust like when I first started, I made the exact same mistake that keeps most people stuck. I remember the frustration of trying everything and getting nowhere...`
+          /\n\n/g,
+          `\n\n**[IMPROVED - MICRO-HOOK ADDED]**\nBut wait, it gets even better...\n\n`
         );
-      case "Enhance CTA Urgency":
-        return script + `\n\n**[IMPROVED CTA WITH URGENCY]**\nBut here's the thing - I'm only sharing this with the first 100 people who take action TODAY. This opportunity won't be available forever. Don't let this pass you by like all the others.`;
+      case "Strengthen Dream Selling":
+        return script.replace(
+          /(solution|result|outcome)/i,
+          `$1\n\n**[IMPROVED - DREAM SELLING ADDED]**\nPicture yourself achieving this exact result - imagine the freedom, the confidence, the transformation...`
+        );
       default:
         return `**[IMPROVED VERSION - ${improvement.title.toUpperCase()}]**\n${script}\n\n**Enhancement Applied:** ${improvement.description}`;
     }
@@ -154,12 +182,11 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lightbulb className="w-5 h-5 text-yellow-600" />
-          Suggested Improvements
+          Enhanced Script Improvements
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {/* Show last improvement result */}
           {lastImprovement && (
             <Card className="border-green-200 bg-green-50">
               <CardHeader className="pb-3">
@@ -223,7 +250,7 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
               </div>
               <p className="text-sm text-gray-600 mb-2">{improvement.description}</p>
               <p className="text-xs text-gray-500">
-                <strong>What this does:</strong> {improvement.instruction}
+                <strong>Enhancement:</strong> {improvement.instruction}
               </p>
             </div>
           ))}
