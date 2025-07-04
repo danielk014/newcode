@@ -28,7 +28,7 @@ const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<stri
       },
       body: JSON.stringify({
         model: 'claude-3-5-haiku-20241022',
-        max_tokens: 4000,
+        max_tokens: 8000, // Increased from 4000 to handle long scripts
         system: systemPrompt,
         messages: [
           { role: 'user', content: prompt }
@@ -79,27 +79,41 @@ serve(async (req) => {
     }
 
     console.log(`Starting translation to ${targetLanguage}...`);
+    console.log(`Source text length: ${text.length} characters`);
 
     const systemPrompt = `You are a professional translator specializing in video scripts and viral content. 
-    Translate the given text to ${targetLanguage} while:
-    - Preserving the emotional impact and engagement factor
-    - Maintaining cultural relevance for the target audience
-    - Keeping the same structure and formatting
-    - Adapting idioms and expressions appropriately
-    - Preserving marketing hooks and psychological triggers
-    ${preserveStructure ? '- Keep all formatting, line breaks, and section markers intact' : ''}
-    
-    Return only the translated text, maintaining the exact same format as the input.`;
 
-    const translatedText = await callClaudeAPI(text, systemPrompt);
+🚨 CRITICAL REQUIREMENT: You MUST translate the ENTIRE input text without any truncation or omission.
 
-    console.log('Translation completed successfully');
+Translate the given text to ${targetLanguage} while:
+- Preserving the emotional impact and engagement factor
+- Maintaining cultural relevance for the target audience
+- Keeping the same structure and formatting
+- Adapting idioms and expressions appropriately
+- Preserving marketing hooks and psychological triggers
+- TRANSLATING EVERY SINGLE WORD AND SECTION
+${preserveStructure ? '- Keep all formatting, line breaks, and section markers intact' : ''}
+
+IMPORTANT: Return the COMPLETE translation. Do not summarize, shorten, or omit any content. The output must be as comprehensive as the input.`;
+
+    const userPrompt = `Please translate this COMPLETE script to ${targetLanguage}. Make sure to translate EVERY section and maintain the full length:
+
+${text}
+
+Remember: Translate the ENTIRE script above without any omissions.`;
+
+    const translatedText = await callClaudeAPI(userPrompt, systemPrompt);
+
+    const translatedLength = translatedText.length;
+    console.log(`Translation completed successfully. Output length: ${translatedLength} characters`);
 
     return new Response(JSON.stringify({ 
       success: true, 
       translatedText: translatedText,
       sourceLanguage: 'auto-detected',
-      targetLanguage: targetLanguage
+      targetLanguage: targetLanguage,
+      sourceLength: text.length,
+      translatedLength: translatedLength
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
