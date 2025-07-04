@@ -59,55 +59,55 @@ export const ScriptGenerationProgress: React.FC<ScriptGenerationProgressProps> =
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl flex items-center justify-center gap-2">
-          <Zap className="w-6 h-6 text-blue-600" />
-          Generating Your Viral Script
+    <Card className="w-full max-w-lg mx-auto shadow-xl border-0 bg-card/90 backdrop-blur-sm">
+      <CardHeader className="text-center pb-4 px-4 sm:px-6">
+        <CardTitle className="text-lg sm:text-2xl flex flex-col sm:flex-row items-center justify-center gap-2">
+          <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          <span className="text-center">Generating Your Script</span>
         </CardTitle>
         <div className="mt-4">
-          <Progress value={overallProgress} className="w-full h-3" />
-          <p className="text-sm text-gray-600 mt-2">
+          <Progress value={overallProgress} className="w-full h-2 sm:h-3" />
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
             {Math.round(overallProgress)}% Complete
           </p>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-4 sm:px-6 pb-4 sm:pb-6">
         {error && (
-          <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-            <div className="flex items-center gap-2 text-red-800">
-              <AlertCircle className="w-5 h-5" />
-              <span className="font-medium">Generation Error</span>
+          <div className="p-3 sm:p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+            <div className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="font-medium text-sm sm:text-base">Generation Error</span>
             </div>
-            <p className="text-sm text-red-700 mt-1">{error}</p>
+            <p className="text-xs sm:text-sm text-destructive/80 mt-1">{error}</p>
           </div>
         )}
         
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {steps.map((step, index) => {
             const StepIcon = stepIcons[step.id as keyof typeof stepIcons] || Clock;
             
             return (
               <div
                 key={step.id}
-                className={`p-4 rounded-lg border transition-all duration-300 ${
-                  step.status === 'active' ? 'ring-2 ring-blue-200' : ''
+                className={`p-3 sm:p-4 rounded-lg border transition-all duration-300 ${
+                  step.status === 'active' ? 'ring-2 ring-primary/20' : ''
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <StepIcon className={`w-5 h-5 ${
-                      step.status === 'active' ? 'text-blue-600' : 
-                      step.status === 'completed' ? 'text-green-600' : 
-                      step.status === 'error' ? 'text-red-600' : 'text-gray-400'
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                      step.status === 'active' ? 'text-primary' : 
+                      step.status === 'completed' ? 'text-accent' : 
+                      step.status === 'error' ? 'text-destructive' : 'text-muted-foreground'
                     }`} />
-                    <span className="font-medium">{step.label}</span>
+                    <span className="font-medium text-sm sm:text-base">{step.label}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2">
                     <Badge 
                       variant="outline" 
-                      className={getStatusColor(step.status)}
+                      className={`text-xs ${getStatusColor(step.status)}`}
                     >
                       {step.status}
                     </Badge>
@@ -117,8 +117,8 @@ export const ScriptGenerationProgress: React.FC<ScriptGenerationProgressProps> =
                 
                 {step.status === 'active' && (
                   <div className="mt-2">
-                    <Progress value={step.progress} className="w-full h-2" />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <Progress value={step.progress} className="w-full h-1.5 sm:h-2" />
+                    <p className="text-xs text-muted-foreground mt-1">
                       {Math.round(step.progress)}% - {step.label}...
                     </p>
                   </div>
@@ -128,8 +128,8 @@ export const ScriptGenerationProgress: React.FC<ScriptGenerationProgressProps> =
           })}
         </div>
         
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="mt-4 sm:mt-6 text-center">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             This process typically takes 30-60 seconds for high-quality results
           </p>
         </div>

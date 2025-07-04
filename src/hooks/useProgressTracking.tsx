@@ -71,8 +71,8 @@ export const useProgressTracking = ({ steps, onComplete, onError }: UseProgressT
     
     intervalRef.current = setInterval(() => {
       progress += increment;
-      if (progress >= 95) {
-        progress = 95; // Don't reach 100% until actually complete
+      if (progress >= 90) {
+        progress = 90; // Don't reach 100% until actually complete
         if (intervalRef.current) clearInterval(intervalRef.current);
       }
       updateStepProgress(stepId, progress);
