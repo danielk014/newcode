@@ -440,46 +440,50 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen w-full bg-white">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="min-h-screen w-full bg-background">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 -mx-6 px-6 py-6 mb-8">
+        <div className="bg-card border-b border-border -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-8">
           <div className="max-w-4xl mx-auto text-center relative">
-            <div className="absolute top-0 right-0">
+            <div className="absolute top-0 right-0 hidden sm:block">
               <UserMenu />
             </div>
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Target className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-bold text-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+              <h1 className="text-xl sm:text-3xl font-bold text-foreground">
                 PitchArchitect
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground mb-2">
+            <p className="text-sm sm:text-lg text-muted-foreground mb-2 px-2">
               AI-powered YouTube script writer with file upload, sentiment analysis & translation
             </p>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 px-2">
               Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
             </p>
-            <div className="flex justify-center gap-3">
-              <Button variant="outline" size="sm" asChild>
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 px-2">
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                 <Link to="/enhanced-tactics">
                   <BookOpen className="w-4 h-4 mr-2" />
-                  View Enhanced Tactics Library
+                  <span className="text-xs sm:text-sm">View Enhanced Tactics Library</span>
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                 <Link to="/saved-scripts">
                   <FileText className="w-4 h-4 mr-2" />
-                  My Saved Scripts
+                  <span className="text-xs sm:text-sm">My Saved Scripts</span>
                 </Link>
               </Button>
+            </div>
+            {/* Mobile User Menu */}
+            <div className="mt-4 sm:hidden">
+              <UserMenu />
             </div>
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-2">
+        <div className="flex justify-center mb-4 sm:mb-8 overflow-x-auto pb-2">
+          <div className="flex items-center space-x-1 sm:space-x-2 min-w-max px-2">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const isActive = currentStep === step.id;
@@ -487,16 +491,16 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               
               return (
                 <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all border ${
+                  <div className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all border ${
                     isActive ? 'bg-primary text-primary-foreground border-primary' : 
                     isCompleted ? 'bg-accent text-accent-foreground border-accent' : 
                     'bg-secondary text-secondary-foreground border-border'
                   }`}>
-                    <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{step.title}</span>
+                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{step.title}</span>
                   </div>
                   {index < steps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-muted-foreground mx-1" />
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground mx-0.5 sm:mx-1" />
                   )}
                 </div>
               );
@@ -507,17 +511,17 @@ Remember, this is a process, not an event. Each week builds on the previous one,
         {/* Main Content */}
         <div className="max-w-5xl mx-auto">
           {currentStep === 0 && (
-            <Card className="shadow-lg border border-gray-200 bg-white">
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="text-xl flex items-center justify-center gap-2">
+            <Card className="shadow-lg border border-border bg-card">
+              <CardHeader className="text-center pb-3 sm:pb-4 px-4 sm:px-6">
+                <CardTitle className="text-lg sm:text-xl flex flex-col sm:flex-row items-center justify-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
                   Input Your Reference Scripts
                 </CardTitle>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-xs sm:text-sm px-2">
                   Multiple ways to add scripts: copy-paste, upload files
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6 px-6 pb-6">
+              <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
                 {/* Format Selection */}
                 <div className="mb-6">
                   <ViralFormatSelector 
@@ -530,30 +534,30 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                  <TabsList className="grid w-full grid-cols-2 bg-muted">
                     <TabsTrigger 
                       value="manual"
-                      className="data-[state=active]:bg-gray-600 data-[state=active]:text-white text-gray-700"
+                      className="text-xs sm:text-sm"
                     >
                       Manual Input
                     </TabsTrigger>
                     <TabsTrigger 
                       value="upload"
-                      className="data-[state=active]:bg-gray-600 data-[state=active]:text-white text-gray-700"
+                      className="text-xs sm:text-sm"
                     >
-                      <Upload className="w-4 h-4 mr-1" />
+                      <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Upload Files
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="manual" className="mt-6">
+                  <TabsContent value="manual" className="mt-4 sm:mt-6">
                     {/* Dynamic Script Inputs */}
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
+                        <h3 className="text-base sm:text-lg font-semibold">Reference Scripts ({scriptInput.scripts.length}/8)</h3>
                       </div>
                       
-                      <div className="grid gap-4">
+                      <div className="grid gap-3 sm:gap-4">
                         {scriptInput.scripts.map((script, index) => (
                           <ScriptInputPanel
                             key={index}
@@ -572,7 +576,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                           disabled={scriptInput.scripts.length >= 8}
                           variant="outline"
                           size="sm"
-                          className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                          className="text-xs sm:text-sm"
                         >
                           + Add Script
                         </Button>
@@ -580,7 +584,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="upload" className="mt-6">
+                  <TabsContent value="upload" className="mt-4 sm:mt-6">
                     <FileUploader 
                       onScriptExtracted={handleFileScriptExtracted}
                       maxFiles={5}
@@ -591,67 +595,72 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                 <Separator />
 
                 {/* Video Details */}
-                <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="topic" className="text-sm font-medium">Video Topic</Label>
+                      <Label htmlFor="topic" className="text-xs sm:text-sm font-medium">Video Topic</Label>
                       <Input
                         id="topic"
                         placeholder="e.g., How to make money online"
                         value={scriptInput.topic}
                         onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                        className="text-xs sm:text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cta" className="text-sm font-medium">Call to Action</Label>
+                      <Label htmlFor="cta" className="text-xs sm:text-sm font-medium">Call to Action</Label>
                       <Input
                         id="cta"
                         placeholder="Subscribe to my course"
                         value={scriptInput.callToAction}
                         onChange={(e) => setScriptInput({...scriptInput, callToAction: e.target.value})}
+                        className="text-xs sm:text-sm"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium">Video Description/Context</Label>
+                    <Label htmlFor="description" className="text-xs sm:text-sm font-medium">Video Description/Context</Label>
                     <Textarea
                       id="description"
                       placeholder="Describe what this video is about, the angle you want to take, or any specific context..."
-                      className="min-h-[80px]"
+                      className="min-h-[60px] sm:min-h-[80px] text-xs sm:text-sm"
                       value={scriptInput.description}
                       onChange={(e) => setScriptInput({...scriptInput, description: e.target.value})}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="length" className="text-sm font-medium">Minimum Amount of Words</Label>
+                    <Label htmlFor="length" className="text-xs sm:text-sm font-medium">Minimum Amount of Words</Label>
                     <Input
                       id="length"
                       type="number"
                       placeholder="1400"
                       value={scriptInput.targetLength}
                       onChange={(e) => setScriptInput({...scriptInput, targetLength: parseInt(e.target.value)})}
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-center pt-6">
+                <div className="flex justify-center pt-4 sm:pt-6">
                   <Button 
                     onClick={handleAnalyze}
                     disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                    className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base"
                     size="lg"
                   >
                     {isAnalyzing ? (
                       <>
-                        <Brain className="w-5 h-5 mr-2 animate-pulse" />
-                        Analyzing Your Scripts...
+                        <Brain className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-pulse" />
+                        <span className="hidden sm:inline">Analyzing Your Scripts...</span>
+                        <span className="sm:hidden">Analyzing...</span>
                       </>
                     ) : (
                       <>
-                        <Brain className="w-5 h-5 mr-2" />
-                        Analyze Scripts for Viral Tactics
+                        <Brain className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                        <span className="hidden sm:inline">Analyze Scripts for Viral Tactics</span>
+                        <span className="sm:hidden">Analyze Scripts</span>
                       </>
                     )}
                   </Button>

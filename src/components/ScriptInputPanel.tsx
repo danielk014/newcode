@@ -21,24 +21,24 @@ export const ScriptInputPanel: React.FC<ScriptInputPanelProps> = ({
   canRemove
 }) => {
   return (
-    <div className="space-y-2 border rounded-lg p-4 relative">
+    <div className="space-y-2 border border-border rounded-lg p-3 sm:p-4 relative bg-card">
       {canRemove && (
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-2 right-2 h-6 w-6 p-0"
+          className="absolute top-1 right-1 sm:top-2 sm:right-2 h-6 w-6 p-0 z-10"
           onClick={onRemove}
         >
-          <X className="w-4 h-4" />
+          <X className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
       )}
-      <Label htmlFor={`script${index + 1}`} className="text-sm font-medium">
+      <Label htmlFor={`script${index + 1}`} className="text-xs sm:text-sm font-medium text-foreground">
         Reference Script #{index + 1}
       </Label>
       <Textarea
         id={`script${index + 1}`}
         placeholder={`Paste your ${index === 0 ? 'first' : index === 1 ? 'second' : `script #${index + 1}`} high-performing script here...`}
-        className="min-h-[200px] resize-none"
+        className="min-h-[150px] sm:min-h-[200px] resize-none text-xs sm:text-sm"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
