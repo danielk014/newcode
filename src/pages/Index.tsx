@@ -206,7 +206,8 @@ const Index = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       progressTracking.completeStep('analyzing');
       
-      progressTracking.simulateProgress('generating', 25000);
+      // Start generating step
+      progressTracking.simulateProgress('generating', 30000);
       
       console.log('Generating viral script with optimized performance...');
       
@@ -223,11 +224,9 @@ const Index = () => {
         }
       });
 
+      // Complete generating step immediately after API call
       progressTracking.completeStep('generating');
-      progressTracking.simulateProgress('validating', 2000);
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       if (error) {
         console.error('Supabase function error:', error);
         throw new Error(error.message || 'Failed to generate script');
@@ -237,10 +236,14 @@ const Index = () => {
         throw new Error(data.error || 'Failed to generate script');
       }
 
-      progressTracking.completeStep('validating');
-      progressTracking.simulateProgress('finalizing', 1000);
-      
+      // Start and complete validation quickly
+      progressTracking.simulateProgress('validating', 1000);
       await new Promise(resolve => setTimeout(resolve, 500));
+      progressTracking.completeStep('validating');
+      
+      // Start and complete finalizing
+      progressTracking.simulateProgress('finalizing', 500);
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       console.log('Viral script generated successfully');
       setGeneratedScript(data.script);

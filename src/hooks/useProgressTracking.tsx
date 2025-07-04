@@ -45,6 +45,9 @@ export const useProgressTracking = ({ steps, onComplete, onError }: UseProgressT
   };
 
   const completeStep = (stepId: string) => {
+    // Clear any running intervals for this step
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    
     setProgressSteps(prev => prev.map(step => 
       step.id === stepId ? { ...step, status: 'completed', progress: 100 } : step
     ));
