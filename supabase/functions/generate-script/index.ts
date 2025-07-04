@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -16,7 +15,7 @@ const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<stri
   console.log('Calling Claude API for script generation...');
   
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // Extended timeout for longer scripts
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
   
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -86,140 +85,103 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = `You are an expert YouTube script writer specializing in viral content creation.
+    const systemPrompt = `You are a professional YouTube script writer. Your job is to write actual script content that will be spoken in a video.
 
-🚨 CRITICAL REQUIREMENTS 🚨
-- GENERATE EXACTLY ${targetWordCount} WORDS OR MORE
-- OUTPUT ONLY THE ACTUAL SCRIPT CONTENT
-- NO INSTRUCTIONS, NO COMMENTARY, NO META-TEXT
-- START DIRECTLY WITH THE HOOK
+CRITICAL RULES:
+1. Write ONLY the script content that will be spoken aloud
+2. Do NOT write any instructions, explanations, or meta-commentary
+3. Do NOT use section headers like "Hook:" or "Problem:" 
+4. Start writing the script immediately with the opening words
+5. Write at least ${targetWordCount} words
+6. Use engaging, conversational language as if speaking directly to viewers
 
-🎯 PSYCHOLOGICAL TACTICS TO APPLY 🎯
-${scripts.length > 0 ? `
-ANALYZE THE REFERENCE SCRIPTS AND EXTRACT:
-1. Specific psychological triggers (fear, urgency, curiosity, social proof)
-2. Persuasion techniques (authority, scarcity, reciprocity)
-3. Emotional patterns (problem agitation, solution revelation)
-4. Hook structures (pattern interrupts, bold claims)
-5. Storytelling elements (case studies, testimonials)
-6. Call-to-action styles (urgency, benefit reinforcement)
+When reference scripts are provided, analyze their style and replicate:
+- Their tone of voice and personality
+- Their psychological triggers and persuasion techniques  
+- Their formatting and structure patterns
+- Their storytelling approach and examples
+- Their call-to-action style
 
-REPLICATE THESE EXACT ELEMENTS:
-- Copy the writing tone and personality
-- Use similar sentence structures and rhythm
-- Apply the same psychological trigger sequences
-- Mirror the emotional progression patterns
-- Replicate the formatting style exactly
-` : `
-APPLY THESE PROVEN PSYCHOLOGICAL TACTICS:
-1. Pattern Interrupt Hook (0-3s)
-2. Curiosity Gap Creation (3-15s)
-3. Problem Agitation (15-45s)
-4. Authority Positioning (45s-1m)
-5. Social Proof Integration (1-2m)
-6. Solution Framework (2-4m)
-7. Future Pacing (4-5m)
-8. Scarcity/Urgency CTA (final 30s)
-`}
+Write a complete YouTube script that viewers will hear when watching the video.`;
 
-SCRIPT STRUCTURE (MINIMUM ${targetWordCount} WORDS):
-1. **HOOK (0-15s)** - Bold claim + pattern interrupt
-2. **PROBLEM (15-60s)** - Pain point agitation
-3. **SOLUTION (1-4m)** - Detailed methodology with examples
-4. **PROOF (Throughout)** - Success stories and data
-5. **ADVANCED TIPS (4-5m)** - Expert insights
-6. **CTA (Final 30s)** - Urgent action with benefits
+    let userPrompt;
+    
+    if (scripts.length > 0) {
+      userPrompt = `Write a ${targetWordCount}+ word YouTube script about "${topic}".
 
-OUTPUT FORMAT: Pure script content only. No headings like "Hook:" or "Problem:" - just the actual words to be spoken.`;
+Here are reference scripts to analyze and replicate the style:
 
-    const userPrompt = `Create a ${targetWordCount}+ word YouTube script about: "${topic}"
-
-TARGET: ${targetWordCount} WORDS MINIMUM
-TOPIC: ${topic}
-DESCRIPTION: ${description || 'Create engaging viral content'}
-AUDIENCE: ${targetAudience || 'YouTube viewers'}
-CTA: ${callToAction || 'Subscribe and like'}
-
-${scripts.length > 0 ? `
-REFERENCE SCRIPTS TO ANALYZE:
 ${scripts.map((script, index) => `
-=== REFERENCE ${index + 1} ===
+REFERENCE SCRIPT ${index + 1}:
 ${script}
-===============================
+---
 `).join('\n')}
 
-INSTRUCTIONS:
-1. Deeply analyze each reference script's psychological tactics
-2. Extract their persuasion patterns and emotional triggers
-3. Copy their writing style, tone, and formatting exactly
-4. Apply their proven psychological frameworks to your new topic
-5. Maintain their sentence structure and rhythm patterns
-6. Use their specific transition phrases and power words
-7. Mirror their storytelling approach and case study style
-8. Replicate their call-to-action urgency and language
+Study these reference scripts and write a new script about "${topic}" that:
+- Uses the same writing style and tone
+- Applies similar psychological triggers  
+- Follows similar structure patterns
+- Includes engaging examples and stories
+- Ends with a compelling call-to-action: "${callToAction}"
 
-Your script must feel like it was written by the same person who wrote these references.
-` : ''}
+Target audience: ${targetAudience}
+${description ? `Context: ${description}` : ''}
 
-SCRIPT CONTENT (${targetWordCount}+ WORDS):
-`;
+Write the complete script (minimum ${targetWordCount} words):`;
+    } else {
+      userPrompt = `Write a complete ${targetWordCount}+ word YouTube script about "${topic}".
 
-    console.log(`Generating script with minimum ${targetWordCount} words...`);
+Requirements:
+- Target audience: ${targetAudience}
+- Call-to-action: "${callToAction}"
+${description ? `- Context: ${description}` : ''}
+- Use proven viral techniques like hooks, storytelling, and psychological triggers
+- Include specific examples and actionable advice
+- Write in an engaging, conversational tone
+
+Start writing the script now:`;
+    }
+
+    console.log(`Generating script with minimum ${targetWordCount} words for topic: ${topic}`);
 
     let generatedScript = await callClaudeAPI(userPrompt, systemPrompt);
     let attempts = 0;
-    const maxAttempts = 5; // Increased attempts
+    const maxAttempts = 3;
 
-    // Enhanced word count validation
+    // Word count validation and expansion
     while (attempts < maxAttempts) {
       const wordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
-      console.log(`Attempt ${attempts + 1}: Script generated with ${wordCount} words (target: ${targetWordCount})`);
+      console.log(`Attempt ${attempts + 1}: Generated ${wordCount} words (target: ${targetWordCount})`);
 
       if (wordCount >= targetWordCount) {
-        console.log(`✅ Word count requirement met: ${wordCount} words`);
+        console.log(`✅ Word count target achieved: ${wordCount} words`);
         break;
       }
 
       attempts++;
-      console.log(`⚠️ Script too short (${wordCount} words), expanding... (Attempt ${attempts}/${maxAttempts})`);
+      console.log(`⚠️ Expanding script from ${wordCount} to ${targetWordCount} words...`);
       
-      const wordsNeeded = targetWordCount - wordCount;
-      const expansionPrompt = `EXPAND THIS SCRIPT TO ${targetWordCount} WORDS:
+      const expansionPrompt = `Take this script and expand it to exactly ${targetWordCount} words by adding more details, examples, and content:
 
-CURRENT SCRIPT (${wordCount} words):
+CURRENT SCRIPT:
 ${generatedScript}
 
-REQUIREMENTS:
-- Add ${wordsNeeded} more words to reach ${targetWordCount} total
-- Expand with detailed examples, case studies, and psychological explanations
-- Add more storytelling elements and specific tactics
-- Include advanced strategies and implementation details
-- Maintain the same writing style and tone throughout
+Expand this script to ${targetWordCount} words by:
+- Adding more detailed explanations and examples
+- Including additional stories and case studies  
+- Expanding on key points with more depth
+- Adding psychological insights and advanced tips
+- Providing more actionable steps and strategies
 
-EXPANDED SCRIPT (${targetWordCount}+ words):`;
+Write the expanded ${targetWordCount}+ word script:`;
 
-      const expansionSystemPrompt = `You are expanding a YouTube script to meet word count requirements. 
+      const expansionSystem = `You are expanding a YouTube script. Write only the script content - no instructions or commentary. Expand the provided script to exactly ${targetWordCount} words while maintaining the same style and flow.`;
 
-CRITICAL RULES:
-- Output ONLY the expanded script content
-- NO instructions or commentary
-- Reach exactly ${targetWordCount} words or more
-- Maintain the original style and flow
-- Add substantial content, not filler
-
-Return the complete expanded script:`;
-
-      generatedScript = await callClaudeAPI(expansionPrompt, expansionSystemPrompt);
+      generatedScript = await callClaudeAPI(expansionPrompt, expansionSystem);
     }
 
     const finalWordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
-    console.log(`Final script completed with ${finalWordCount} words after ${attempts + 1} attempts`);
-
-    if (finalWordCount < targetWordCount) {
-      console.log(`⚠️ WARNING: Final script (${finalWordCount} words) is still below target (${targetWordCount} words)`);
-    }
-
-    console.log('Script generation completed successfully');
+    console.log(`Final script: ${finalWordCount} words after ${attempts + 1} attempts`);
 
     return new Response(
       JSON.stringify({ 
