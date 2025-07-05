@@ -6,30 +6,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
-  const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
-  if (!claudeApiKey) {
-    throw new Error('Claude API key not configured');
+const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not configured');
   }
 
-  console.log('Calling Claude API for script generation...');
+  console.log('Calling OpenAI API for script generation...');
   
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000);
   
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': claudeApiKey,
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'gpt-4.1-2025-04-14',
         max_tokens: 8000,
-        system: systemPrompt,
         messages: [
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ]
       }),
@@ -40,17 +39,17 @@ const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<stri
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Claude API error:', response.status, errorText);
-      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     
-    if (!data.content || !data.content[0] || !data.content[0].text) {
-      throw new Error('Invalid response from Claude API');
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      throw new Error('Invalid response from OpenAI API');
     }
     
-    return data.content[0].text;
+    return data.choices[0].message.content;
   } catch (error) {
     clearTimeout(timeoutId);
     console.error('Script generation API error:', error);
@@ -144,7 +143,7 @@ Start writing the script now:`;
 
     console.log(`Generating script with target ${targetWordCount} words for topic: ${topic}`);
 
-    const generatedScript = await callClaudeAPI(userPrompt, systemPrompt);
+    const generatedScript = await callOpenAIAPI(userPrompt, systemPrompt);
     const finalWordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
     console.log(`Generated script: ${finalWordCount} words`);
 

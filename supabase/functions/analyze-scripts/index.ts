@@ -2,7 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
+const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,11 +19,11 @@ serve(async (req) => {
     
     console.log('Received request with scripts:', scripts?.length || 0);
 
-    if (!claudeApiKey) {
-      console.error('Claude API key not configured');
+    if (!openaiApiKey) {
+      console.error('OpenAI API key not configured');
       return new Response(JSON.stringify({
         success: false,
-        error: 'Claude API key not configured'
+        error: 'OpenAI API key not configured'
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -134,17 +134,16 @@ Return ONLY this JSON structure (no extra text):
   }
 }`;
 
-    console.log('Sending request to Claude API...');
+    console.log('Sending request to OpenAI API...');
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${claudeApiKey}`,
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'gpt-4.1-2025-04-14',
         max_tokens: 4000,
         messages: [{
           role: 'user',
@@ -155,7 +154,7 @@ Return ONLY this JSON structure (no extra text):
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Claude API error:', response.status, errorText);
+      console.error('OpenAI API error:', response.status, errorText);
       
       // Return fallback analysis instead of throwing error
       const fallbackAnalysis = createFallbackAnalysis(scripts);
@@ -168,10 +167,10 @@ Return ONLY this JSON structure (no extra text):
     }
 
     const data = await response.json();
-    console.log('Claude API response received');
+    console.log('OpenAI API response received');
     
-    if (!data.content || !data.content[0] || !data.content[0].text) {
-      console.error('Invalid response format from Claude API');
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      console.error('Invalid response format from OpenAI API');
       const fallbackAnalysis = createFallbackAnalysis(scripts);
       return new Response(JSON.stringify({
         success: true,
@@ -181,7 +180,7 @@ Return ONLY this JSON structure (no extra text):
       });
     }
 
-    const analysisText = data.content[0].text;
+    const analysisText = data.choices[0].message.content;
     
     // Parse the JSON response from Claude
     let analysis;
@@ -189,9 +188,9 @@ Return ONLY this JSON structure (no extra text):
       // Clean the response text in case Claude added extra formatting
       const cleanedText = analysisText.replace(/```json\n?|\n?```/g, '').trim();
       analysis = JSON.parse(cleanedText);
-      console.log('Successfully parsed Claude response');
+      console.log('Successfully parsed OpenAI response');
     } catch (e) {
-      console.error('Failed to parse Claude response as JSON:', e);
+      console.error('Failed to parse OpenAI response as JSON:', e);
       console.error('Raw response:', analysisText);
       
       // Create a fallback structured response based on the scripts
