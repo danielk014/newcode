@@ -142,54 +142,18 @@ ${description ? `- Context: ${description}` : ''}
 Start writing the script now:`;
     }
 
-    console.log(`Generating script with minimum ${targetWordCount} words for topic: ${topic}`);
+    console.log(`Generating script with target ${targetWordCount} words for topic: ${topic}`);
 
-    let generatedScript = await callClaudeAPI(userPrompt, systemPrompt);
-    let attempts = 0;
-    const maxAttempts = 3;
-
-    // Word count validation and expansion
-    while (attempts < maxAttempts) {
-      const wordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
-      console.log(`Attempt ${attempts + 1}: Generated ${wordCount} words (target: ${targetWordCount})`);
-
-      if (wordCount >= targetWordCount) {
-        console.log(`✅ Word count target achieved: ${wordCount} words`);
-        break;
-      }
-
-      attempts++;
-      console.log(`⚠️ Expanding script from ${wordCount} to ${targetWordCount} words...`);
-      
-      const expansionPrompt = `Take this script and expand it to exactly ${targetWordCount} words by adding more details, examples, and content:
-
-CURRENT SCRIPT:
-${generatedScript}
-
-Expand this script to ${targetWordCount} words by:
-- Adding more detailed explanations and examples
-- Including additional stories and case studies  
-- Expanding on key points with more depth
-- Adding psychological insights and advanced tips
-- Providing more actionable steps and strategies
-
-Write the expanded ${targetWordCount}+ word script:`;
-
-      const expansionSystem = `You are expanding a YouTube script. Write only the script content - no instructions or commentary. Expand the provided script to exactly ${targetWordCount} words while maintaining the same style and flow.`;
-
-      generatedScript = await callClaudeAPI(expansionPrompt, expansionSystem);
-    }
-
+    const generatedScript = await callClaudeAPI(userPrompt, systemPrompt);
     const finalWordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
-    console.log(`Final script: ${finalWordCount} words after ${attempts + 1} attempts`);
+    console.log(`Generated script: ${finalWordCount} words`);
 
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
         success: true,
         wordCount: finalWordCount,
-        targetWordCount: targetWordCount,
-        attempts: attempts + 1
+        targetWordCount: targetWordCount
       }),
       { 
         headers: { 
