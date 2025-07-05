@@ -527,16 +527,16 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 bg-muted">
+                  <TabsList className="flex w-full gap-2 bg-muted p-2">
                     <TabsTrigger 
                       value="manual"
-                      className="text-xs sm:text-sm"
+                      className="text-xs sm:text-sm flex-1"
                     >
                       Manual Input
                     </TabsTrigger>
                     <TabsTrigger 
                       value="upload"
-                      className="text-xs sm:text-sm"
+                      className="text-xs sm:text-sm flex-1 bg-accent text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                     >
                       <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Upload Files
