@@ -138,39 +138,33 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         {/* Tactics with Strength and Timing */}
                         <div className="space-y-3">
                           <h4 className="font-medium text-gray-800">Detected Tactics:</h4>
-                          <div className="grid gap-2">
-                            {scriptAnalysis.tactics.map((tactic: any, tacticIndex: number) => (
-                              <ClickableTactic key={tacticIndex} name={tactic.name}>
-                                <div className="p-3 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all cursor-pointer hover:bg-blue-50 border-l-4 border-l-blue-400">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                      <Badge className={getTacticColor(tactic.name)} variant="secondary">
-                                        {tactic.name}
-                                      </Badge>
-                                      <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
-                                        {tactic.category}
-                                      </Badge>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      {tactic.strength && (
-                                        <Badge variant="outline" className="text-xs font-bold text-green-700">
-                                          {tactic.strength}/10
-                                        </Badge>
-                                      )}
-                                      <ArrowRight className="w-4 h-4 text-blue-600" />
-                                    </div>
+                          <div className="grid gap-3">
+                            {scriptAnalysis.tactics
+                              .sort((a: any, b: any) => (b.strength || 0) - (a.strength || 0))
+                              .map((tactic: any, tacticIndex: number) => (
+                              <div key={tacticIndex} className="p-4 border rounded-lg bg-card shadow-sm border-l-4 border-l-primary">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-2">
+                                    <Badge className={getTacticColor(tactic.name)} variant="secondary">
+                                      {tactic.name}
+                                    </Badge>
+                                    <Badge variant="outline" className="text-xs">
+                                      {tactic.category}
+                                    </Badge>
                                   </div>
-                                  <p className="text-sm text-gray-700 mb-2 font-medium">{tactic.description}</p>
-                                  {tactic.timestamps && (
-                                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                                      <span className="font-medium">Timing:</span> {tactic.timestamps.join(', ')}
-                                    </div>
+                                  {tactic.strength && (
+                                    <Badge variant="outline" className="text-xs font-bold text-accent-foreground bg-accent">
+                                      {tactic.strength}/10
+                                    </Badge>
                                   )}
-                                  <div className="mt-2 text-xs text-blue-600 font-medium">
-                                    Click to learn more in Tactics Library →
-                                  </div>
                                 </div>
-                              </ClickableTactic>
+                                <p className="text-sm text-muted-foreground mb-2">{tactic.description}</p>
+                                {tactic.timestamps && (
+                                  <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
+                                    <span className="font-medium">Timing:</span> {tactic.timestamps.join(', ')}
+                                  </div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -357,23 +351,13 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       structured for maximum engagement and conversion.
                     </p>
                   </div>
-                  <Button onClick={handleGenerateScript} size="lg" className="px-8 border border-black">
+                  <Button onClick={handleGenerateScript} size="lg" className="px-8 bg-accent hover:bg-accent/90 text-accent-foreground border">
                     <Zap className="w-5 h-5 mr-2" />
                     Generate Script
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </CardContent>
               </Card>
-              
-              <div className="flex justify-end mt-6">
-                <Button 
-                  onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
-                >
-                  {getButtonText()}
-                  <Zap className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

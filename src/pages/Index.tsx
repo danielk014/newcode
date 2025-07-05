@@ -648,7 +648,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse"></div>
                         <div className="relative flex items-center justify-center">
                           <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          <span className="hidden sm:inline">Analyzing Your Scripts with AI...</span>
+                          <span className="hidden sm:inline">Analyzing Your Scripts...</span>
                           <span className="sm:hidden">Analyzing...</span>
                         </div>
                       </>

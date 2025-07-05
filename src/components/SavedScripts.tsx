@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FileText, Eye, Calendar, Hash, ExternalLink } from 'lucide-react';
+import { FileText, Calendar, Hash, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from './AuthProvider';
@@ -139,26 +138,11 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
                         <Button
                           size="sm"
                           onClick={() => onLoadScript(script.content, script.title)}
-                          className="flex-1"
+                          className="w-full"
                         >
                           Load Script
                         </Button>
                       )}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="outline">
-                            <Eye className="w-3 h-3" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>{script.title}</DialogTitle>
-                          </DialogHeader>
-                          <div className="max-h-60 overflow-y-auto">
-                            <p className="text-sm whitespace-pre-wrap">{script.content}</p>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
                     </div>
                   </div>
                 </CardContent>
