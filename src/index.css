@@ -105,12 +105,9 @@ All colors MUST be HSL.
   }
 
   /* Add black outlines to input fields and textareas */
-  input[type="text"], 
-  input[type="number"], 
-  input[type="email"], 
-  input[type="password"], 
+  input, 
   textarea {
-    @apply border border-black;
+    @apply border border-black !important;
   }
 
   /* Ensure placeholder text is visible */
