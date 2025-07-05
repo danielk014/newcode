@@ -138,31 +138,39 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         {/* Tactics with Strength and Timing */}
                         <div className="space-y-3">
                           <h4 className="font-medium text-gray-800">Detected Tactics:</h4>
-                          <div className="space-y-2">
+                          <div className="grid gap-2">
                             {scriptAnalysis.tactics.map((tactic: any, tacticIndex: number) => (
-                              <div key={tacticIndex} className="p-3 border rounded-lg bg-white shadow-sm">
-                                <div className="flex items-center justify-between mb-2">
-                                  <Badge className={getTacticColor(tactic.name)} variant="secondary">
-                                    {tactic.name}
-                                  </Badge>
-                                  <div className="flex items-center gap-2">
-                                    <Badge variant="outline" className="text-xs">
-                                      {tactic.category}
-                                    </Badge>
-                                    {tactic.strength && (
-                                      <Badge variant="outline" className="text-xs">
-                                        {tactic.strength}/10
+                              <ClickableTactic key={tacticIndex} name={tactic.name}>
+                                <div className="p-3 border rounded-lg bg-white shadow-sm hover:shadow-md transition-all cursor-pointer hover:bg-blue-50 border-l-4 border-l-blue-400">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                      <Badge className={getTacticColor(tactic.name)} variant="secondary">
+                                        {tactic.name}
                                       </Badge>
-                                    )}
+                                      <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
+                                        {tactic.category}
+                                      </Badge>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      {tactic.strength && (
+                                        <Badge variant="outline" className="text-xs font-bold text-green-700">
+                                          {tactic.strength}/10
+                                        </Badge>
+                                      )}
+                                      <ArrowRight className="w-4 h-4 text-blue-600" />
+                                    </div>
+                                  </div>
+                                  <p className="text-sm text-gray-700 mb-2 font-medium">{tactic.description}</p>
+                                  {tactic.timestamps && (
+                                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                                      <span className="font-medium">Timing:</span> {tactic.timestamps.join(', ')}
+                                    </div>
+                                  )}
+                                  <div className="mt-2 text-xs text-blue-600 font-medium">
+                                    Click to learn more in Tactics Library →
                                   </div>
                                 </div>
-                                <p className="text-xs text-gray-600 mb-1">{tactic.description}</p>
-                                {tactic.timestamps && (
-                                  <div className="text-xs text-gray-500">
-                                    <span className="font-medium">Timing:</span> {tactic.timestamps.join(', ')}
-                                  </div>
-                                )}
-                              </div>
+                              </ClickableTactic>
                             ))}
                           </div>
                         </div>
@@ -334,7 +342,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="mb-6">
-                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-6">
+                    <div className="grid grid-cols-2 gap-6 max-w-md mx-auto mb-6">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">{analysis.synthesizedTactics.length}</div>
                         <div className="text-sm text-gray-600">Tactics Ready</div>
@@ -342,12 +350,6 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">{analysis.blueprint?.sections?.length || 0}</div>
                         <div className="text-sm text-gray-600">Sections Planned</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">
-                          {Math.round((analysis.synthesizedTactics.length / 10) * 100)}%
-                        </div>
-                        <div className="text-sm text-gray-600">Confidence Score</div>
                       </div>
                     </div>
                     <p className="text-gray-600 mb-6">

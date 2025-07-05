@@ -640,14 +640,17 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                   <Button 
                     onClick={handleAnalyze}
                     disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base relative overflow-hidden"
                     size="lg"
                   >
                     {isAnalyzing ? (
                       <>
-                        <Brain className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-pulse" />
-                        <span className="hidden sm:inline">Analyzing Your Scripts...</span>
-                        <span className="sm:hidden">Analyzing...</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse"></div>
+                        <div className="relative flex items-center justify-center">
+                          <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span className="hidden sm:inline">Analyzing Your Scripts with AI...</span>
+                          <span className="sm:hidden">Analyzing...</span>
+                        </div>
                       </>
                     ) : (
                       <>

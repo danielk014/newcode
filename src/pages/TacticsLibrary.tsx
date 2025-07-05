@@ -172,6 +172,97 @@ const tacticData: Tactic[] = [
       "Most people suffer with this their entire lives..."
     ],
     psychology: "Leverages loss aversion and pain avoidance motivations that drive human behavior."
+  },
+  {
+    name: "Story Loop Opening",
+    category: "Hook",
+    description: "Start a compelling story but don't finish it until later in the content",
+    explanation: "Open story loops create psychological tension that keeps viewers engaged until the story is resolved. The brain craves closure and will stay engaged to get it.",
+    whenToUse: "At the beginning of content, when introducing case studies, or when you need to maintain attention across long sections.",
+    examples: [
+      "Three months ago, I was broke. By the end of this video, I'll show you exactly how I changed that...",
+      "My client was about to lose everything until she discovered this one thing...",
+      "I almost gave up on my business until this happened..."
+    ],
+    psychology: "Exploits the Zeigarnik Effect - our tendency to remember uncompleted tasks better than completed ones."
+  },
+  {
+    name: "Controversy Creation",
+    category: "Hook",
+    description: "Present an opposing or unpopular viewpoint to generate strong reactions",
+    explanation: "Controversial statements trigger emotional responses and force engagement. Even negative emotions can increase retention and sharing.",
+    whenToUse: "When your audience holds strong conventional beliefs, to differentiate from competitors, or to create viral potential.",
+    examples: [
+      "Everyone tells you to follow your passion - that's terrible advice",
+      "The fitness industry has been lying to you about weight loss",
+      "College is the biggest scam in America"
+    ],
+    psychology: "Activates fight-or-flight responses and cognitive dissonance, making content memorable and shareable."
+  },
+  {
+    name: "Reciprocity Trigger",
+    category: "Persuasion",
+    description: "Give value first to create an obligation for the viewer to reciprocate",
+    explanation: "When someone receives something of value, they feel psychologically obligated to give something back. This increases compliance with requests.",
+    whenToUse: "Before asking for engagement, subscriptions, or purchases. Also effective in building long-term loyalty.",
+    examples: [
+      "I'm giving you my $500 course for free because I want to help you succeed",
+      "Here's my personal phone number - text me if you need help",
+      "I'll personally review your business plan if you comment below"
+    ],
+    psychology: "Based on the reciprocity principle - one of the most powerful psychological drivers of human behavior."
+  },
+  {
+    name: "Bandwagon Effect",
+    category: "Social",
+    description: "Show that a large group is already taking the desired action",
+    explanation: "People naturally want to be part of the winning team or popular choice. This reduces perceived risk and increases action probability.",
+    whenToUse: "When you have significant user numbers, trending topics, or when launching new initiatives.",
+    examples: [
+      "Join 100,000+ entrepreneurs who've already transformed their business",
+      "This method is going viral - everyone's talking about it",
+      "Be part of the movement that's changing the industry"
+    ],
+    psychology: "Leverages herding behavior and social validation needs inherent in human psychology."
+  },
+  {
+    name: "Urgency Stacking",
+    category: "Scarcity",
+    description: "Layer multiple time-sensitive elements to maximize immediate action",
+    explanation: "Multiple urgent factors create compounding pressure that makes inaction feel increasingly costly with each passing moment.",
+    whenToUse: "In sales situations, limited-time offers, or when you need immediate engagement rather than delayed action.",
+    examples: [
+      "Price goes up in 24 hours, only 50 spots left, and registration closes Friday",
+      "Market conditions are changing fast, and my calendar is filling up this week",
+      "This opportunity expires soon, and I can only help the first 100 people"
+    ],
+    psychology: "Combines multiple scarcity triggers to overwhelm analytical thinking and promote emotional decision-making."
+  },
+  {
+    name: "Vulnerability Sharing",
+    category: "Emotional",
+    description: "Share personal struggles or failures to build trust and connection",
+    explanation: "Vulnerability creates authentic connection and makes the speaker more relatable. It lowers psychological barriers and increases trust.",
+    whenToUse: "When building rapport, before making big claims, or when your audience seems skeptical or distant.",
+    examples: [
+      "I failed at this 7 times before I figured it out",
+      "I was embarrassed to admit I was struggling with this",
+      "Here's the mistake that cost me $50,000..."
+    ],
+    psychology: "Triggers empathy responses and the fundamental attribution error - we relate more to vulnerable people."
+  },
+  {
+    name: "Curiosity Gap Widening",
+    category: "Hook",
+    description: "Progressively reveal information while maintaining mystery about the core revelation",
+    explanation: "By giving partial information and then pausing, you create an information gap that the brain desperately wants to fill.",
+    whenToUse: "Throughout content to maintain engagement, especially during transitions or before breaks in longer content.",
+    examples: [
+      "The third secret is the most powerful, but first you need to understand...",
+      "What happened next shocked even me, but let me set the stage...",
+      "This single word changed everything, and I'll reveal it in just a moment..."
+    ],
+    psychology: "Exploits the brain's prediction error system and our natural drive to complete patterns and fill knowledge gaps."
   }
 ];
 
@@ -181,7 +272,8 @@ const categoryIcons = {
   Emotional: Heart,
   Authority: Crown,
   Social: Users,
-  Scarcity: Clock
+  Scarcity: Clock,
+  Persuasion: Brain
 };
 
 const categoryColors = {
@@ -190,7 +282,8 @@ const categoryColors = {
   Emotional: "bg-red-100 text-red-800",
   Authority: "bg-purple-100 text-purple-800",
   Social: "bg-orange-100 text-orange-800",
-  Scarcity: "bg-yellow-100 text-yellow-800"
+  Scarcity: "bg-yellow-100 text-yellow-800",
+  Persuasion: "bg-indigo-100 text-indigo-800"
 };
 
 export default function TacticsLibrary() {
