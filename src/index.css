@@ -98,6 +98,26 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     min-height: 100vh;
   }
+
+  /* Add black outlines to buttons */
+  button {
+    @apply border-2 border-black;
+  }
+
+  /* Add black outlines to input fields and textareas */
+  input[type="text"], 
+  input[type="number"], 
+  input[type="email"], 
+  input[type="password"], 
+  textarea {
+    @apply border-2 border-black;
+  }
+
+  /* Ensure placeholder text is visible */
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-600;
+  }
 }
 
 #root {

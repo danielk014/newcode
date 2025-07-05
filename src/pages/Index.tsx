@@ -43,7 +43,7 @@ const Index = () => {
     targetLength: 1400,
     callToAction: ''
   });
-  const [selectedFormat, setSelectedFormat] = useState<string>('');
+  const [selectedFormat, setSelectedFormat] = useState<string>('Copy Reference Script Format'); // Set default format
   const [analysis, setAnalysis] = useState<any>(null);
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -525,16 +525,6 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
-                {/* Format Selection */}
-                <div className="mb-6">
-                  <ViralFormatSelector 
-                    selectedFormat={selectedFormat}
-                    onFormatSelect={setSelectedFormat}
-                  />
-                </div>
-
-                <Separator />
-
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 bg-muted">
