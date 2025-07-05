@@ -161,21 +161,35 @@ Start writing the script now:`;
       attempts++;
       console.log(`⚠️ Expanding script from ${wordCount} to ${targetWordCount} words...`);
       
-      const expansionPrompt = `Take this script and expand it to exactly ${targetWordCount} words by adding more details, examples, and content:
+      const expansionPrompt = `CRITICAL: You must write EXACTLY ${targetWordCount} words or more.
+
+Current script has ${wordCount} words. Expand it to ${targetWordCount} words:
 
 CURRENT SCRIPT:
 ${generatedScript}
 
-Expand this script to ${targetWordCount} words by:
-- Adding more detailed explanations and examples
-- Including additional stories and case studies  
-- Expanding on key points with more depth
-- Adding psychological insights and advanced tips
-- Providing more actionable steps and strategies
+EXPANSION REQUIREMENTS:
+- Add detailed examples and case studies
+- Include step-by-step breakdowns
+- Add personal anecdotes and stories
+- Provide comprehensive explanations of concepts
+- Include actionable tips and strategies
+- Add supporting statistics and data
+- Elaborate on each main point thoroughly
+- Include transitions and connecting phrases
 
-Write the expanded ${targetWordCount}+ word script:`;
+TARGET: Write ${targetWordCount} words minimum. Count as you write. Do not stop until you reach ${targetWordCount} words.`;
 
-      const expansionSystem = `You are expanding a YouTube script. Write only the script content - no instructions or commentary. Expand the provided script to exactly ${targetWordCount} words while maintaining the same style and flow.`;
+      const expansionSystem = `You are a professional YouTube script writer. Your task is to expand the given script to EXACTLY ${targetWordCount} words or more. 
+
+MANDATORY RULES:
+1. Write ONLY script content that will be spoken
+2. Count words as you write to ensure you reach ${targetWordCount}
+3. Use natural, engaging language
+4. Add substantial content, not filler
+5. Maintain the original style and flow
+
+You MUST reach the ${targetWordCount} word target. This is non-negotiable.`;
 
       generatedScript = await callClaudeAPI(expansionPrompt, expansionSystem);
     }
