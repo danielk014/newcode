@@ -72,17 +72,22 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
 
     setIsSaving(true);
     try {
+      const wordCount = editedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
+      
       const { error } = await supabase
         .from('saved_scripts')
         .insert({
           user_id: user.id,
-          title: saveTitle,
-          content: editedScript,
-          word_count: editedScript.split(' ').length,
+          title: saveTitle.trim(),
+          content: editedScript.trim(),
+          word_count: wordCount,
           language: 'en'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast({
         title: "Script Saved!",
@@ -119,6 +124,14 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
   };
 
   const handleTranslatedScript = (translatedScript: string, language: string) => {
+    // Create a version entry for the translation
+    const newTranslationVersion = {
+      script: translatedScript,
+      improvement: `Translated to ${language}`,
+      timestamp: new Date(),
+      changesSummary: `Script translated from original language to ${language}. All content and structure preserved while adapting for ${language} audience.`
+    };
+    setImprovedVersions(prev => [newTranslationVersion, ...prev]);
     setEditedScript(translatedScript);
     setActiveTab("script");
     toast({
