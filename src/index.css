@@ -101,7 +101,7 @@ All colors MUST be HSL.
 
   /* Add black outlines to buttons */
   button {
-    @apply border-2 border-black;
+    @apply border border-black;
   }
 
   /* Add black outlines to input fields and textareas */
@@ -110,7 +110,7 @@ All colors MUST be HSL.
   input[type="email"], 
   input[type="password"], 
   textarea {
-    @apply border-2 border-black;
+    @apply border border-black;
   }
 
   /* Ensure placeholder text is visible */
