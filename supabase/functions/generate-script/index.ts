@@ -72,7 +72,7 @@ serve(async (req) => {
       scripts = [], 
       callToAction,
       format,
-      targetWordCount = 2000
+      targetWordCount = 1400
     } = await req.json();
     
     if (!topic) {
