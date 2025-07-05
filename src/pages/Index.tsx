@@ -536,7 +536,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                     </TabsTrigger>
                     <TabsTrigger 
                       value="upload"
-                      className="text-xs sm:text-sm flex-1 bg-accent text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="text-xs sm:text-sm flex-1 bg-primary/10 text-primary border border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                     >
                       <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Upload Files
