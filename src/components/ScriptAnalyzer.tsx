@@ -75,17 +75,17 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="analysis">Analysis</TabsTrigger>
-              <TabsTrigger value="synthesis">Synthesis</TabsTrigger>
-              <TabsTrigger value="blueprint">Blueprint</TabsTrigger>
-              <TabsTrigger value="generate">Generate</TabsTrigger>
+            <TabsList className="flex w-full gap-2 bg-muted p-2">
+              <TabsTrigger value="analysis" className="flex-1 border border-black">Analysis</TabsTrigger>
+              <TabsTrigger value="synthesis" className="flex-1 border border-black">Synthesis</TabsTrigger>
+              <TabsTrigger value="blueprint" className="flex-1 border border-black">Blueprint</TabsTrigger>
+              <TabsTrigger value="generate" className="flex-1 border border-black">Generate</TabsTrigger>
             </TabsList>
 
             <TabsContent value="analysis" className="mt-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
                 {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
-                  <Card key={index}>
+                  <Card key={index} className="border-l-4 border-l-blue-500">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <BarChart3 className="w-5 h-5 text-blue-600" />
@@ -93,39 +93,120 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Word Count</span>
-                          <span>{scriptAnalysis.wordCount}</span>
+                      <div className="space-y-4">
+                        {/* Basic Stats */}
+                        <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
+                          <div className="text-center">
+                            <div className="text-sm text-gray-600">Word Count</div>
+                            <div className="font-bold text-lg">{scriptAnalysis.wordCount}</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm text-gray-600">Duration</div>
+                            <div className="font-bold text-lg">{scriptAnalysis.estimatedDuration}</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm text-gray-600">Tactics</div>
+                            <div className="font-bold text-lg">{scriptAnalysis.tactics.length}</div>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Est. Duration</span>
-                          <span>{scriptAnalysis.estimatedDuration}m</span>
+
+                        {/* Script Structure Analysis */}
+                        {scriptAnalysis.structure && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-gray-800">Script Structure:</h4>
+                            <div className="space-y-2">
+                              <div className="p-2 bg-blue-50 rounded border-l-2 border-blue-400">
+                                <div className="text-xs font-medium text-blue-800">HOOK</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.hook}</div>
+                              </div>
+                              <div className="p-2 bg-red-50 rounded border-l-2 border-red-400">
+                                <div className="text-xs font-medium text-red-800">PROBLEM</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.problem}</div>
+                              </div>
+                              <div className="p-2 bg-green-50 rounded border-l-2 border-green-400">
+                                <div className="text-xs font-medium text-green-800">SOLUTION</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.solution}</div>
+                              </div>
+                              <div className="p-2 bg-purple-50 rounded border-l-2 border-purple-400">
+                                <div className="text-xs font-medium text-purple-800">CALL TO ACTION</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.cta}</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Tactics with Strength and Timing */}
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-gray-800">Detected Tactics:</h4>
+                          <div className="space-y-2">
+                            {scriptAnalysis.tactics.map((tactic: any, tacticIndex: number) => (
+                              <div key={tacticIndex} className="p-3 border rounded-lg bg-white shadow-sm">
+                                <div className="flex items-center justify-between mb-2">
+                                  <Badge className={getTacticColor(tactic.name)} variant="secondary">
+                                    {tactic.name}
+                                  </Badge>
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="text-xs">
+                                      {tactic.category}
+                                    </Badge>
+                                    {tactic.strength && (
+                                      <Badge variant="outline" className="text-xs">
+                                        {tactic.strength}/10
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-xs text-gray-600 mb-1">{tactic.description}</p>
+                                {tactic.timestamps && (
+                                  <div className="text-xs text-gray-500">
+                                    <span className="font-medium">Timing:</span> {tactic.timestamps.join(', ')}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Tactics Detected</span>
-                          <span>{scriptAnalysis.tactics.length}</span>
-                        </div>
-                        <Progress value={Math.min(85, scriptAnalysis.tactics.length * 10)} className="h-2" />
-                        <div className="flex flex-wrap gap-2">
-                          {scriptAnalysis.tactics.slice(0, 5).map((tactic: any, tacticIndex: number) => (
-                            <Badge key={tacticIndex} className={getTacticColor(tactic.name)}>
-                              {tactic.name}
-                            </Badge>
-                          ))}
-                        </div>
-                        {scriptAnalysis.emotionalTone.length > 0 && (
-                          <div>
-                            <p className="text-sm font-medium mb-2">Emotional Tone:</p>
+
+                        {/* Hero's Journey Elements */}
+                        {scriptAnalysis.heroJourneyElements && scriptAnalysis.heroJourneyElements.length > 0 && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-gray-800">Hero's Journey Elements:</h4>
+                            <div className="space-y-2">
+                              {scriptAnalysis.heroJourneyElements.map((element: any, elemIndex: number) => (
+                                <div key={elemIndex} className="p-2 border rounded bg-yellow-50">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-sm font-medium text-yellow-800">{element.stage}</span>
+                                    <span className="text-xs text-yellow-600">{element.timestamp}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-600">{element.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Emotional Tone */}
+                        {scriptAnalysis.emotionalTone && scriptAnalysis.emotionalTone.length > 0 && (
+                          <div className="space-y-2">
+                            <h4 className="font-medium text-gray-800">Emotional Tone:</h4>
                             <div className="flex flex-wrap gap-1">
                               {scriptAnalysis.emotionalTone.map((tone: string, toneIndex: number) => (
-                                <Badge key={toneIndex} variant="outline" className="text-xs">
+                                <Badge key={toneIndex} variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">
                                   {tone}
                                 </Badge>
                               ))}
                             </div>
                           </div>
                         )}
+
+                        {/* Effectiveness Score */}
+                        <div className="pt-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium">Effectiveness Score</span>
+                            <span className="text-sm font-bold">{Math.min(95, scriptAnalysis.tactics.length * 12 + 20)}%</span>
+                          </div>
+                          <Progress value={Math.min(95, scriptAnalysis.tactics.length * 12 + 20)} className="h-2" />
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -135,7 +216,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -184,7 +265,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -235,7 +316,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -274,7 +355,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       structured for maximum engagement and conversion.
                     </p>
                   </div>
-                  <Button onClick={handleGenerateScript} size="lg" className="px-8">
+                  <Button onClick={handleGenerateScript} size="lg" className="px-8 border border-black">
                     <Zap className="w-5 h-5 mr-2" />
                     Generate Script
                     <ArrowRight className="w-5 h-5 ml-2" />
@@ -285,7 +366,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   <Zap className="w-4 h-4 ml-2" />
