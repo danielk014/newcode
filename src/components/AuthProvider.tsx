@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Simple demo authentication - replace with Discord OAuth later
     if (username && password) {
       const userData: User = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: crypto.randomUUID(),
         username,
         verified: true
       };

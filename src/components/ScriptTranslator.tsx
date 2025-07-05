@@ -82,11 +82,13 @@ export const ScriptTranslator: React.FC<ScriptTranslatorProps> = ({
 
       const translated = data.translatedText;
       setTranslatedScript(translated);
+      
+      // Save translation as a version automatically
       onTranslatedScript(translated, selectedLang?.name || targetLanguage);
 
       toast({
         title: "Translation Complete",
-        description: `Script translated to ${selectedLang?.name || targetLanguage}`
+        description: `Script translated to ${selectedLang?.name || targetLanguage} and saved as version`
       });
     } catch (error) {
       console.error('Translation error:', error);
