@@ -464,13 +464,13 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 px-2">
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
                 <Link to="/enhanced-tactics">
                   <BookOpen className="w-4 h-4 mr-2" />
                   <span className="text-xs sm:text-sm">View Enhanced Tactics Library</span>
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
                 <Link to="/saved-scripts">
                   <FileText className="w-4 h-4 mr-2" />
                   <span className="text-xs sm:text-sm">My Saved Scripts</span>
