@@ -300,7 +300,28 @@ export default function TacticsLibrary() {
   // Automatically open the focused tactic when the component mounts or when focusTactic changes
   useEffect(() => {
     if (focusTactic) {
-      setOpenTactics([focusTactic]);
+      // Decode the URL-encoded tactic name and find matching tactic
+      const decodedTacticName = decodeURIComponent(focusTactic);
+      console.log('Looking for tactic:', decodedTacticName);
+      
+      // Find the exact tactic in our data
+      const matchingTactic = tacticData.find(tactic => tactic.name === decodedTacticName);
+      
+      if (matchingTactic) {
+        console.log('Found matching tactic:', matchingTactic.name);
+        setOpenTactics([matchingTactic.name]);
+      } else {
+        console.log('No matching tactic found. Available tactics:', tacticData.map(t => t.name));
+        // Fallback: try partial matching
+        const partialMatch = tacticData.find(tactic => 
+          tactic.name.toLowerCase().includes(decodedTacticName.toLowerCase()) ||
+          decodedTacticName.toLowerCase().includes(tactic.name.toLowerCase())
+        );
+        if (partialMatch) {
+          console.log('Found partial match:', partialMatch.name);
+          setOpenTactics([partialMatch.name]);
+        }
+      }
     }
   }, [focusTactic]);
 
@@ -359,9 +380,10 @@ export default function TacticsLibrary() {
           {tacticData.map((tactic) => {
             const Icon = categoryIcons[tactic.category as keyof typeof categoryIcons] || Target;
             const isOpen = openTactics.includes(tactic.name);
+            const isFocused = focusTactic && decodeURIComponent(focusTactic) === tactic.name;
             
             return (
-              <Card key={tactic.name} className="shadow-lg">
+              <Card key={tactic.name} className={`shadow-lg ${isFocused ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}>
                 <Collapsible open={isOpen} onOpenChange={() => toggleTactic(tactic.name)}>
                   <CollapsibleTrigger asChild>
                     <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
