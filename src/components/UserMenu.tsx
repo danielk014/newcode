@@ -15,19 +15,12 @@ const UserMenu = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-2">
-        <Avatar className="w-8 h-8">
-          <AvatarFallback className="text-sm">
-            {displayName.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">{displayName}</span>
-          <span className="text-xs text-gray-500 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {user.days_remaining} days left
-          </span>
-        </div>
+      <div className="flex flex-col">
+        <span className="text-sm font-medium">{displayName}</span>
+        <span className="text-xs text-gray-500 flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {user.days_remaining} days left
+        </span>
       </div>
       <Button
         variant="outline"

@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages, Home } from 'lucide-react';
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages, Home, Target } from 'lucide-react';
 import { TacticMapper } from './TacticMapper';
 import { ScriptImprovement } from './ScriptImprovement';
 import { ScriptTranslator } from './ScriptTranslator';
@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import UserMenu from './UserMenu';
 
 interface ScriptGeneratorProps {
   script: string;
@@ -161,28 +162,53 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
   ];
 
   return (
-    <div className="space-y-6">
-      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader className="text-center relative">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate('/')}
-            className="absolute left-4 top-4"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Home
-          </Button>
-          <CardTitle className="text-2xl flex items-center justify-center gap-2">
-            <CheckCircle className="w-6 h-6 text-green-600" />
-            Your Script is Ready!
-          </CardTitle>
-          {improvedVersions.length > 0 && (
-            <div className="flex items-center justify-center gap-2 mt-2">
-              <Badge variant="secondary">{improvedVersions.length} improvement{improvedVersions.length > 1 ? 's' : ''} applied</Badge>
+    <div className="min-h-screen w-full bg-background">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+        {/* Header */}
+        <div className="bg-card border-b border-border -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-8">
+          <div className="max-w-4xl mx-auto relative">
+            <div className="absolute left-0 top-0">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/')}
+                className="gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </Button>
             </div>
-          )}
-        </CardHeader>
+            <div className="absolute right-0 top-0 hidden sm:block">
+              <UserMenu />
+            </div>
+            <div className="text-center px-20">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Target className="w-6 h-6 text-primary" />
+                <h1 className="text-2xl font-bold text-foreground">
+                  PitchArchitect
+                </h1>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <span className="text-xl font-semibold">Your Script is Ready!</span>
+              </div>
+              {improvedVersions.length > 0 && (
+                <div className="flex items-center justify-center gap-2 mt-2">
+                  <Badge variant="secondary">{improvedVersions.length} improvement{improvedVersions.length > 1 ? 's' : ''} applied</Badge>
+                </div>
+              )}
+            </div>
+            {/* Mobile User Menu */}
+            <div className="mt-4 sm:hidden text-center">
+              <UserMenu />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="text-center">
+            </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6">
@@ -379,6 +405,8 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
           </Tabs>
         </CardContent>
       </Card>
+        </div>
+      </div>
     </div>
   );
 };
