@@ -157,10 +157,21 @@ const Index = () => {
 
   const handleAnalyze = async () => {
     const filledScripts = scriptInput.scripts.filter(script => script.trim());
-    if (filledScripts.length < 2 || !scriptInput.topic) {
+    
+    // Enhanced validation with better error messages
+    if (filledScripts.length < 2) {
       toast({
-        title: "Missing Information",
-        description: "Please provide at least 2 reference scripts and a video topic.",
+        title: "Not Enough Scripts",
+        description: "Please provide at least 2 reference scripts to analyze.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!scriptInput.topic || !scriptInput.topic.trim()) {
+      toast({
+        title: "Topic Required",
+        description: "Please enter a video topic before proceeding with analysis.",
         variant: "destructive"
       });
       return;
@@ -210,17 +221,25 @@ const Index = () => {
   };
 
   const handleGenerate = async () => {
-    // Validate required fields before proceeding
-    if (!scriptInput.topic.trim()) {
+    // Enhanced validation with detailed logging
+    console.log('Generate button clicked');
+    console.log('Current topic:', scriptInput.topic);
+    console.log('Topic length:', scriptInput.topic?.length || 0);
+    console.log('Topic trimmed:', scriptInput.topic?.trim());
+    
+    if (!scriptInput.topic || !scriptInput.topic.trim()) {
+      console.error('Topic validation failed - topic is empty or whitespace only');
       toast({
         title: "Topic Required",
-        description: "Please enter a video topic before generating.",
+        description: "Please enter a video topic before generating the script.",
         variant: "destructive"
       });
       return;
     }
 
-    if (scriptInput.scripts.filter(s => s.trim()).length < 2) {
+    const filledScripts = scriptInput.scripts.filter(s => s.trim());
+    if (filledScripts.length < 2) {
+      console.error('Scripts validation failed - not enough scripts');
       toast({
         title: "Scripts Required",
         description: "Please provide at least 2 reference scripts.",
@@ -229,6 +248,7 @@ const Index = () => {
       return;
     }
 
+    console.log('Validation passed, proceeding with generation');
     setCurrentStep(2);
     setIsGenerating(true);
     progressTracking.reset();
@@ -284,8 +304,6 @@ const Index = () => {
       setGeneratedScript(data.script);
       
       progressTracking.completeStep('finalizing');
-      
-      // Removed toast notification for successful generation
       
     } catch (error) {
       console.error('Error generating script:', error);
@@ -481,10 +499,10 @@ Remember, this is a process, not an event. Each week builds on the previous one,
     <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-secondary/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <header className="py-8 sm:py-12 mb-8">
+        <header className="py-6 sm:py-8 mb-6">
           <div className="max-w-5xl mx-auto">
             {/* Top bar with user menu */}
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                   <Target className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -502,11 +520,11 @@ Remember, this is a process, not an event. Each week builds on the previous one,
             </div>
             
             {/* Main heading */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <h2 className="text-lg sm:text-xl text-muted-foreground mb-3 font-medium">
                 AI-powered YouTube script writer with file upload, sentiment analysis & translation
               </h2>
-              <p className="text-sm text-muted-foreground/80 mb-8">
+              <p className="text-sm text-muted-foreground/80 mb-6">
                 Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
               </p>
               
@@ -529,8 +547,8 @@ Remember, this is a process, not an event. Each week builds on the previous one,
           </div>
         </header>
 
-        {/* Progress Steps */}
-        <div className="flex justify-center mb-6">
+        {/* Progress Steps - Reduced margin */}
+        <div className="flex justify-center mb-4">
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-3">
             <div className="flex items-center space-x-2 sm:space-x-4">
               {steps.map((step, index) => {
@@ -658,6 +676,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                         value={scriptInput.topic}
                         onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
                         className="text-xs sm:text-sm"
+                        required
                       />
                     </div>
                     <div className="space-y-2">
@@ -765,8 +784,8 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-16 max-w-5xl mx-auto">
-            <div className="text-center mb-8">
+          <div className="mt-12 max-w-5xl mx-auto">
+            <div className="text-center mb-6">
               <h3 className="text-lg font-semibold text-foreground mb-2">Powerful Features</h3>
               <p className="text-sm text-muted-foreground">Everything you need for professional script generation</p>
             </div>
