@@ -805,17 +805,19 @@ export default function TacticsLibrary() {
         : [...prev, tacticName]
     );
 
-    // Scroll to tactic after a short delay to allow for opening animation
-    setTimeout(() => {
-      const tacticElement = tacticRefs.current[tacticName];
-      if (tacticElement) {
-        tacticElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center',
-          inline: 'nearest'
-        });
-      }
-    }, isCurrentlyOpen ? 0 : 150); // No delay when closing, short delay when opening
+    // Scroll to tactic after allowing time for opening animation to complete
+    if (!isCurrentlyOpen) {
+      setTimeout(() => {
+        const tacticElement = tacticRefs.current[tacticName];
+        if (tacticElement) {
+          tacticElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+      }, 400); // Longer delay to allow collapsible animation to complete
+    }
   };
 
   const handleReturn = () => {
