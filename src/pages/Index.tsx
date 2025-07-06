@@ -547,8 +547,8 @@ Remember, this is a process, not an event. Each week builds on the previous one,
           </div>
         </header>
 
-        {/* Progress Steps - Reduced margin */}
-        <div className="flex justify-center mb-4">
+        {/* Progress Steps - Further reduced margin */}
+        <div className="flex justify-center mb-2">
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-3">
             <div className="flex items-center space-x-2 sm:space-x-4">
               {steps.map((step, index) => {
