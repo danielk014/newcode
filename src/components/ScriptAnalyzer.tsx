@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -85,7 +84,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
             <TabsContent value="analysis" className="mt-6">
               <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
                 {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
-                  <Card key={index} className="border-l-4 border-l-blue-500">
+                  <Card key={index} className="border-l-4 border-l-blue-500 h-fit">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <BarChart3 className="w-5 h-5 text-blue-600" />
