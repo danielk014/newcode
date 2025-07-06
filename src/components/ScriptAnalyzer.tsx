@@ -82,8 +82,8 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               <TabsTrigger value="generate" className="flex-1 border border-black">Generate</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="analysis" className="mt-6">
-              <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+            <TabsContent value="analysis" className="mt-4">
+              <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
                 {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
                   <Card key={index} className="border-l-4 border-l-blue-500">
                     <CardHeader>
@@ -92,8 +92,8 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         Reference Script #{index + 1}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
                         {/* Basic Stats */}
                         <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
                           <div className="text-center">
