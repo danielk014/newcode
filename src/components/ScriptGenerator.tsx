@@ -164,25 +164,6 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     <div className="min-h-screen w-full bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <div className="space-y-6">
-          <div className="flex items-center justify-between mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/')}
-              className="gap-2"
-            >
-              <Home className="w-4 h-4" />
-              Home
-            </Button>
-            <div className="flex items-center gap-2">
-              <Target className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">
-                PitchArchitect
-              </h1>
-            </div>
-            <UserMenu />
-          </div>
-          
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2">
