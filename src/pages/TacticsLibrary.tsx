@@ -276,6 +276,19 @@ const tacticData: Tactic[] = [
       "Step 1: Do this first, Step 2: Then this, Step 3: Finally this..."
     ],
     psychology: "Leverages the brain's preference for structured information and the satisfaction derived from completing sequential tasks. Reduces cognitive load by breaking complexity into manageable chunks."
+  },
+  {
+    name: "Call to Action",
+    category: "Monetization",
+    description: "Directs viewers to newsletters, software, or submission forms promising further secrets or access",
+    explanation: "Strategic calls-to-action that create a bridge between your content and deeper engagement. This tactic transforms passive viewers into active participants by offering exclusive value in exchange for their commitment.",
+    whenToUse: "At the end of videos, during natural transition points, or when introducing premium content. Most effective when the CTA directly relates to the value just provided.",
+    examples: [
+      "Join my newsletter for the advanced strategies I can't share on YouTube...",
+      "Download my free checklist that breaks this down step-by-step...",
+      "Apply for my program if you're ready to take this seriously..."
+    ],
+    psychology: "Leverages the principle of reciprocity and the desire for exclusive access. Creates a sense of progression and community membership."
   }
 ];
 
