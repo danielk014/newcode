@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -733,6 +733,7 @@ export default function TacticsLibrary() {
   const navigate = useNavigate();
   const focusTactic = searchParams.get('tactic');
   const [openTactics, setOpenTactics] = useState<string[]>([]);
+  const tacticRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
   // Get the origin path and state from navigation state
   const originPath = (location.state as any)?.from || '/';
@@ -796,11 +797,25 @@ export default function TacticsLibrary() {
   }, [focusTactic]);
 
   const toggleTactic = (tacticName: string) => {
+    const isCurrentlyOpen = openTactics.includes(tacticName);
+    
     setOpenTactics(prev => 
-      prev.includes(tacticName) 
+      isCurrentlyOpen 
         ? prev.filter(name => name !== tacticName)
         : [...prev, tacticName]
     );
+
+    // Scroll to tactic after a short delay to allow for opening animation
+    setTimeout(() => {
+      const tacticElement = tacticRefs.current[tacticName];
+      if (tacticElement) {
+        tacticElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }, isCurrentlyOpen ? 0 : 150); // No delay when closing, short delay when opening
   };
 
   const handleReturn = () => {
@@ -853,7 +868,11 @@ export default function TacticsLibrary() {
             const isFocused = focusTactic && decodeURIComponent(focusTactic) === tactic.name;
             
             return (
-              <Card key={tactic.name} className={`shadow-lg ${isFocused ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}>
+              <Card 
+                key={tactic.name} 
+                ref={(el) => tacticRefs.current[tactic.name] = el}
+                className={`shadow-lg ${isFocused ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
+              >
                 <Collapsible open={isOpen} onOpenChange={() => toggleTactic(tactic.name)}>
                   <CollapsibleTrigger asChild>
                     <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
