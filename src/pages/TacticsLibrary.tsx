@@ -821,20 +821,18 @@ export default function TacticsLibrary() {
 
     // Scroll to tactic after allowing time for opening animation to complete
     if (!isCurrentlyOpen) {
-      // Use requestAnimationFrame to ensure DOM has updated, then add delay for animation
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          const tacticElement = tacticRefs.current[tacticName];
-          if (tacticElement) {
-            console.log('Scrolling to clicked tactic:', tacticName);
-            tacticElement.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'center',
-              inline: 'nearest'
-            });
-          }
-        }, 300); // Reduced delay since we're using requestAnimationFrame
-      });
+      // Wait for the collapsible animation to fully complete (typically 200ms)
+      setTimeout(() => {
+        const tacticElement = tacticRefs.current[tacticName];
+        if (tacticElement) {
+          console.log('Scrolling to clicked tactic:', tacticName);
+          tacticElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+      }, 500); // Increased delay to ensure collapsible content is fully expanded
     }
   };
 
