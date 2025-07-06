@@ -112,7 +112,15 @@ export type Database = {
           user_id?: string
           word_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_saved_scripts_temp_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "temp_users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       temp_users: {
         Row: {
