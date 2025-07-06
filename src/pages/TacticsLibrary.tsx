@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ArrowLeft, Brain, Target, Heart, Crown, Clock, Users } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useLocation } from 'react-router-dom';
 
 interface Tactic {
   name: string;
@@ -288,8 +288,12 @@ const categoryColors = {
 
 export default function TacticsLibrary() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const focusTactic = searchParams.get('tactic');
   const [openTactics, setOpenTactics] = useState<string[]>(focusTactic ? [focusTactic] : []);
+  
+  // Get the origin path from navigation state, default to home if not available
+  const originPath = (location.state as any)?.from || '/';
 
   const toggleTactic = (tacticName: string) => {
     setOpenTactics(prev => 
@@ -303,7 +307,7 @@ export default function TacticsLibrary() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link to="/">
+          <Link to={originPath}>
             <Button variant="outline" className="mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to PitchArchitect
