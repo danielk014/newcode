@@ -9,14 +9,12 @@ interface ProgressStep {
 }
 
 interface UseProgressTrackingProps {
-  steps?: Array<{ id: string; label: string }>;
+  steps: Array<{ id: string; label: string }>;
   onComplete?: () => void;
   onError?: (error: string) => void;
 }
 
-export const useProgressTracking = (props: UseProgressTrackingProps = {}) => {
-  const { steps = [], onComplete, onError } = props;
-  
+export const useProgressTracking = ({ steps, onComplete, onError }: UseProgressTrackingProps) => {
   const [progressSteps, setProgressSteps] = useState<ProgressStep[]>(
     steps.map(step => ({ ...step, status: 'pending' as const, progress: 0 }))
   );
@@ -95,8 +93,6 @@ export const useProgressTracking = (props: UseProgressTrackingProps = {}) => {
 
   // Calculate overall progress
   useEffect(() => {
-    if (progressSteps.length === 0) return;
-    
     const totalProgress = progressSteps.reduce((sum, step) => sum + step.progress, 0);
     const overall = totalProgress / progressSteps.length;
     setOverallProgress(overall);
