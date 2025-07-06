@@ -286,24 +286,31 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 <CardContent>
                   <div className="space-y-4">
                     {analysis.blueprint?.sections?.map((section: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-bold">{index + 1}</span>
+                      <div key={index} className="p-6 border rounded-lg bg-gradient-to-r from-gray-50 to-white">
+                        <div className="flex items-center gap-6">
+                          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-blue-600 font-bold text-xl">{index + 1}</span>
                           </div>
-                          <div>
-                            <h4 className="font-medium">{section.name}</h4>
-                            <p className="text-sm text-gray-600">{section.duration}</p>
-                            <p className="text-xs text-gray-500">{section.wordCount} words</p>
-                            <p className="text-xs text-gray-400">{section.purpose}</p>
+                          
+                          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div className="md:col-span-2">
+                              <h4 className="font-semibold text-lg mb-1">{section.name}</h4>
+                              <p className="text-sm text-gray-600">{section.purpose}</p>
+                            </div>
+                            
+                            <div className="flex flex-col items-start md:items-center">
+                              <div className="text-sm font-medium text-gray-700 mb-1">{section.duration}</div>
+                              <div className="text-xs text-gray-500">{section.wordCount} words</div>
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-1 justify-start md:justify-end">
+                              {section.tactics?.map((tactic: string, tacticIndex: number) => (
+                                <Badge key={tacticIndex} variant="secondary" className="text-xs whitespace-nowrap">
+                                  {tactic}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2">
-                          {section.tactics?.map((tactic: string, tacticIndex: number) => (
-                            <Badge key={tacticIndex} variant="secondary" className="text-xs">
-                              {tactic}
-                            </Badge>
-                          ))}
                         </div>
                       </div>
                     )) || (
