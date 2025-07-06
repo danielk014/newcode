@@ -114,12 +114,49 @@ export type Database = {
         }
         Relationships: []
       }
+      temp_users: {
+        Row: {
+          created_at: string
+          created_by_admin: boolean
+          expires_at: string
+          id: string
+          is_active: boolean
+          password: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_admin?: boolean
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          password: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          created_by_admin?: boolean
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          password?: string
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_days_remaining: {
+        Args: { user_id: string }
+        Returns: number
+      }
+      is_account_valid: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
