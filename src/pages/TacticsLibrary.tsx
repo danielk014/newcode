@@ -263,6 +263,19 @@ const tacticData: Tactic[] = [
       "This single word changed everything, and I'll reveal it in just a moment..."
     ],
     psychology: "Exploits the brain's prediction error system and our natural drive to complete patterns and fill knowledge gaps."
+  },
+  {
+    name: "Step-by-Step Blueprint",
+    category: "Retention",
+    description: "Presents actionable frameworks for predictable outcomes",
+    explanation: "Breaking down complex processes into clear, sequential steps makes content feel more valuable and actionable. This tactic keeps viewers engaged by providing a clear roadmap they can follow, creating a sense of progress and achievement.",
+    whenToUse: "When teaching complex concepts, presenting strategies, or guiding viewers through processes. Perfect for educational content and how-to videos.",
+    examples: [
+      "Here's my exact 5-step framework that generated $100k...",
+      "Follow this blueprint and you'll see results in 30 days...",
+      "Step 1: Do this first, Step 2: Then this, Step 3: Finally this..."
+    ],
+    psychology: "Leverages the brain's preference for structured information and the satisfaction derived from completing sequential tasks. Reduces cognitive load by breaking complexity into manageable chunks."
   }
 ];
 
@@ -299,7 +312,6 @@ export default function TacticsLibrary() {
 
   // Create mapping for common AI-generated tactic names to our library names
   const tacticNameMapping: Record<string, string> = {
-    'Step-by-Step Blueprint': 'Future Pacing',
     'Expert Authority': 'Authority Establishment', 
     'Social Validation': 'Social Proof',
     'Time Sensitivity': 'Scarcity Creation',
