@@ -92,9 +92,23 @@ export const ScriptTranslator: React.FC<ScriptTranslatorProps> = ({
       });
     } catch (error) {
       console.error('Translation error:', error);
+      
+      let errorMessage = "Could not translate script";
+      
+      // Provide more specific error messages
+      if (error.message?.includes('Claude API key not configured')) {
+        errorMessage = "Translation service not available. Please contact support.";
+      } else if (error.message?.includes('non-2xx status code')) {
+        errorMessage = "Translation service temporarily unavailable. Please try again.";
+      } else if (error.message?.includes('timeout')) {
+        errorMessage = "Translation taking too long. Please try with a shorter script.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Translation Failed",
-        description: error.message || "Could not translate script",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

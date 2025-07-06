@@ -10,10 +10,12 @@ const corsHeaders = {
 const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
   const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
   if (!claudeApiKey) {
-    throw new Error('Claude API key not configured');
+    console.error('Claude API key not found in environment variables');
+    throw new Error('Claude API key not configured. Please set CLAUDE_API_KEY in Supabase secrets.');
   }
 
   console.log('Calling Claude API for translation...');
+  console.log('API key exists:', claudeApiKey ? 'Yes' : 'No');
   
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
