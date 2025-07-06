@@ -327,7 +327,7 @@ export default function TacticsLibrary() {
             }}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to PitchArchitect
+            Return
           </Button>
           
           <div className="text-center">
