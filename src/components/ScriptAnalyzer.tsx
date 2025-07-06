@@ -245,11 +245,6 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                             name={tactic.name} 
                             currentStep={currentStep} 
                             analysis={analysis}
-                            navigationState={{
-                              from: location.pathname,
-                              currentStep: currentStep,
-                              analysis: analysis
-                            }}
                           >
                             <span className="font-medium">{tactic.name}</span>
                           </ClickableTactic>

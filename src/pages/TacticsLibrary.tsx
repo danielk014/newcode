@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -292,11 +291,18 @@ export default function TacticsLibrary() {
   const location = useLocation();
   const navigate = useNavigate();
   const focusTactic = searchParams.get('tactic');
-  const [openTactics, setOpenTactics] = useState<string[]>(focusTactic ? [focusTactic] : []);
+  const [openTactics, setOpenTactics] = useState<string[]>([]);
   
   // Get the origin path and state from navigation state
   const originPath = (location.state as any)?.from || '/';
   const navigationState = location.state as any;
+
+  // Automatically open the focused tactic when the component mounts or when focusTactic changes
+  useEffect(() => {
+    if (focusTactic) {
+      setOpenTactics([focusTactic]);
+    }
+  }, [focusTactic]);
 
   const toggleTactic = (tacticName: string) => {
     setOpenTactics(prev => 
