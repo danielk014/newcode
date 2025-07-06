@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -547,8 +548,8 @@ Remember, this is a process, not an event. Each week builds on the previous one,
           </div>
         </header>
 
-        {/* Progress Steps - Reduced margin by 50% */}
-        <div className="flex justify-center mb-1">
+        {/* Progress Steps - Minimized gap to bring closer to Enhanced Tactics Library */}
+        <div className="flex justify-center mb-0">
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-3">
             <div className="flex items-center space-x-2 sm:space-x-4">
               {steps.map((step, index) => {
