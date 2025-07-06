@@ -304,8 +304,16 @@ export default function TacticsLibrary() {
     );
   };
 
+  // Add keyboard event handler to prevent unwanted navigation
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100" onKeyDown={handleKeyDown}>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Button 
@@ -352,7 +360,16 @@ export default function TacticsLibrary() {
               <Card key={tactic.name} className="shadow-lg">
                 <Collapsible open={isOpen} onOpenChange={() => toggleTactic(tactic.name)}>
                   <CollapsibleTrigger asChild>
-                    <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+                    <CardHeader 
+                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleTactic(tactic.name);
+                        }
+                      }}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Icon className="w-6 h-6 text-blue-600" />
