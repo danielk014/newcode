@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,23 @@ interface ScriptAnalyzerProps {
 
 export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
   const [activeTab, setActiveTab] = useState('analysis');
+
+  if (!analysis) {
+    return (
+      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl flex items-center justify-center gap-2">
+            <Brain className="w-6 h-6 text-blue-600 animate-pulse" />
+            Analyzing Your Scripts...
+          </CardTitle>
+          <p className="text-gray-600">Our AI is examining your scripts for viral patterns and tactics</p>
+        </CardHeader>
+        <CardContent className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const getTacticColor = (tactic: string) => {
     const colors = [

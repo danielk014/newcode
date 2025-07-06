@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 import { IndustryTemplates } from '@/components/IndustryTemplates';
 import { FormatRecommendationTool } from '@/components/FormatRecommendationTool';
-import { AuthGuard } from '@/components/AuthGuard';
+import AuthGuard from '@/components/AuthGuard';
 import UserMenu from '@/components/UserMenu';
 import { useLocation } from 'react-router-dom';
 
@@ -40,6 +41,7 @@ export default function Index() {
   const [detectedTactics, setDetectedTactics] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [scriptInputs, setScriptInputs] = useState(['']);
 
   // Handle state restoration when returning from tactics library
   useEffect(() => {
@@ -54,12 +56,12 @@ export default function Index() {
 
   const steps = [
     {
-      title: "Input Your Topic",
+      title: "Input Your Scripts",
       icon: <FileText className="w-6 h-6" />,
-      description: "Tell us what you want to create content about"
+      description: "Paste your high-performing reference scripts"
     },
     {
-      title: "Choose Format",
+      title: "Choose Format", 
       icon: <Target className="w-6 h-6" />,
       description: "Select the best viral format for your content"
     },
@@ -94,6 +96,7 @@ export default function Index() {
     setGeneratedScript('');
     setDetectedTactics([]);
     setAnalysis(null);
+    setScriptInputs(['']);
   };
 
   const handleScriptGenerated = (script: string, tactics: any[]) => {
@@ -104,6 +107,65 @@ export default function Index() {
 
   const handleAnalysisComplete = (analysisResult: any) => {
     setAnalysis(analysisResult);
+  };
+
+  const handleInputChange = (index: number, value: string) => {
+    const newInputs = [...scriptInputs];
+    newInputs[index] = value;
+    setScriptInputs(newInputs);
+  };
+
+  const handleAddInput = () => {
+    if (scriptInputs.length < 5) {
+      setScriptInputs([...scriptInputs, '']);
+    }
+  };
+
+  const handleRemoveInput = (index: number) => {
+    if (scriptInputs.length > 1) {
+      const newInputs = scriptInputs.filter((_, i) => i !== index);
+      setScriptInputs(newInputs);
+    }
+  };
+
+  const handleAnalyzeScripts = async () => {
+    setIsGenerating(true);
+    setCurrentStep(2);
+    
+    // Simulate analysis process
+    setTimeout(() => {
+      const mockAnalysis = {
+        scriptAnalyses: scriptInputs.filter(input => input.trim()).map((script, index) => ({
+          wordCount: script.split(' ').length,
+          estimatedDuration: `${Math.ceil(script.split(' ').length / 150)} min`,
+          tactics: [
+            { name: 'Hook', category: 'Attention', strength: 8, description: 'Strong opening statement' },
+            { name: 'Social Proof', category: 'Credibility', strength: 7, description: 'Uses testimonials' }
+          ],
+          structure: {
+            hook: 'Attention-grabbing opening',
+            problem: 'Identifies pain point',
+            solution: 'Presents clear solution',
+            cta: 'Strong call to action'
+          }
+        })),
+        synthesizedTactics: [
+          { name: 'Pattern Interrupt', category: 'Attention', description: 'Breaks normal thought patterns' },
+          { name: 'Authority Building', category: 'Credibility', description: 'Establishes expertise' }
+        ],
+        blueprint: {
+          sections: [
+            { name: 'Hook', purpose: 'Grab attention', duration: '0-5s', wordCount: '10-15', tactics: ['Pattern Interrupt'] },
+            { name: 'Problem', purpose: 'Identify pain', duration: '5-15s', wordCount: '20-30', tactics: ['Pain Point'] },
+            { name: 'Solution', purpose: 'Present offer', duration: '15-45s', wordCount: '50-80', tactics: ['Authority'] },
+            { name: 'CTA', purpose: 'Drive action', duration: '45-60s', wordCount: '15-25', tactics: ['Urgency'] }
+          ]
+        }
+      };
+      
+      setAnalysis(mockAnalysis);
+      setIsGenerating(false);
+    }, 3000);
   };
 
   if (generatedScript && currentStep === 3) {
@@ -174,31 +236,62 @@ export default function Index() {
           {/* Step Content */}
           <div className="max-w-4xl mx-auto">
             {currentStep === 0 && (
-              <ScriptInputPanel 
-                onNext={handleNext}
-                userInput={userInput}
-                setUserInput={setUserInput}
-              />
+              <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <FileText className="w-6 h-6 text-blue-600" />
+                    Paste Your Reference Scripts
+                  </CardTitle>
+                  <p className="text-gray-600">Upload 1-5 high-performing scripts to analyze their success patterns</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {scriptInputs.map((input, index) => (
+                      <ScriptInputPanel
+                        key={index}
+                        index={index}
+                        value={input}
+                        onChange={(value) => handleInputChange(index, value)}
+                        onRemove={() => handleRemoveInput(index)}
+                        canRemove={scriptInputs.length > 1}
+                      />
+                    ))}
+                    
+                    <div className="flex gap-4 justify-between items-center">
+                      {scriptInputs.length < 5 && (
+                        <Button
+                          variant="outline"
+                          onClick={handleAddInput}
+                          className="flex-1"
+                        >
+                          + Add Another Script
+                        </Button>
+                      )}
+                      <Button
+                        onClick={handleAnalyzeScripts}
+                        disabled={!scriptInputs.some(input => input.trim())}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Analyze Scripts
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             {currentStep === 1 && (
               <ViralFormatSelector 
-                onNext={handleNext}
-                onBack={handleBack}
-                userInput={userInput}
                 selectedFormat={selectedFormat}
-                setSelectedFormat={setSelectedFormat}
+                onFormatSelect={setSelectedFormat}
               />
             )}
 
             {currentStep === 2 && (
               <ScriptAnalyzer
-                userInput={userInput}
-                selectedFormat={selectedFormat}
-                onScriptGenerated={handleScriptGenerated}
-                onBack={handleBack}
-                onAnalysisComplete={handleAnalysisComplete}
                 analysis={analysis}
+                onGenerate={handleScriptGenerated}
                 currentStep={currentStep}
               />
             )}
