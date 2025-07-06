@@ -177,13 +177,13 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                   <Home className="w-4 h-4" />
                   Home
                 </Button>
+                <div className="flex items-center gap-2">
+                  <Target className="w-6 h-6 text-primary" />
+                  <h1 className="text-2xl font-bold text-foreground">
+                    PitchArchitect
+                  </h1>
+                </div>
                 <UserMenu />
-              </div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Target className="w-6 h-6 text-primary" />
-                <h1 className="text-2xl font-bold text-foreground">
-                  PitchArchitect
-                </h1>
               </div>
               <div className="flex items-center justify-center gap-2">
                 <CheckCircle className="w-6 h-6 text-green-600" />
