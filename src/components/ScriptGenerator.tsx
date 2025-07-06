@@ -7,13 +7,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages } from 'lucide-react';
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages, Home } from 'lucide-react';
 import { TacticMapper } from './TacticMapper';
 import { ScriptImprovement } from './ScriptImprovement';
 import { ScriptTranslator } from './ScriptTranslator';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface ScriptGeneratorProps {
   script: string;
@@ -35,6 +36,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
   const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(editedScript);
@@ -161,7 +163,16 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
   return (
     <div className="space-y-6">
       <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader className="text-center">
+        <CardHeader className="text-center relative">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate('/')}
+            className="absolute left-4 top-4"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Home
+          </Button>
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
             <CheckCircle className="w-6 h-6 text-green-600" />
             Your Script is Ready!
