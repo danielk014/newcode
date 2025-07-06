@@ -210,6 +210,25 @@ const Index = () => {
   };
 
   const handleGenerate = async () => {
+    // Validate required fields before proceeding
+    if (!scriptInput.topic.trim()) {
+      toast({
+        title: "Topic Required",
+        description: "Please enter a video topic before generating.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (scriptInput.scripts.filter(s => s.trim()).length < 2) {
+      toast({
+        title: "Scripts Required",
+        description: "Please provide at least 2 reference scripts.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setCurrentStep(2);
     setIsGenerating(true);
     progressTracking.reset();
@@ -224,15 +243,17 @@ const Index = () => {
       progressTracking.simulateProgress('generating', 30000);
       
       console.log('Generating viral script with optimized performance...');
+      console.log('Topic:', scriptInput.topic);
+      console.log('Scripts count:', scriptInput.scripts.filter(s => s.trim()).length);
       
       const { data, error } = await supabase.functions.invoke('generate-script', {
         body: {
-          topic: scriptInput.topic,
-          description: scriptInput.description,
-          targetAudience: 'YouTube viewers interested in ' + scriptInput.topic,
+          topic: scriptInput.topic.trim(),
+          description: scriptInput.description.trim(),
+          targetAudience: 'YouTube viewers interested in ' + scriptInput.topic.trim(),
           videoLength: Math.round(scriptInput.targetLength / 140),
           scripts: scriptInput.scripts.filter(s => s.trim()),
-          callToAction: scriptInput.callToAction,
+          callToAction: scriptInput.callToAction.trim(),
           format: selectedFormat,
           targetWordCount: scriptInput.targetLength
         }
