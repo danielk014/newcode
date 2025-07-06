@@ -163,6 +163,19 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
 
   return (
     <div className="min-h-screen w-full bg-background">
+      {/* Home button in top-left corner */}
+      <div className="absolute top-4 left-4 z-10">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => navigate('/')}
+          className="gap-2"
+        >
+          <Home className="w-4 h-4" />
+          Home
+        </Button>
+      </div>
+      
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <div className="space-y-6">
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
