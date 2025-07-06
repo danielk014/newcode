@@ -193,12 +193,12 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="script">Generated Script</TabsTrigger>
-              <TabsTrigger value="mapping">Tactic Mapping</TabsTrigger>
-              <TabsTrigger value="revisions">Improve Script</TabsTrigger>
-              <TabsTrigger value="translate">Translate</TabsTrigger>
-              <TabsTrigger value="versions">Versions</TabsTrigger>
-              <TabsTrigger value="export">Export & Share</TabsTrigger>
+              <TabsTrigger value="script" className="hover:bg-green-500 hover:text-white transition-colors">Generated Script</TabsTrigger>
+              <TabsTrigger value="mapping" className="hover:bg-green-500 hover:text-white transition-colors">Tactic Mapping</TabsTrigger>
+              <TabsTrigger value="revisions" className="hover:bg-green-500 hover:text-white transition-colors">Improve Script</TabsTrigger>
+              <TabsTrigger value="translate" className="hover:bg-green-500 hover:text-white transition-colors">Translate</TabsTrigger>
+              <TabsTrigger value="versions" className="hover:bg-green-500 hover:text-white transition-colors">Versions</TabsTrigger>
+              <TabsTrigger value="export" className="hover:bg-green-500 hover:text-white transition-colors">Export & Share</TabsTrigger>
             </TabsList>
 
             <TabsContent value="script" className="mt-6">
