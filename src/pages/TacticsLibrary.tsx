@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -290,7 +289,6 @@ const categoryColors = {
 export default function TacticsLibrary() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const navigate = useNavigate();
   const focusTactic = searchParams.get('tactic');
   const [openTactics, setOpenTactics] = useState<string[]>(focusTactic ? [focusTactic] : []);
   
@@ -305,21 +303,6 @@ export default function TacticsLibrary() {
     );
   };
 
-  const handleReturn = () => {
-    const state = (location.state as any);
-    if (state?.currentStep && state?.analysis) {
-      // Navigate back with state restoration
-      navigate(originPath, { 
-        state: { 
-          restoreStep: state.currentStep, 
-          restoreAnalysis: state.analysis 
-        } 
-      });
-    } else {
-      navigate(originPath);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
@@ -327,10 +310,21 @@ export default function TacticsLibrary() {
           <Button 
             variant="outline" 
             className="mb-4"
-            onClick={handleReturn}
+            onClick={() => {
+              const state = (location.state as any);
+              if (state?.currentStep && state?.analysis) {
+                // Navigate back with state restoration
+                window.history.replaceState(
+                  { currentStep: state.currentStep, analysis: state.analysis }, 
+                  '', 
+                  originPath
+                );
+              }
+              window.location.href = originPath;
+            }}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Return
+            Back to PitchArchitect
           </Button>
           
           <div className="text-center">
