@@ -457,19 +457,17 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-background">
+    <div className="min-h-screen w-full bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
-        {/* Futuristic Header */}
-        <div className="glass border-b border-glass-border backdrop-blur-lg -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-8 neon-glow">
+        {/* Header */}
+        <div className="bg-card border-b border-border -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-8">
           <div className="max-w-4xl mx-auto text-center relative">
             <div className="absolute top-0 right-0 hidden sm:block">
               <UserMenu />
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-primary flex items-center justify-center neon-glow animate-float">
-                <Target className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <h1 className="text-xl sm:text-3xl font-bold text-foreground neon-text">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+              <h1 className="text-xl sm:text-3xl font-bold text-foreground">
                 PitchArchitect
               </h1>
             </div>
@@ -480,13 +478,13 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 px-2">
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto glass border-glass-border neon-glow hover:bg-primary/10">
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
                 <Link to="/enhanced-tactics">
                   <BookOpen className="w-4 h-4 mr-2" />
                   <span className="text-xs sm:text-sm">View Enhanced Tactics Library</span>
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto glass border-glass-border neon-glow hover:bg-primary/10">
+              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
                 <Link to="/saved-scripts">
                   <FileText className="w-4 h-4 mr-2" />
                   <span className="text-xs sm:text-sm">My Saved Scripts</span>
@@ -500,47 +498,43 @@ Remember, this is a process, not an event. Each week builds on the previous one,
           </div>
         </div>
 
-        {/* Futuristic Progress Steps */}
+        {/* Progress Steps */}
         <div className="flex justify-center mb-4 sm:mb-8 overflow-x-auto pb-2">
-          <div className="glass rounded-full p-2 neon-glow">
-            <div className="flex items-center space-x-1 sm:space-x-2 min-w-max px-2">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = currentStep === step.id;
-                const isCompleted = currentStep > step.id;
-                
-                return (
-                  <div key={step.id} className="flex items-center">
-                    <div className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all duration-300 border ${
-                      isActive ? 'bg-gradient-primary text-white border-primary shadow-[0_0_20px_hsl(var(--primary))] animate-glow-pulse' : 
-                      isCompleted ? 'bg-gradient-primary text-white border-primary shadow-[0_0_10px_hsl(var(--primary))]' : 
-                      'glass border-glass-border text-muted-foreground hover:border-primary/50'
-                    }`}>
-                      <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{step.title}</span>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <ArrowRight className={`w-3 h-3 sm:w-4 sm:h-4 mx-0.5 sm:mx-1 transition-colors duration-300 ${
-                        isCompleted ? 'text-primary' : 'text-muted-foreground'
-                      }`} />
-                    )}
+          <div className="flex items-center space-x-1 sm:space-x-2 min-w-max px-2">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = currentStep === step.id;
+              const isCompleted = currentStep > step.id;
+              
+              return (
+                <div key={step.id} className="flex items-center">
+                  <div className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all border ${
+                    isActive ? 'bg-primary text-primary-foreground border-primary' : 
+                    isCompleted ? 'bg-accent text-accent-foreground border-accent' : 
+                    'bg-secondary text-secondary-foreground border-border'
+                  }`}>
+                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{step.title}</span>
                   </div>
-                );
-              })}
-            </div>
+                  {index < steps.length - 1 && (
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground mx-0.5 sm:mx-1" />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Main Content */}
         <div className="max-w-5xl mx-auto">
           {currentStep === 0 && (
-            <Card className="glass border-glass-border neon-glow animate-fade-in">
+            <Card className="shadow-lg border border-border bg-card">
               <CardHeader className="text-center pb-3 sm:pb-4 px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl flex flex-col sm:flex-row items-center justify-center gap-2 neon-text">
-                  <FileText className="w-5 h-5 text-primary animate-float" />
+                <CardTitle className="text-lg sm:text-xl flex flex-col sm:flex-row items-center justify-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
                   Input Your Reference Scripts
                 </CardTitle>
-                <CardDescription className="text-xs sm:text-sm px-2 text-muted-foreground">
+                <CardDescription className="text-xs sm:text-sm px-2">
                   Multiple ways to add scripts: copy-paste, upload files
                 </CardDescription>
               </CardHeader>
