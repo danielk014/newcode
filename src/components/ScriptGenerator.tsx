@@ -76,17 +76,15 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     try {
       const wordCount = editedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
       
-      // Get the current session to ensure we have the correct user ID
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user?.id) {
-        throw new Error('No valid session found');
+      // Use the user ID from the custom auth system
+      if (!user?.id) {
+        throw new Error('No valid user found');
       }
       
       const { error } = await supabase
         .from('saved_scripts')
         .insert({
-          user_id: session.user.id,
+          user_id: user.id,
           title: saveTitle.trim(),
           content: editedScript.trim(),
           word_count: wordCount,
