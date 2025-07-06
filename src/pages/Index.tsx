@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -786,7 +784,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-12 max-w-5xl mx-auto">
+          <div className="mt-12 mb-8 max-w-5xl mx-auto">
             <div className="text-center mb-6">
               <h3 className="text-lg font-semibold text-foreground mb-2">Powerful Features</h3>
               <p className="text-sm text-muted-foreground">Everything you need for professional script generation</p>
@@ -828,4 +826,3 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 };
 
 export default Index;
-
