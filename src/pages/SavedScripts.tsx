@@ -168,7 +168,7 @@ const SavedScriptsPage = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Script Generator
