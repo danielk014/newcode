@@ -96,7 +96,7 @@ export const ScriptTranslator: React.FC<ScriptTranslatorProps> = ({
       let errorMessage = "Could not translate script";
       
       // Provide more specific error messages
-      if (error.message?.includes('Claude API key not configured')) {
+      if (error.message?.includes('OpenAI API key not configured')) {
         errorMessage = "Translation service not available. Please contact support.";
       } else if (error.message?.includes('non-2xx status code')) {
         errorMessage = "Translation service temporarily unavailable. Please try again.";

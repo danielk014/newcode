@@ -7,34 +7,34 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
-  const claudeApiKey = Deno.env.get('CLAUDE_API_KEY');
-  if (!claudeApiKey) {
-    console.error('Claude API key not found in environment variables');
-    throw new Error('Claude API key not configured. Please set CLAUDE_API_KEY in Supabase secrets.');
+const callOpenAIAPI = async (prompt: string, systemPrompt: string): Promise<string> => {
+  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openAIApiKey) {
+    console.error('OpenAI API key not found in environment variables');
+    throw new Error('OpenAI API key not configured. Please set OPENAI_API_KEY in Supabase secrets.');
   }
 
-  console.log('Calling Claude API for translation...');
-  console.log('API key exists:', claudeApiKey ? 'Yes' : 'No');
+  console.log('Calling OpenAI API for translation...');
+  console.log('API key exists:', openAIApiKey ? 'Yes' : 'No');
   
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
   
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': claudeApiKey,
+        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 8000, // Increased from 4000 to handle long scripts
-        system: systemPrompt,
+        model: 'gpt-4.1-2025-04-14',
+        max_tokens: 8000,
         messages: [
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
-        ]
+        ],
+        temperature: 0.3
       }),
       signal: controller.signal
     });
@@ -43,17 +43,17 @@ const callClaudeAPI = async (prompt: string, systemPrompt: string): Promise<stri
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Claude API error:', response.status, errorText);
-      throw new Error(`Claude API error: ${response.status} - ${errorText}`);
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     
-    if (!data.content || !data.content[0] || !data.content[0].text) {
-      throw new Error('Invalid response from Claude API');
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      throw new Error('Invalid response from OpenAI API');
     }
     
-    return data.content[0].text;
+    return data.choices[0].message.content;
   } catch (error) {
     clearTimeout(timeoutId);
     console.error('Translation API error:', error);
@@ -104,7 +104,7 @@ ${text}
 
 Remember: Translate the ENTIRE script above without any omissions.`;
 
-    const translatedText = await callClaudeAPI(userPrompt, systemPrompt);
+    const translatedText = await callOpenAIAPI(userPrompt, systemPrompt);
 
     const translatedLength = translatedText.length;
     console.log(`Translation completed successfully. Output length: ${translatedLength} characters`);
