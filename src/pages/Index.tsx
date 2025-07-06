@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -500,7 +501,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
     <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-secondary/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <header className="py-6 sm:py-8 mb-6">
+        <header className="py-6 sm:py-8 mb-3">
           <div className="max-w-5xl mx-auto">
             {/* Top bar with user menu */}
             <div className="flex justify-between items-start mb-6">
@@ -521,11 +522,11 @@ Remember, this is a process, not an event. Each week builds on the previous one,
             </div>
             
             {/* Main heading */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-3">
               <h2 className="text-lg sm:text-xl text-muted-foreground mb-3 font-medium">
                 AI-powered YouTube script writer with file upload, sentiment analysis & translation
               </h2>
-              <p className="text-sm text-muted-foreground/80 mb-6">
+              <p className="text-sm text-muted-foreground/80 mb-3">
                 Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
               </p>
               
@@ -827,3 +828,4 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 };
 
 export default Index;
+
