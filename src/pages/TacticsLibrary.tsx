@@ -297,6 +297,25 @@ export default function TacticsLibrary() {
   const originPath = (location.state as any)?.from || '/';
   const navigationState = location.state as any;
 
+  // Create mapping for common AI-generated tactic names to our library names
+  const tacticNameMapping: Record<string, string> = {
+    'Step-by-Step Blueprint': 'Future Pacing',
+    'Expert Authority': 'Authority Establishment', 
+    'Social Validation': 'Social Proof',
+    'Time Sensitivity': 'Scarcity Creation',
+    'Success Stories': 'Social Proof',
+    'Problem Agitation': 'Pain Point Amplification',
+    'Benefit Stacking': 'Dream Selling',
+    'Curiosity Gap': 'Information Gap Hook',
+    'Pattern Breaking': 'Pattern Interrupt',
+    'Cliffhanger': 'Story Loop Opening',
+    'Controversy Hook': 'Controversy Creation',
+    'Value First': 'Reciprocity Trigger',
+    'Urgency Creation': 'Urgency Stacking',
+    'Vulnerable Moment': 'Vulnerability Sharing',
+    'Information Withholding': 'Curiosity Gap Widening'
+  };
+
   // Automatically open the focused tactic when the component mounts or when focusTactic changes
   useEffect(() => {
     if (focusTactic) {
@@ -304,23 +323,34 @@ export default function TacticsLibrary() {
       const decodedTacticName = decodeURIComponent(focusTactic);
       console.log('Looking for tactic:', decodedTacticName);
       
-      // Find the exact tactic in our data
-      const matchingTactic = tacticData.find(tactic => tactic.name === decodedTacticName);
+      // Try direct match first
+      let matchingTactic = tacticData.find(tactic => tactic.name === decodedTacticName);
+      
+      // If not found, try the mapping
+      if (!matchingTactic && tacticNameMapping[decodedTacticName]) {
+        const mappedName = tacticNameMapping[decodedTacticName];
+        matchingTactic = tacticData.find(tactic => tactic.name === mappedName);
+        console.log(`Mapped "${decodedTacticName}" to "${mappedName}"`);
+      }
+      
+      // If still not found, try partial matching
+      if (!matchingTactic) {
+        matchingTactic = tacticData.find(tactic => 
+          tactic.name.toLowerCase().includes(decodedTacticName.toLowerCase()) ||
+          decodedTacticName.toLowerCase().includes(tactic.name.toLowerCase()) ||
+          // Check if any word in the tactic name matches
+          tactic.name.toLowerCase().split(' ').some(word => 
+            decodedTacticName.toLowerCase().includes(word) && word.length > 2
+          )
+        );
+      }
       
       if (matchingTactic) {
         console.log('Found matching tactic:', matchingTactic.name);
         setOpenTactics([matchingTactic.name]);
       } else {
         console.log('No matching tactic found. Available tactics:', tacticData.map(t => t.name));
-        // Fallback: try partial matching
-        const partialMatch = tacticData.find(tactic => 
-          tactic.name.toLowerCase().includes(decodedTacticName.toLowerCase()) ||
-          decodedTacticName.toLowerCase().includes(tactic.name.toLowerCase())
-        );
-        if (partialMatch) {
-          console.log('Found partial match:', partialMatch.name);
-          setOpenTactics([partialMatch.name]);
-        }
+        console.log('Tried mapping for:', decodedTacticName);
       }
     }
   }, [focusTactic]);
