@@ -10,7 +10,7 @@ import { Save, FileText, Trash2, Eye, Calendar, Hash, ArrowLeft } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface SavedScript {
   id: string;
@@ -32,6 +32,7 @@ const SavedScriptsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -167,13 +168,7 @@ const SavedScriptsPage = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => {
-              if (window.history.length > 1) {
-                window.history.back();
-              } else {
-                window.location.href = '/';
-              }
-            }}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Script Generator
