@@ -1,7 +1,7 @@
 
 export interface PsychologicalTactic {
   name: string;
-  category: 'Hook' | 'Narrative' | 'Persuasion' | 'Engagement' | 'Emotional' | 'Retention' | 'Monetization' | 'Algorithm';
+  category: 'Hook' | 'Narrative' | 'Persuasion' | 'Engagement' | 'Emotional' | 'Retention' | 'Monetization' | 'Algorithm' | 'Authority';
   description: string;
   effectiveness: number;
   examples: string[];
@@ -287,6 +287,160 @@ export const psychologicalTactics: PsychologicalTactic[] = [
     effectiveness: 76,
     examples: ["Join my newsletter for the advanced strategies I can't share on YouTube", "Download my free checklist that breaks this down step-by-step", "Apply for my program if you're ready to take this seriously"],
     timing: "End of videos"
+  },
+  
+  // Advanced Psychological Tactics
+  {
+    name: "Loss Aversion",
+    category: "Emotional",
+    description: "Emphasize what viewers will lose by not taking action",
+    effectiveness: 89,
+    examples: ["Every day you wait, you're losing money", "While you hesitate, your competitors are getting ahead", "Don't let this opportunity slip away"],
+    timing: "Before call to action"
+  },
+  {
+    name: "Anchoring Bias",
+    category: "Persuasion",
+    description: "Set a high reference point to make your offer seem reasonable",
+    effectiveness: 82,
+    examples: ["This normally costs $2000, but today only $297", "Most people spend years learning this, you'll master it in weeks", "While others charge $500/hour, I'm giving this away free"],
+    timing: "Before revealing price or value"
+  },
+  {
+    name: "Commitment Consistency",
+    category: "Persuasion",
+    description: "Get small commitments that lead to bigger ones",
+    effectiveness: 84,
+    examples: ["If you agree that success requires action, then...", "Since you've already invested time watching this, why not...", "You said you wanted to change, so here's step one"],
+    timing: "Building toward major request"
+  },
+  {
+    name: "Fear of Missing Out (FOMO)",
+    category: "Emotional",
+    description: "Tap into fear of being left behind socially or professionally",
+    effectiveness: 87,
+    examples: ["Everyone in your industry is already doing this", "Don't be the last to discover this", "While you're thinking, others are already succeeding"],
+    timing: "Social proof sections"
+  },
+  {
+    name: "Nostalgia Hook",
+    category: "Emotional",
+    description: "Connect with positive memories to create emotional investment",
+    effectiveness: 76,
+    examples: ["Remember when things were simpler?", "This takes me back to when I first started", "Just like the good old days, but better"],
+    timing: "Opening or storytelling"
+  },
+  {
+    name: "Contrast Principle",
+    category: "Hook",
+    description: "Show dramatic before/after differences to highlight transformation",
+    effectiveness: 85,
+    examples: ["From zero to millionaire in 12 months", "The difference between struggling and thriving", "What separates winners from losers"],
+    timing: "Problem/solution presentation"
+  },
+  {
+    name: "Halo Effect",
+    category: "Authority",
+    description: "Use one impressive achievement to elevate everything else",
+    effectiveness: 81,
+    examples: ["As someone who built a $10M company", "Featured in Forbes, now I'll show you", "After speaking at Harvard, here's what I learned"],
+    timing: "Credibility establishment"
+  },
+  {
+    name: "Repetition Effect",
+    category: "Retention",
+    description: "Repeat key messages to increase believability and memory",
+    effectiveness: 78,
+    examples: ["This is important - really important", "Remember this, because this changes everything", "I'll say it again because it bears repeating"],
+    timing: "Key points emphasis"
+  },
+  {
+    name: "Exclusive Access",
+    category: "Persuasion",
+    description: "Make viewers feel specially chosen or privileged",
+    effectiveness: 83,
+    examples: ["I'm only sharing this with my subscribers", "This is insider information", "You're getting VIP access to this"],
+    timing: "Value delivery"
+  },
+  {
+    name: "Behind the Scenes",
+    category: "Engagement",
+    description: "Show the process, struggles, and journey behind success",
+    effectiveness: 80,
+    examples: ["Here's what really happened behind closed doors", "Let me pull back the curtain", "The untold story of how this really works"],
+    timing: "Storytelling sections"
+  },
+  {
+    name: "Trend Riding",
+    category: "Algorithm",
+    description: "Capitalize on current trends and viral topics",
+    effectiveness: 79,
+    examples: ["Everyone's talking about this trend, but here's what they're missing", "The viral method that actually works", "Why this trending topic matters for your business"],
+    timing: "Content hooks"
+  },
+  {
+    name: "Community Building",
+    category: "Engagement",
+    description: "Create sense of belonging and shared identity",
+    effectiveness: 77,
+    examples: ["Join thousands of entrepreneurs like yourself", "You're part of an exclusive group who gets this", "Welcome to the community of action-takers"],
+    timing: "Call to action"
+  },
+  {
+    name: "Expert Endorsement",
+    category: "Authority",
+    description: "Leverage third-party credibility and recommendations",
+    effectiveness: 85,
+    examples: ["As recommended by industry leaders", "Top experts agree this is the future", "Even my competitors admit this works"],
+    timing: "Credibility building"
+  },
+  {
+    name: "Reverse Psychology",
+    category: "Hook",
+    description: "Tell people NOT to do something to increase desire",
+    effectiveness: 81,
+    examples: ["Don't try this unless you're serious", "This isn't for everyone", "Please don't share this video"],
+    timing: "Content opening"
+  },
+  {
+    name: "Cliffhanger Technique",
+    category: "Retention",
+    description: "End sections on suspense to maintain engagement",
+    effectiveness: 84,
+    examples: ["But then something unexpected happened", "The shocking twist comes next", "What I discovered next will blow your mind"],
+    timing: "Section transitions"
+  },
+  {
+    name: "Metaphor Power",
+    category: "Engagement",
+    description: "Use powerful comparisons to explain complex ideas simply",
+    effectiveness: 75,
+    examples: ["Building a business is like building a house", "This strategy is your secret weapon", "Think of this as your roadmap to success"],
+    timing: "Concept explanation"
+  },
+  {
+    name: "Personal Revelation",
+    category: "Emotional",
+    description: "Share intimate details to create deep connection",
+    effectiveness: 82,
+    examples: ["I've never told anyone this before", "This is deeply personal, but", "Here's my most embarrassing failure"],
+    timing: "Vulnerable moments"
+  },
+  {
+    name: "Challenge Framework",
+    category: "Engagement",
+    description: "Dare the audience to take action or prove something",
+    effectiveness: 78,
+    examples: ["I challenge you to try this for 30 days", "Prove me wrong if you can", "Here's my dare to you"],
+    timing: "Call to action"
+  },
+  {
+    name: "Newsjacking",
+    category: "Hook",
+    description: "Comment on current events to gain relevance and attention",
+    effectiveness: 73,
+    examples: ["With everything happening in the news", "This recent event proves my point", "While everyone's focused on [current event], here's what really matters"],
+    timing: "Content opening"
   }
 ];
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Target, Brain, Heart, Users, MessageSquare, Clock } from 'lucide-react';
+import { ArrowLeft, Target, Brain, Heart, Users, MessageSquare, Clock, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 
@@ -18,6 +18,7 @@ const Tactics = () => {
       case 'Retention': return <Clock className="w-5 h-5" />;
       case 'Algorithm': return <Target className="w-5 h-5" />;
       case 'Monetization': return <Brain className="w-5 h-5" />;
+      case 'Authority': return <Crown className="w-5 h-5" />;
       default: return <Target className="w-5 h-5" />;
     }
   };
@@ -32,6 +33,7 @@ const Tactics = () => {
       case 'Retention': return 'bg-indigo-100 text-indigo-800';
       case 'Algorithm': return 'bg-cyan-100 text-cyan-800';
       case 'Monetization': return 'bg-emerald-100 text-emerald-800';
+      case 'Authority': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };

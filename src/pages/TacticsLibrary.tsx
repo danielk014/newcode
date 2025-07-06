@@ -447,6 +447,255 @@ const tacticData: Tactic[] = [
       "I'm talking directly to you if you've ever felt..."
     ],
     psychology: "Creates parasocial relationships and personal investment by breaking down the barrier between creator and viewer."
+  },
+  
+  // Advanced Psychological Tactics
+  {
+    name: "Loss Aversion",
+    category: "Emotional",
+    description: "Emphasize what viewers will lose by not taking action",
+    explanation: "This tactic leverages the psychological principle that losses feel twice as powerful as equivalent gains. By focusing on what people will lose rather than what they'll gain, it creates stronger motivation to act.",
+    whenToUse: "Before calls-to-action, when overcoming hesitation, or when creating urgency around decision-making.",
+    examples: [
+      "Every day you wait, you're losing money to competitors",
+      "While you hesitate, opportunities are passing you by",
+      "Don't let this chance slip away - you'll regret it later"
+    ],
+    psychology: "Exploits loss aversion bias - the tendency for losses to feel psychologically more significant than equivalent gains."
+  },
+  {
+    name: "Anchoring Bias",
+    category: "Persuasion",
+    description: "Set a high reference point to make your offer seem reasonable",
+    explanation: "By presenting a high initial value or price point, you anchor expectations high, making your actual offer appear more reasonable and valuable by comparison.",
+    whenToUse: "Before revealing prices, when presenting value propositions, or when comparing options.",
+    examples: [
+      "This normally costs $2000, but today only $297",
+      "Most consultants charge $500/hour, I'm giving this away free",
+      "While others spend years learning this, you'll master it in weeks"
+    ],
+    psychology: "Leverages anchoring bias - the tendency to rely heavily on the first piece of information encountered when making decisions."
+  },
+  {
+    name: "Commitment Consistency",
+    category: "Persuasion",
+    description: "Get small commitments that lead to bigger ones",
+    explanation: "People have a strong desire to appear consistent with their previous commitments. By securing small agreements first, you make larger commitments more likely.",
+    whenToUse: "When building toward a major request, getting buy-in for concepts, or creating progressive engagement.",
+    examples: [
+      "If you agree that success requires action, then you'll love this next part",
+      "Since you've already invested time watching this, why not take the next step?",
+      "You said you wanted to change your life - here's how to start"
+    ],
+    psychology: "Based on commitment and consistency principle - people strive to be consistent with their previous commitments and stated beliefs."
+  },
+  {
+    name: "Fear of Missing Out (FOMO)",
+    category: "Emotional",
+    description: "Tap into fear of being left behind socially or professionally",
+    explanation: "FOMO creates anxiety about missing rewarding experiences others are having, driving people to take action to avoid being excluded or left behind.",
+    whenToUse: "When highlighting trends, showing social proof, or creating urgency around opportunities.",
+    examples: [
+      "Everyone in your industry is already doing this",
+      "Don't be the last person to discover this breakthrough",
+      "While you're thinking about it, others are already succeeding"
+    ],
+    psychology: "Exploits social comparison theory and the fear of regret, particularly strong in social media age."
+  },
+  {
+    name: "Nostalgia Hook",
+    category: "Emotional",
+    description: "Connect with positive memories to create emotional investment",
+    explanation: "Nostalgia creates positive emotions and makes people more open to messaging. It builds connection through shared cultural references and fond memories.",
+    whenToUse: "When building rapport, creating emotional connection, or contrasting past with present solutions.",
+    examples: [
+      "Remember when business was simpler? Here's how to get back to that",
+      "This takes me back to when I first started - full of hope and dreams",
+      "Just like the good old days, but with modern advantages"
+    ],
+    psychology: "Triggers positive emotional states associated with memory, making people more receptive and connected."
+  },
+  {
+    name: "Contrast Principle",
+    category: "Hook",
+    description: "Show dramatic before/after differences to highlight transformation",
+    explanation: "Dramatic contrasts make changes appear more significant and desirable. The human brain is wired to notice differences, making contrasts particularly compelling.",
+    whenToUse: "When presenting transformations, showing results, or highlighting the gap between current and desired states.",
+    examples: [
+      "From zero to millionaire in 12 months - here's exactly how",
+      "The stark difference between struggling entrepreneurs and thriving ones",
+      "What separates those who succeed from those who never make it"
+    ],
+    psychology: "Leverages the brain's pattern recognition and contrast detection systems to make differences appear more dramatic."
+  },
+  {
+    name: "Halo Effect",
+    category: "Authority",
+    description: "Use one impressive achievement to elevate everything else",
+    explanation: "When people perceive you as excellent in one area, they tend to assume you're excellent in related areas. One strong credential can enhance your entire reputation.",
+    whenToUse: "When establishing credibility, introducing yourself, or before making expert claims.",
+    examples: [
+      "As someone who built a $10M company, let me share what I've learned about marketing",
+      "After being featured in Forbes, I discovered this secret most people miss",
+      "Having spoken at Harvard Business School, here's my take on leadership"
+    ],
+    psychology: "Exploits the halo effect - the tendency for positive impressions in one area to influence opinions in other areas."
+  },
+  {
+    name: "Repetition Effect",
+    category: "Retention",
+    description: "Repeat key messages to increase believability and memory",
+    explanation: "Repetition increases both recall and believability. The more people hear something, the more likely they are to remember it and believe it's true.",
+    whenToUse: "For key messages, important concepts, or when you need to reinforce critical points throughout content.",
+    examples: [
+      "This is important - really, really important - so I'm going to say it again",
+      "Remember this principle, because this principle changes everything",
+      "I'll repeat this because it bears repeating: consistency beats perfection"
+    ],
+    psychology: "Based on the mere exposure effect and repetition bias - repeated exposure increases both familiarity and perceived truth."
+  },
+  {
+    name: "Exclusive Access",
+    category: "Persuasion",
+    description: "Make viewers feel specially chosen or privileged",
+    explanation: "Exclusivity creates a sense of special status and privilege. People value things more when they feel they have unique access to them.",
+    whenToUse: "When delivering valuable content, making offers, or building loyalty with your audience.",
+    examples: [
+      "I'm only sharing this insider information with my subscribers",
+      "This is behind-the-scenes access most people never get",
+      "You're getting VIP treatment with this exclusive reveal"
+    ],
+    psychology: "Leverages the need for uniqueness and status, making people feel special and valued."
+  },
+  {
+    name: "Behind the Scenes",
+    category: "Engagement",
+    description: "Show the process, struggles, and journey behind success",
+    explanation: "Behind-the-scenes content satisfies curiosity and creates authenticity. People are naturally drawn to seeing how things really work and the real story behind success.",
+    whenToUse: "When building authenticity, showing your process, or making your success more relatable and achievable.",
+    examples: [
+      "Here's what really happened behind closed doors during my biggest deal",
+      "Let me pull back the curtain on how this industry actually works",
+      "The untold story of the failures that led to this breakthrough"
+    ],
+    psychology: "Satisfies natural curiosity and creates authenticity through transparency, building trust and connection."
+  },
+  {
+    name: "Trend Riding",
+    category: "Algorithm",
+    description: "Capitalize on current trends and viral topics for increased reach",
+    explanation: "Connecting your content to trending topics leverages existing interest and algorithm preferences, dramatically increasing potential reach and engagement.",
+    whenToUse: "When current events relate to your message, during viral moments, or when trending topics align with your expertise.",
+    examples: [
+      "Everyone's talking about this AI trend, but here's what they're missing about business",
+      "This viral TikTok dance teaches us something important about marketing",
+      "Why this trending news story matters for your financial future"
+    ],
+    psychology: "Leverages recency bias and social proof - people are more interested in current, trending topics that others are discussing."
+  },
+  {
+    name: "Community Building",
+    category: "Engagement",
+    description: "Create sense of belonging and shared identity among viewers",
+    explanation: "Humans have a fundamental need to belong. By creating a sense of community and shared identity, you increase loyalty and engagement while making people feel part of something bigger.",
+    whenToUse: "When building long-term relationships, creating loyal followings, or encouraging ongoing engagement.",
+    examples: [
+      "Welcome to our community of ambitious entrepreneurs who refuse to settle",
+      "You're now part of an exclusive group of people who understand this secret",
+      "Join thousands of action-takers who are already transforming their lives"
+    ],
+    psychology: "Fulfills the fundamental human need for belonging and social connection, creating stronger emotional bonds."
+  },
+  {
+    name: "Expert Endorsement",
+    category: "Authority",
+    description: "Leverage third-party credibility and expert recommendations",
+    explanation: "Third-party endorsements are more credible than self-promotion. When recognized experts vouch for you or your methods, it dramatically increases trust and authority.",
+    whenToUse: "When establishing credibility, overcoming skepticism, or when you have legitimate expert backing.",
+    examples: [
+      "As recommended by three Nobel Prize winners in economics",
+      "Top industry leaders agree this is the future of marketing",
+      "Even my biggest competitors admit this strategy works"
+    ],
+    psychology: "Leverages authority principle and social proof - people trust expert opinions more than personal claims."
+  },
+  {
+    name: "Reverse Psychology",
+    category: "Hook",
+    description: "Tell people NOT to do something to increase their desire to do it",
+    explanation: "When you tell someone not to do something, it can trigger psychological reactance - the desire to do the opposite of what they're told, especially if they feel their freedom is being restricted.",
+    whenToUse: "When you want to increase desire, create intrigue, or filter for serious prospects only.",
+    examples: [
+      "Don't try this strategy unless you're 100% committed to success",
+      "This isn't for everyone - please don't share this video",
+      "I almost don't want to tell you this because it's so powerful"
+    ],
+    psychology: "Triggers psychological reactance - the tendency to want something more when told you can't or shouldn't have it."
+  },
+  {
+    name: "Cliffhanger Technique",
+    category: "Retention",
+    description: "End sections on suspense to maintain engagement across breaks",
+    explanation: "Cliffhangers create open loops that the brain desperately wants to close. This technique maintains attention across transitions and keeps people engaged longer.",
+    whenToUse: "Before breaks, when transitioning between topics, or at the end of content to encourage return visits.",
+    examples: [
+      "But then something completely unexpected happened - I'll tell you what in just a moment",
+      "The shocking twist in this story comes right after I explain this key concept",
+      "What I discovered next will completely change how you see this industry"
+    ],
+    psychology: "Exploits the Zeigarnik Effect and creates psychological tension that can only be resolved by continued engagement."
+  },
+  {
+    name: "Metaphor Power",
+    category: "Engagement",
+    description: "Use powerful comparisons to make complex ideas instantly understandable",
+    explanation: "Metaphors help people understand new concepts by relating them to familiar experiences. They make abstract ideas concrete and memorable.",
+    whenToUse: "When explaining complex concepts, making ideas stick, or helping people visualize abstract processes.",
+    examples: [
+      "Building a business is like constructing a house - you need a solid foundation",
+      "This marketing strategy is your secret weapon in the battle for attention",
+      "Think of your email list as a garden that needs daily nurturing"
+    ],
+    psychology: "Leverages analogical reasoning and makes new information easier to process by connecting to existing knowledge."
+  },
+  {
+    name: "Personal Revelation",
+    category: "Emotional",
+    description: "Share intimate details to create deep emotional connection",
+    explanation: "Personal revelations create intimacy and trust by showing vulnerability. When you share something deeply personal, people feel closer to you and more invested in your story.",
+    whenToUse: "When building deep connection, establishing trust, or making yourself more relatable and human.",
+    examples: [
+      "I've never told anyone this before, but I was actually homeless when I started",
+      "This is deeply personal, but I struggled with depression during my biggest success",
+      "Here's my most embarrassing business failure that no one knows about"
+    ],
+    psychology: "Creates intimacy through vulnerability and self-disclosure, triggering reciprocal trust and emotional investment."
+  },
+  {
+    name: "Challenge Framework",
+    category: "Engagement",
+    description: "Dare the audience to take action or prove something",
+    explanation: "Challenges tap into competitive instincts and the desire to prove oneself. They transform passive consumption into active participation.",
+    whenToUse: "When encouraging action, creating engagement, or when you want to separate serious people from casual viewers.",
+    examples: [
+      "I challenge you to implement this strategy for 30 days and prove me wrong",
+      "Here's my dare: try to find a flaw in this logic",
+      "Most people won't do this simple exercise - will you be different?"
+    ],
+    psychology: "Appeals to competitive instincts and the need to prove competence, creating stronger motivation than simple requests."
+  },
+  {
+    name: "Newsjacking",
+    category: "Hook",
+    description: "Comment on current events to gain immediate relevance and attention",
+    explanation: "By connecting your message to current events, you tap into existing attention and interest. This makes your content immediately relevant and timely.",
+    whenToUse: "When current events relate to your expertise, during major news cycles, or when you can add unique perspective to trending topics.",
+    examples: [
+      "With everything happening in the economy right now, here's what smart investors are doing",
+      "This recent corporate scandal perfectly illustrates the leadership principle I teach",
+      "While everyone's focused on this political drama, here's what's really affecting your business"
+    ],
+    psychology: "Leverages recency bias and current interest, making content feel urgent and immediately relevant."
   }
 ];
 
