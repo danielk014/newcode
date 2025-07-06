@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,63 +6,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Brain, Zap, Target, BarChart3, Clock, ArrowRight } from 'lucide-react';
 import { ClickableTactic } from './ClickableTactic';
-import { supabase } from '@/integrations/supabase/client';
 
 interface ScriptAnalyzerProps {
   analysis: any;
-  onGenerate: (script: string, tactics: any[]) => void;
+  onGenerate: () => void;
   currentStep?: number;
-  scripts?: string[];
-  onBack?: () => void;
-  onAnalysisComplete?: (analysisResult: any) => void;
 }
 
-export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ 
-  analysis: initialAnalysis, 
-  onGenerate, 
-  currentStep,
-  scripts = [],
-  onBack,
-  onAnalysisComplete
-}) => {
+export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
   const [activeTab, setActiveTab] = useState('analysis');
-  const [analysis, setAnalysis] = useState(initialAnalysis);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  useEffect(() => {
-    // If we don't have analysis but we have scripts, run the analysis
-    if (!analysis && scripts.length > 0 && scripts.some(script => script.trim())) {
-      runAnalysis();
-    }
-  }, [scripts, analysis]);
-
-  const runAnalysis = async () => {
-    setIsAnalyzing(true);
-    try {
-      console.log('Starting deep script analysis with Claude AI...');
-      console.log('Scripts to analyze:', scripts.length);
-      
-      const { data, error } = await supabase.functions.invoke('analyze-scripts', {
-        body: { 
-          scripts: scripts.filter(script => script.trim()),
-          topic: 'Generate viral content'
-        }
-      });
-
-      if (error) {
-        console.error('Analysis error:', error);
-        throw error;
-      }
-
-      console.log('Analysis complete:', data);
-      setAnalysis(data);
-      onAnalysisComplete?.(data);
-    } catch (error) {
-      console.error('Failed to analyze scripts:', error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   const getTacticColor = (tactic: string) => {
     const colors = [
@@ -85,23 +36,11 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
     } else if (activeTab === 'blueprint') {
       setActiveTab('generate');
     }
+    // Only call onGenerate when explicitly clicking the "Generate Script" button
   };
 
-  const handleGenerateScript = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-script', {
-        body: { 
-          analysis,
-          topic: 'Generate viral content based on analysis'
-        }
-      });
-
-      if (error) throw error;
-
-      onGenerate(data.script, data.tactics || []);
-    } catch (error) {
-      console.error('Failed to generate script:', error);
-    }
+  const handleGenerateScript = () => {
+    onGenerate();
   };
 
   const getButtonText = () => {
@@ -125,25 +64,6 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
     return handleNextStep;
   };
 
-  if (isAnalyzing || !analysis) {
-    return (
-      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl flex items-center justify-center gap-2">
-            <Brain className="w-6 h-6 text-blue-600 animate-pulse" />
-            Analyzing Your Scripts...
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center py-8">
-          <div className="space-y-4">
-            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
-            <p className="text-gray-600">Our AI is analyzing your reference scripts to identify viral tactics...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -163,9 +83,8 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
             </TabsList>
 
             <TabsContent value="analysis" className="mt-6">
-              
               <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
-                {analysis.scriptAnalyses?.map((scriptAnalysis: any, index: number) => (
+                {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
                   <Card key={index} className="border-l-4 border-l-blue-500 h-fit">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
@@ -187,16 +106,41 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                           </div>
                           <div className="text-center">
                             <div className="text-sm text-gray-600">Tactics</div>
-                            <div className="font-bold text-lg">{scriptAnalysis.tactics?.length || 0}</div>
+                            <div className="font-bold text-lg">{scriptAnalysis.tactics.length}</div>
                           </div>
                         </div>
+
+                        {/* Script Structure Analysis */}
+                        {scriptAnalysis.structure && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-gray-800">Script Structure:</h4>
+                            <div className="space-y-2">
+                              <div className="p-2 bg-blue-50 rounded border-l-2 border-blue-400">
+                                <div className="text-xs font-medium text-blue-800">HOOK</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.hook}</div>
+                              </div>
+                              <div className="p-2 bg-red-50 rounded border-l-2 border-red-400">
+                                <div className="text-xs font-medium text-red-800">PROBLEM</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.problem}</div>
+                              </div>
+                              <div className="p-2 bg-green-50 rounded border-l-2 border-green-400">
+                                <div className="text-xs font-medium text-green-800">SOLUTION</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.solution}</div>
+                              </div>
+                              <div className="p-2 bg-purple-50 rounded border-l-2 border-purple-400">
+                                <div className="text-xs font-medium text-purple-800">CALL TO ACTION</div>
+                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.cta}</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Tactics with Strength and Timing */}
                         <div className="space-y-3">
                           <h4 className="font-medium text-gray-800">Detected Tactics:</h4>
                           <div className="grid gap-3">
                             {scriptAnalysis.tactics
-                              ?.sort((a: any, b: any) => (b.strength || 0) - (a.strength || 0))
+                              .sort((a: any, b: any) => (b.strength || 0) - (a.strength || 0))
                               .map((tactic: any, tacticIndex: number) => (
                               <div key={tacticIndex} className="p-4 border rounded-lg bg-card shadow-sm border-l-4 border-l-primary">
                                 <div className="flex items-center justify-between mb-3">
@@ -225,13 +169,45 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                           </div>
                         </div>
 
+                        {/* Hero's Journey Elements */}
+                        {scriptAnalysis.heroJourneyElements && scriptAnalysis.heroJourneyElements.length > 0 && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-gray-800">Hero's Journey Elements:</h4>
+                            <div className="space-y-2">
+                              {scriptAnalysis.heroJourneyElements.map((element: any, elemIndex: number) => (
+                                <div key={elemIndex} className="p-2 border rounded bg-yellow-50">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-sm font-medium text-yellow-800">{element.stage}</span>
+                                    <span className="text-xs text-yellow-600">{element.timestamp}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-600">{element.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Emotional Tone */}
+                        {scriptAnalysis.emotionalTone && scriptAnalysis.emotionalTone.length > 0 && (
+                          <div className="space-y-2">
+                            <h4 className="font-medium text-gray-800">Emotional Tone:</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {scriptAnalysis.emotionalTone.map((tone: string, toneIndex: number) => (
+                                <Badge key={toneIndex} variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">
+                                  {tone}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Effectiveness Score */}
                         <div className="pt-2">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium">Effectiveness Score</span>
-                            <span className="text-sm font-bold">{Math.min(95, (scriptAnalysis.tactics?.length || 0) * 12 + 20)}%</span>
+                            <span className="text-sm font-bold">{Math.min(95, scriptAnalysis.tactics.length * 12 + 20)}%</span>
                           </div>
-                          <Progress value={Math.min(95, (scriptAnalysis.tactics?.length || 0) * 12 + 20)} className="h-2" />
+                          <Progress value={Math.min(95, scriptAnalysis.tactics.length * 12 + 20)} className="h-2" />
                         </div>
                       </div>
                     </CardContent>
@@ -239,19 +215,10 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                 ))}
               </div>
               
-              <div className="flex justify-between mt-6">
-                {onBack && (
-                  <Button 
-                    variant="outline"
-                    onClick={onBack}
-                    className="border border-black"
-                  >
-                    Back
-                  </Button>
-                )}
+              <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2 border border-black ml-auto`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -264,12 +231,12 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-purple-600" />
-                    Synthesized Tactics ({analysis.synthesizedTactics?.length || 0} Found)
+                    Synthesized Tactics ({analysis.synthesizedTactics.length} Found)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {analysis.synthesizedTactics?.map((tactic: any, index: number) => (
+                    {analysis.synthesizedTactics.map((tactic: any, index: number) => (
                       <div key={index} className="p-4 border rounded-lg bg-gray-50">
                         <div className="flex items-center justify-between mb-2">
                           <ClickableTactic name={tactic.name} currentStep={currentStep} analysis={analysis}>
@@ -297,19 +264,10 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                 </CardContent>
               </Card>
               
-              <div className="flex justify-between mt-6">
-                {onBack && (
-                  <Button 
-                    variant="outline"
-                    onClick={onBack}
-                    className="border border-black"
-                  >
-                    Back
-                  </Button>
-                )}
+              <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2 border border-black ml-auto`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -364,19 +322,10 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                 </CardContent>
               </Card>
               
-              <div className="flex justify-between mt-6">
-                {onBack && (
-                  <Button 
-                    variant="outline"
-                    onClick={onBack}
-                    className="border border-black"
-                  >
-                    Back
-                  </Button>
-                )}
+              <div className="flex justify-end mt-6">
                 <Button 
                   onClick={getButtonClickHandler()}
-                  className={`${getButtonColor()} text-white px-6 py-2 border border-black ml-auto`}
+                  className={`${getButtonColor()} text-white px-6 py-2 border border-black`}
                 >
                   {getButtonText()}
                   {activeTab === 'generate' ? <Zap className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
@@ -396,7 +345,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({
                   <div className="mb-6">
                     <div className="grid grid-cols-2 gap-6 max-w-md mx-auto mb-6">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{analysis.synthesizedTactics?.length || 0}</div>
+                        <div className="text-2xl font-bold text-blue-600">{analysis.synthesizedTactics.length}</div>
                         <div className="text-sm text-gray-600">Tactics Ready</div>
                       </div>
                       <div className="text-center">
