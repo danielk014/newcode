@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,7 @@ import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
 
 interface ScriptInput {
   scripts: string[];
@@ -50,6 +51,19 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   
   const { toast } = useToast();
+  const location = useLocation();
+
+  // Handle state restoration when returning from TacticsLibrary
+  useEffect(() => {
+    const navigationState = location.state as any;
+    if (navigationState?.preserveState && navigationState?.currentStep !== undefined && navigationState?.analysis) {
+      setCurrentStep(navigationState.currentStep);
+      setAnalysis(navigationState.analysis);
+      
+      // Clear the navigation state to prevent re-triggering
+      window.history.replaceState({}, '', location.pathname);
+    }
+  }, [location.state]);
 
   const generationSteps = [
     { id: 'analyzing', label: 'Analyzing reference scripts and viral tactics' },

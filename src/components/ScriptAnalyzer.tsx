@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Brain, Zap, Target, BarChart3, Clock, ArrowRight } from 'lucide-react';
 import { ClickableTactic } from './ClickableTactic';
+import { useLocation } from 'react-router-dom';
 
 interface ScriptAnalyzerProps {
   analysis: any;
@@ -15,6 +16,7 @@ interface ScriptAnalyzerProps {
 
 export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
   const [activeTab, setActiveTab] = useState('analysis');
+  const location = useLocation();
 
   const getTacticColor = (tactic: string) => {
     const colors = [
@@ -239,7 +241,16 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                     {analysis.synthesizedTactics.map((tactic: any, index: number) => (
                       <div key={index} className="p-4 border rounded-lg bg-gray-50">
                         <div className="flex items-center justify-between mb-2">
-                          <ClickableTactic name={tactic.name} currentStep={currentStep} analysis={analysis}>
+                          <ClickableTactic 
+                            name={tactic.name} 
+                            currentStep={currentStep} 
+                            analysis={analysis}
+                            navigationState={{
+                              from: location.pathname,
+                              currentStep: currentStep,
+                              analysis: analysis
+                            }}
+                          >
                             <span className="font-medium">{tactic.name}</span>
                           </ClickableTactic>
                           <Badge variant="outline">{tactic.category}</Badge>
