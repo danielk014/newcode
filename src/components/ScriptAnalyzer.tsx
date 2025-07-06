@@ -23,21 +23,6 @@ export function ScriptAnalyzer({ analysis, onGenerate, currentStep }: ScriptAnal
     analysis: analysis
   };
 
-  // Safely extract tactics array
-  const synthesizedTactics = Array.isArray(analysis?.synthesizedTactics) 
-    ? analysis.synthesizedTactics 
-    : [];
-
-  // Safely extract insights array
-  const insights = Array.isArray(analysis?.insights) 
-    ? analysis.insights 
-    : [];
-
-  // Safely extract blueprint string
-  const blueprint = typeof analysis?.blueprint === 'string' 
-    ? analysis.blueprint 
-    : 'Blueprint analysis in progress...';
-
   return (
     <div className="space-y-6">
       {/* Analysis Results Header */}
@@ -66,34 +51,20 @@ export function ScriptAnalyzer({ analysis, onGenerate, currentStep }: ScriptAnal
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3">
-            {synthesizedTactics.length > 0 ? (
-              synthesizedTactics.map((tactic: any, index: number) => (
-                <div key={index} className="p-4 bg-accent/50 rounded-lg border border-border">
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-semibold text-foreground">
-                      {typeof tactic === 'string' ? tactic : tactic?.name || `Tactic ${index + 1}`}
-                    </h4>
-                    {typeof tactic === 'object' && tactic?.category && (
-                      <Badge variant="secondary" className="text-xs">
-                        {tactic.category}
-                      </Badge>
-                    )}
-                  </div>
-                  {typeof tactic === 'object' && tactic?.description && (
-                    <p className="text-sm text-muted-foreground mb-2">{tactic.description}</p>
-                  )}
-                  {typeof tactic === 'object' && tactic?.frequency && (
-                    <div className="text-xs text-muted-foreground">
-                      <strong>Found in:</strong> {tactic.frequency} scripts
-                    </div>
-                  )}
+            {analysis.synthesizedTactics?.map((tactic: any, index: number) => (
+              <div key={index} className="p-4 bg-accent/50 rounded-lg border border-border">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-foreground">{tactic.name}</h4>
+                  <Badge variant="secondary" className="text-xs">
+                    {tactic.category}
+                  </Badge>
                 </div>
-              ))
-            ) : (
-              <div className="p-4 bg-accent/50 rounded-lg border border-border">
-                <p className="text-sm text-muted-foreground">No specific tactics identified in the analysis.</p>
+                <p className="text-sm text-muted-foreground mb-2">{tactic.description}</p>
+                <div className="text-xs text-muted-foreground">
+                  <strong>Found in:</strong> {tactic.frequency} scripts
+                </div>
               </div>
-            )}
+            ))}
           </div>
           
           <div className="flex justify-center pt-4">
@@ -124,7 +95,7 @@ export function ScriptAnalyzer({ analysis, onGenerate, currentStep }: ScriptAnal
         <CardContent>
           <div className="bg-accent/30 p-4 rounded-lg border border-border">
             <div className="whitespace-pre-wrap text-sm text-foreground">
-              {blueprint}
+              {analysis.blueprint}
             </div>
           </div>
         </CardContent>
@@ -140,18 +111,12 @@ export function ScriptAnalyzer({ analysis, onGenerate, currentStep }: ScriptAnal
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {insights.length > 0 ? (
-              insights.map((insight: string, index: number) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-accent/30 rounded-lg border border-border">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-foreground">{insight}</p>
-                </div>
-              ))
-            ) : (
-              <div className="p-3 bg-accent/30 rounded-lg border border-border">
-                <p className="text-sm text-muted-foreground">Analysis insights are being processed...</p>
+            {analysis.insights?.map((insight: string, index: number) => (
+              <div key={index} className="flex items-start gap-3 p-3 bg-accent/30 rounded-lg border border-border">
+                <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-sm text-foreground">{insight}</p>
               </div>
-            )}
+            ))}
           </div>
         </CardContent>
       </Card>
