@@ -10,6 +10,7 @@ import Tactics from "./pages/Tactics";
 import TacticsLibrary from "./pages/TacticsLibrary";
 import NotFound from "./pages/NotFound";
 import SavedScriptsPage from "./pages/SavedScripts";
+import AuthPage from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -20,16 +21,15 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthGuard>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/tactics" element={<TacticsLibrary />} />
-              <Route path="/enhanced-tactics" element={<Tactics />} />
-              <Route path="/saved-scripts" element={<SavedScriptsPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthGuard>
+          <Routes>
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+            <Route path="/tactics" element={<AuthGuard><TacticsLibrary /></AuthGuard>} />
+            <Route path="/enhanced-tactics" element={<AuthGuard><Tactics /></AuthGuard>} />
+            <Route path="/saved-scripts" element={<AuthGuard><SavedScriptsPage /></AuthGuard>} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

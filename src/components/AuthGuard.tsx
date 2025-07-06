@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from './AuthProvider';
-import LoginForm from './LoginForm';
+import { Navigate } from 'react-router-dom';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
-    return <LoginForm />;
+    return <Navigate to="/auth" replace />;
   }
   
   return <>{children}</>;

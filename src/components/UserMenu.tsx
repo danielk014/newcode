@@ -10,15 +10,18 @@ const UserMenu = () => {
 
   if (!user) return null;
 
+  // Get display name from email (before @) or user metadata
+  const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2">
         <Avatar className="w-8 h-8">
           <AvatarFallback className="text-sm">
-            {user.username.charAt(0).toUpperCase()}
+            {displayName.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <span className="text-sm font-medium">{user.username}</span>
+        <span className="text-sm font-medium">{displayName}</span>
       </div>
       <Button
         variant="outline"
