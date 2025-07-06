@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { FileText, Wand2, Save, Sparkles, Target, Library, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ScriptInputPanel } from '@/components/ScriptInputPanel';
+import { ScriptGenerationForm } from '@/components/ScriptGenerationForm';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { ScriptImprovement } from '@/components/ScriptImprovement';
 import { SentimentAnalyzer } from '@/components/SentimentAnalyzer';
@@ -20,7 +20,6 @@ import { RecentScripts, addToRecentScripts } from '@/components/RecentScripts';
 import { TacticMapper } from '@/components/TacticMapper';
 import { IndustryTemplates } from '@/components/IndustryTemplates';
 import { useAuth } from '@/components/AuthProvider';
-import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -31,16 +30,33 @@ const Index = () => {
   const [saveTitle, setSaveTitle] = useState('');
   const [saveIndustry, setSaveIndustry] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [progress, setProgress] = useState(0);
   
   const { toast } = useToast();
   const { user } = useAuth();
-  const { progress, startProgress, completeProgress } = useProgressTracking();
   const scriptEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToScript = () => {
     if (scriptEndRef.current) {
       scriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const startProgress = () => {
+    setProgress(0);
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(interval);
+          return 90;
+        }
+        return prev + 10;
+      });
+    }, 500);
+  };
+
+  const completeProgress = () => {
+    setProgress(100);
   };
 
   const handleScriptGeneration = async (inputs: any, tactics: any[]) => {
@@ -212,10 +228,10 @@ const Index = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Input Panel */}
           <div className="lg:col-span-2 space-y-6">
-            <ScriptInputPanel onGenerate={handleScriptGeneration} />
+            <ScriptGenerationForm onGenerate={handleScriptGeneration} isGenerating={isGenerating} />
 
             {/* Industry Templates */}
-            <IndustryTemplates onLoadTemplate={loadScript} />
+            <IndustryTemplates onTemplateSelect={loadScript} />
 
             {/* Generated Script Section */}
             {(generatedScript || isGenerating) && (
@@ -307,12 +323,11 @@ const Index = () => {
                 </TabsList>
                 
                 <TabsContent value="analysis">
-                  <ScriptAnalyzer results={analysisResults} />
+                  <ScriptAnalyzer />
                 </TabsContent>
                 
                 <TabsContent value="improvement">
                   <ScriptImprovement 
-                    currentScript={generatedScript}
                     onScriptImproved={(improvedScript) => {
                       setGeneratedScript(improvedScript);
                       addToRecentScripts(
@@ -324,11 +339,11 @@ const Index = () => {
                 </TabsContent>
                 
                 <TabsContent value="sentiment">
-                  <SentimentAnalyzer script={generatedScript} />
+                  <SentimentAnalyzer />
                 </TabsContent>
                 
                 <TabsContent value="tactics">
-                  <TacticMapper script={generatedScript} />
+                  <TacticMapper tactics={[]} />
                 </TabsContent>
               </Tabs>
             )}
