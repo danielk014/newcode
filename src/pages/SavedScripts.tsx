@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { Save, FileText, Trash2, Eye, Calendar, Hash, ArrowLeft } from 'lucide-r
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 interface SavedScript {
   id: string;
@@ -33,6 +32,13 @@ const SavedScriptsPage = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the referrer from location state or default to home
+  const handleGoBack = () => {
+    const from = location.state?.from || '/';
+    navigate(from);
+  };
 
   useEffect(() => {
     if (user) {
@@ -168,7 +174,7 @@ const SavedScriptsPage = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => navigate('/')}
+            onClick={handleGoBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Script Generator

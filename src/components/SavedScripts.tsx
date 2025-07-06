@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import { FileText, Calendar, Hash, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from './AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface SavedScript {
   id: string;
@@ -32,6 +31,7 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     if (user) {
@@ -88,7 +88,10 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
             <FileText className="w-5 h-5 text-blue-600" />
             Recent Scripts
           </div>
-          <Link to="/saved-scripts">
+          <Link 
+            to="/saved-scripts" 
+            state={{ from: location.pathname }}
+          >
             <Button variant="outline" size="sm">
               <ExternalLink className="w-3 h-3 mr-1" />
               View All
@@ -104,7 +107,10 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
             <div className="text-center py-8 text-gray-500">
               <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>No saved scripts yet</p>
-              <Link to="/saved-scripts">
+              <Link 
+                to="/saved-scripts" 
+                state={{ from: location.pathname }}
+              >
                 <Button variant="outline" size="sm" className="mt-2">
                   Create Your First Script
                 </Button>
