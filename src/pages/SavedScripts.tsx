@@ -164,12 +164,14 @@ const SavedScriptsPage = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Script Generator
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Script Generator
+          </Button>
           <div>
             <h1 className="text-3xl font-bold">My Saved Scripts</h1>
             <p className="text-gray-600">Manage your script library</p>
