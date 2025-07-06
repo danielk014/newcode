@@ -478,71 +478,96 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen w-full bg-background">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-secondary/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-card border-b border-border -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 sm:py-6 mb-4 sm:mb-8">
-          <div className="max-w-4xl mx-auto text-center relative">
-            <div className="absolute top-0 right-0 hidden sm:block">
+        <header className="py-8 sm:py-12 mb-8">
+          <div className="max-w-5xl mx-auto">
+            {/* Top bar with user menu */}
+            <div className="flex justify-between items-start mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <Target className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+                    PitchArchitect
+                  </h1>
+                  <p className="text-sm text-muted-foreground hidden sm:block">
+                    Professional Script Generation
+                  </p>
+                </div>
+              </div>
               <UserMenu />
             </div>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-              <h1 className="text-xl sm:text-3xl font-bold text-foreground">
-                PitchArchitect
-              </h1>
-            </div>
-            <p className="text-sm sm:text-lg text-muted-foreground mb-2 px-2">
-              AI-powered YouTube script writer with file upload, sentiment analysis & translation
-            </p>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 px-2">
-              Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 px-2">
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
-                <Link to="/enhanced-tactics">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  <span className="text-xs sm:text-sm">View Enhanced Tactics Library</span>
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild className="w-full sm:w-auto border-black">
-                <Link to="/saved-scripts">
-                  <FileText className="w-4 h-4 mr-2" />
-                  <span className="text-xs sm:text-sm">My Saved Scripts</span>
-                </Link>
-              </Button>
-            </div>
-            {/* Mobile User Menu */}
-            <div className="mt-4 sm:hidden">
-              <UserMenu />
+            
+            {/* Main heading */}
+            <div className="text-center mb-8">
+              <h2 className="text-lg sm:text-xl text-muted-foreground mb-3 font-medium">
+                AI-powered YouTube script writer with file upload, sentiment analysis & translation
+              </h2>
+              <p className="text-sm text-muted-foreground/80 mb-8">
+                Enhanced with DanielKCI's proven strategies • Industry templates • Multi-language support
+              </p>
+              
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-md mx-auto">
+                <Button variant="outline" size="default" asChild className="flex-1 sm:flex-none border-border hover:bg-accent/50">
+                  <Link to="/enhanced-tactics">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    View Enhanced Tactics Library
+                  </Link>
+                </Button>
+                <Button variant="outline" size="default" asChild className="flex-1 sm:flex-none border-border hover:bg-accent/50">
+                  <Link to="/saved-scripts">
+                    <FileText className="w-4 h-4 mr-2" />
+                    My Saved Scripts
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Progress Steps */}
-        <div className="flex justify-center mb-4 sm:mb-8 overflow-x-auto pb-2">
-          <div className="flex items-center space-x-1 sm:space-x-2 min-w-max px-2">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const isActive = currentStep === step.id;
-              const isCompleted = currentStep > step.id;
-              
-              return (
-                <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all border ${
-                    isActive ? 'bg-primary text-primary-foreground border-primary' : 
-                    isCompleted ? 'bg-accent text-accent-foreground border-accent' : 
-                    'bg-secondary text-secondary-foreground border-border'
-                  }`}>
-                    <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{step.title}</span>
+        <div className="flex justify-center mb-8 sm:mb-12">
+          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-4">
+            <div className="flex items-center space-x-3 sm:space-x-6">
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                const isActive = currentStep === step.id;
+                const isCompleted = currentStep > step.id;
+                
+                return (
+                  <div key={step.id} className="flex items-center">
+                    <div className={`flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
+                        : isCompleted 
+                        ? 'bg-green-500/10 text-green-600 border border-green-500/20' 
+                        : 'bg-muted/50 text-muted-foreground border border-border/50'
+                    }`}>
+                      <div className={`p-1 rounded-lg ${
+                        isActive 
+                          ? 'bg-primary-foreground/20'
+                          : isCompleted
+                          ? 'bg-green-500/20'
+                          : 'bg-muted'
+                      }`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="text-sm font-medium whitespace-nowrap hidden sm:block">{step.title}</span>
+                      <span className="text-xs font-medium sm:hidden">{step.id + 1}</span>
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div className={`w-8 sm:w-12 h-0.5 mx-2 transition-colors duration-300 ${
+                        isCompleted ? 'bg-green-500/30' : 'bg-border/30'
+                      }`} />
+                    )}
                   </div>
-                  {index < steps.length - 1 && (
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground mx-0.5 sm:mx-1" />
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 
