@@ -11,9 +11,23 @@ interface ScriptAnalyzerProps {
   analysis: any;
   onGenerate: (script: string, tactics: any[]) => void;
   currentStep?: number;
+  userInput?: string;
+  selectedFormat?: string;
+  onScriptGenerated?: (script: string, tactics: any[]) => void;
+  onBack?: () => void;
+  onAnalysisComplete?: (analysisResult: any) => void;
 }
 
-export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
+export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ 
+  analysis, 
+  onGenerate, 
+  currentStep,
+  userInput,
+  selectedFormat,
+  onScriptGenerated,
+  onBack,
+  onAnalysisComplete
+}) => {
   const [activeTab, setActiveTab] = useState('analysis');
 
   if (!analysis) {
