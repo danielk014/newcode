@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { ClickableTactic } from './ClickableTactic';
 
 interface ScriptAnalyzerProps {
   analysis: any;
-  onGenerate: () => void;
+  onGenerate: (script: string, tactics: any[]) => void;
   currentStep?: number;
 }
 
@@ -58,7 +57,43 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
   };
 
   const handleGenerateScript = () => {
-    onGenerate();
+    // Generate mock script and tactics based on analysis
+    const mockScript = `
+🔥 ATTENTION: This Changes Everything...
+
+Stop scrolling for just 30 seconds because what I'm about to show you will completely transform how you approach [your industry].
+
+Most people are struggling with [common problem] because they're doing it all wrong. They think [misconception], but here's the truth nobody talks about...
+
+[Insert compelling story/case study from analysis]
+
+The secret? It's not about working harder - it's about working smarter using these 3 proven strategies:
+
+1. [Strategy based on detected tactic]
+2. [Strategy based on detected tactic] 
+3. [Strategy based on detected tactic]
+
+I've helped over [number] people achieve [desired outcome], and now I want to help you too.
+
+But here's the thing - this window of opportunity won't stay open forever.
+
+Click the link in my bio RIGHT NOW to get started, or drop a comment below and I'll send you the details personally.
+
+Don't let another day pass wondering "what if" - your future self will thank you for taking action today.
+
+#transformation #success #breakthrough
+    `.trim();
+
+    const mockTactics = [
+      { name: 'Pattern Interrupt', category: 'Attention', strength: 9, description: 'Opening with "Stop scrolling" breaks normal scroll behavior' },
+      { name: 'Authority Building', category: 'Credibility', strength: 8, description: 'References helping many people previously' },
+      { name: 'Social Proof', category: 'Credibility', strength: 7, description: 'Mentions number of people helped' },
+      { name: 'Urgency', category: 'Action', strength: 8, description: 'Creates time pressure with "won\'t stay open forever"' },
+      { name: 'FOMO', category: 'Emotional', strength: 7, description: 'Fear of missing out on opportunity' },
+      { name: 'Direct CTA', category: 'Action', strength: 9, description: 'Clear call to action with multiple options' }
+    ];
+
+    onGenerate(mockScript, mockTactics);
   };
 
   const getButtonText = () => {
