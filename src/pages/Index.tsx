@@ -530,9 +530,9 @@ Remember, this is a process, not an event. Each week builds on the previous one,
         </header>
 
         {/* Progress Steps */}
-        <div className="flex justify-center mb-8 sm:mb-12">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-4">
-            <div className="flex items-center space-x-3 sm:space-x-6">
+        <div className="flex justify-center mb-6">
+          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-3">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {steps.map((step, index) => {
                 const Icon = step.icon;
                 const isActive = currentStep === step.id;
@@ -540,7 +540,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                 
                 return (
                   <div key={step.id} className="flex items-center">
-                    <div className={`flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 ${
+                    <div className={`flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-300 ${
                       isActive 
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
                         : isCompleted 
@@ -560,7 +560,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                       <span className="text-xs font-medium sm:hidden">{step.id + 1}</span>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className={`w-8 sm:w-12 h-0.5 mx-2 transition-colors duration-300 ${
+                      <div className={`w-6 sm:w-8 h-0.5 mx-1 sm:mx-2 transition-colors duration-300 ${
                         isCompleted ? 'bg-green-500/30' : 'bg-border/30'
                       }`} />
                     )}
@@ -572,19 +572,19 @@ Remember, this is a process, not an event. Each week builds on the previous one,
         </div>
 
         {/* Main Content */}
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {currentStep === 0 && (
-            <Card className="shadow-lg border border-border bg-card">
-              <CardHeader className="text-center pb-3 sm:pb-4 px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl flex flex-col sm:flex-row items-center justify-center gap-2">
+            <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+              <CardHeader className="text-center pb-4 px-6">
+                <CardTitle className="text-xl flex items-center justify-center gap-2 mb-2">
                   <FileText className="w-5 h-5 text-primary" />
                   Input Your Reference Scripts
                 </CardTitle>
-                <CardDescription className="text-xs sm:text-sm px-2">
+                <CardDescription className="text-sm text-muted-foreground">
                   Multiple ways to add scripts: copy-paste, upload files
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-4 sm:pb-6">
+              <CardContent className="space-y-6 px-6 pb-6">
                 {/* Script Input Methods */}
                 <Tabs defaultValue="manual" className="w-full">
                   <TabsList className="flex w-full gap-2 bg-muted p-2">
@@ -765,25 +765,35 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
         {/* Features Section */}
         {currentStep === 0 && (
-          <div className="mt-12 max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
-                <Upload className="w-10 h-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2 text-foreground">File Upload</h3>
+          <div className="mt-16 max-w-5xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Powerful Features</h3>
+              <p className="text-sm text-muted-foreground">Everything you need for professional script generation</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              <Card className="text-center p-6 border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Upload className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2 text-foreground">File Upload</h4>
                 <p className="text-sm text-muted-foreground">
                   Upload TXT, PDF, DOC files for instant script extraction
                 </p>
               </Card>
-              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
-                <Brain className="w-10 h-10 text-accent mx-auto mb-4" />
-                <h3 className="font-semibold mb-2 text-foreground">Sentiment Analysis</h3>
+              <Card className="text-center p-6 border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2 text-foreground">AI Analysis</h4>
                 <p className="text-sm text-muted-foreground">
-                  Analyze emotional tone and engagement potential
+                  Analyze emotional tone and engagement potential with AI
                 </p>
               </Card>
-              <Card className="text-center p-6 border border-gray-200 bg-white shadow-sm">
-                <Languages className="w-10 h-10 text-accent mx-auto mb-4" />
-                <h3 className="font-semibold mb-2 text-foreground">Translation</h3>
+              <Card className="text-center p-6 border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Languages className="w-6 h-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2 text-foreground">Translation</h4>
                 <p className="text-sm text-muted-foreground">
                   Translate scripts to 15+ languages while preserving impact
                 </p>
