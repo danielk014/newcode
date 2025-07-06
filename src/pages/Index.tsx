@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { ScriptGenerator } from '@/components/ScriptGenerator';
 import { ScriptInputPanel } from '@/components/ScriptInputPanel';
+import { FileUploader } from '@/components/FileUploader';
 import { ScriptGenerationProgress } from '@/components/ScriptGenerationProgress';
 import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
@@ -125,6 +126,16 @@ export default function Index() {
     if (scriptInputs.length > 1) {
       const newInputs = scriptInputs.filter((_, i) => i !== index);
       setScriptInputs(newInputs);
+    }
+  };
+
+  const handleScriptExtracted = (script: string, filename: string) => {
+    // Add extracted script to inputs
+    const emptyIndex = scriptInputs.findIndex(input => !input.trim());
+    if (emptyIndex !== -1) {
+      handleInputChange(emptyIndex, script);
+    } else if (scriptInputs.length < 5) {
+      setScriptInputs([...scriptInputs, script]);
     }
   };
 
@@ -240,43 +251,83 @@ export default function Index() {
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl flex items-center justify-center gap-2">
                     <FileText className="w-6 h-6 text-blue-600" />
-                    Paste Your Reference Scripts
+                    Input Your Reference Scripts
                   </CardTitle>
-                  <p className="text-gray-600">Upload 1-5 high-performing scripts to analyze their success patterns</p>
+                  <p className="text-gray-600">Upload or paste 1-5 high-performing scripts to analyze their success patterns</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {scriptInputs.map((input, index) => (
-                      <ScriptInputPanel
-                        key={index}
-                        index={index}
-                        value={input}
-                        onChange={(value) => handleInputChange(index, value)}
-                        onRemove={() => handleRemoveInput(index)}
-                        canRemove={scriptInputs.length > 1}
-                      />
-                    ))}
+                  <Tabs defaultValue="manual" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="manual">Manual Input</TabsTrigger>
+                      <TabsTrigger value="upload">Upload Files</TabsTrigger>
+                    </TabsList>
                     
-                    <div className="flex gap-4 justify-between items-center">
-                      {scriptInputs.length < 5 && (
+                    <TabsContent value="manual" className="space-y-4">
+                      {scriptInputs.map((input, index) => (
+                        <ScriptInputPanel
+                          key={index}
+                          index={index}
+                          value={input}
+                          onChange={(value) => handleInputChange(index, value)}
+                          onRemove={() => handleRemoveInput(index)}
+                          canRemove={scriptInputs.length > 1}
+                        />
+                      ))}
+                      
+                      <div className="flex gap-4 justify-between items-center">
+                        {scriptInputs.length < 5 && (
+                          <Button
+                            variant="outline"
+                            onClick={handleAddInput}
+                            className="flex-1"
+                          >
+                            + Add Another Script
+                          </Button>
+                        )}
                         <Button
-                          variant="outline"
-                          onClick={handleAddInput}
-                          className="flex-1"
+                          onClick={handleAnalyzeScripts}
+                          disabled={!scriptInputs.some(input => input.trim())}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                          + Add Another Script
+                          Analyze Scripts
+                          <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="upload" className="space-y-4">
+                      <FileUploader 
+                        onScriptExtracted={handleScriptExtracted}
+                        maxFiles={5}
+                      />
+                      
+                      {scriptInputs.some(input => input.trim()) && (
+                        <div className="space-y-4">
+                          <h4 className="font-medium">Extracted Scripts:</h4>
+                          {scriptInputs.map((input, index) => (
+                            input.trim() && (
+                              <ScriptInputPanel
+                                key={index}
+                                index={index}
+                                value={input}
+                                onChange={(value) => handleInputChange(index, value)}
+                                onRemove={() => handleRemoveInput(index)}
+                                canRemove={scriptInputs.length > 1}
+                              />
+                            )
+                          ))}
+                          
+                          <Button
+                            onClick={handleAnalyzeScripts}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            Analyze Scripts
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </div>
                       )}
-                      <Button
-                        onClick={handleAnalyzeScripts}
-                        disabled={!scriptInputs.some(input => input.trim())}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        Analyze Scripts
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             )}
@@ -285,6 +336,10 @@ export default function Index() {
               <ViralFormatSelector 
                 selectedFormat={selectedFormat}
                 onFormatSelect={setSelectedFormat}
+                onNext={handleNext}
+                onBack={handleBack}
+                userInput={userInput}
+                setUserInput={setUserInput}
               />
             )}
 
@@ -293,6 +348,11 @@ export default function Index() {
                 analysis={analysis}
                 onGenerate={handleScriptGenerated}
                 currentStep={currentStep}
+                userInput={userInput}
+                selectedFormat={selectedFormat}
+                onScriptGenerated={handleScriptGenerated}
+                onBack={handleBack}
+                onAnalysisComplete={handleAnalysisComplete}
               />
             )}
           </div>
