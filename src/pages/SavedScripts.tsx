@@ -36,17 +36,8 @@ const SavedScriptsPage = () => {
 
   // Get the referrer from location state or default to home
   const handleGoBack = () => {
-    // Check if there's state passed with navigation details
-    if (location.state?.from) {
-      // Go back to the specific route with preserved state
-      navigate(location.state.from, { 
-        state: location.state.preserveState || undefined,
-        replace: true 
-      });
-    } else {
-      // Default fallback to home
-      navigate('/', { replace: true });
-    }
+    const from = location.state?.from || '/';
+    navigate(from);
   };
 
   useEffect(() => {
@@ -186,7 +177,7 @@ const SavedScriptsPage = () => {
             onClick={handleGoBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Back to Script Generator
           </Button>
           <div>
             <h1 className="text-3xl font-bold">My Saved Scripts</h1>

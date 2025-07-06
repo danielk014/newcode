@@ -22,12 +22,10 @@ interface SavedScript {
 interface SavedScriptsProps {
   currentScript?: string;
   onLoadScript?: (script: string, title: string) => void;
-  preserveCurrentState?: any; // Allow passing current page state to preserve
 }
 
 export const SavedScripts: React.FC<SavedScriptsProps> = ({ 
-  onLoadScript,
-  preserveCurrentState
+  onLoadScript 
 }) => {
   const [savedScripts, setSavedScripts] = useState<SavedScript[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,10 +90,7 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
           </div>
           <Link 
             to="/saved-scripts" 
-            state={{ 
-              from: location.pathname,
-              preserveState: preserveCurrentState
-            }}
+            state={{ from: location.pathname }}
           >
             <Button variant="outline" size="sm">
               <ExternalLink className="w-3 h-3 mr-1" />
@@ -114,10 +109,7 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
               <p>No saved scripts yet</p>
               <Link 
                 to="/saved-scripts" 
-                state={{ 
-                  from: location.pathname,
-                  preserveState: preserveCurrentState
-                }}
+                state={{ from: location.pathname }}
               >
                 <Button variant="outline" size="sm" className="mt-2">
                   Create Your First Script
