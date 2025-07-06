@@ -10,9 +10,10 @@ import { ClickableTactic } from './ClickableTactic';
 interface ScriptAnalyzerProps {
   analysis: any;
   onGenerate: () => void;
+  currentStep?: number;
 }
 
-export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate }) => {
+export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
   const [activeTab, setActiveTab] = useState('analysis');
 
   const getTacticColor = (tactic: string) => {
@@ -238,7 +239,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                     {analysis.synthesizedTactics.map((tactic: any, index: number) => (
                       <div key={index} className="p-4 border rounded-lg bg-gray-50">
                         <div className="flex items-center justify-between mb-2">
-                          <ClickableTactic name={tactic.name}>
+                          <ClickableTactic name={tactic.name} currentStep={currentStep} analysis={analysis}>
                             <span className="font-medium">{tactic.name}</span>
                           </ClickableTactic>
                           <Badge variant="outline">{tactic.category}</Badge>

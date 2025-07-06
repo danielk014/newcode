@@ -4,15 +4,21 @@ import { Link, useLocation } from 'react-router-dom';
 interface ClickableTacticProps {
   name: string;
   children: React.ReactNode;
+  currentStep?: number;
+  analysis?: any;
 }
 
-export const ClickableTactic: React.FC<ClickableTacticProps> = ({ name, children }) => {
+export const ClickableTactic: React.FC<ClickableTacticProps> = ({ name, children, currentStep, analysis }) => {
   const location = useLocation();
   
   return (
     <Link 
       to={`/tactics?tactic=${encodeURIComponent(name)}`}
-      state={{ from: location.pathname }}
+      state={{ 
+        from: location.pathname,
+        currentStep,
+        analysis 
+      }}
       className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
     >
       {children}

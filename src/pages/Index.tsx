@@ -669,6 +669,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
             <ScriptAnalyzer 
               analysis={analysis} 
               onGenerate={handleGenerate}
+              currentStep={currentStep}
             />
           )}
 

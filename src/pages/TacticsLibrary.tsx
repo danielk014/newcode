@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ArrowLeft, Brain, Target, Heart, Crown, Clock, Users } from 'lucide-react';
-import { Link, useSearchParams, useLocation } from 'react-router-dom';
+import { Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 interface Tactic {
   name: string;
@@ -307,12 +307,25 @@ export default function TacticsLibrary() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link to={originPath}>
-            <Button variant="outline" className="mb-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to PitchArchitect
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            className="mb-4"
+            onClick={() => {
+              const state = (location.state as any);
+              if (state?.currentStep && state?.analysis) {
+                // Navigate back with state restoration
+                window.history.replaceState(
+                  { currentStep: state.currentStep, analysis: state.analysis }, 
+                  '', 
+                  originPath
+                );
+              }
+              window.location.href = originPath;
+            }}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to PitchArchitect
+          </Button>
           
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
