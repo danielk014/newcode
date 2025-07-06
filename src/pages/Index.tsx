@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,14 +28,14 @@ import { ScriptAnalyzer } from '@/components/ScriptAnalyzer';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
 import { IndustryTemplates } from '@/components/IndustryTemplates';
 import { FormatRecommendationTool } from '@/components/FormatRecommendationTool';
-import { AuthGuard } from '@/components/AuthGuard';
+import AuthGuard from '@/components/AuthGuard';
 import UserMenu from '@/components/UserMenu';
 import { useLocation } from 'react-router-dom';
 
 export default function Index() {
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
-  const [userInput, setUserInput] = useState('');
+  const [scripts, setScripts] = useState<string[]>(['']);
   const [selectedFormat, setSelectedFormat] = useState('');
   const [generatedScript, setGeneratedScript] = useState('');
   const [detectedTactics, setDetectedTactics] = useState<any[]>([]);
@@ -89,7 +90,7 @@ export default function Index() {
 
   const handleRestart = () => {
     setCurrentStep(0);
-    setUserInput('');
+    setScripts(['']);
     setSelectedFormat('');
     setGeneratedScript('');
     setDetectedTactics([]);
@@ -104,6 +105,23 @@ export default function Index() {
 
   const handleAnalysisComplete = (analysisResult: any) => {
     setAnalysis(analysisResult);
+  };
+
+  const handleAddScript = () => {
+    setScripts([...scripts, '']);
+  };
+
+  const handleRemoveScript = (index: number) => {
+    if (scripts.length > 1) {
+      const newScripts = scripts.filter((_, i) => i !== index);
+      setScripts(newScripts);
+    }
+  };
+
+  const handleScriptChange = (index: number, value: string) => {
+    const newScripts = [...scripts];
+    newScripts[index] = value;
+    setScripts(newScripts);
   };
 
   if (generatedScript && currentStep === 3) {
@@ -174,32 +192,65 @@ export default function Index() {
           {/* Step Content */}
           <div className="max-w-4xl mx-auto">
             {currentStep === 0 && (
-              <ScriptInputPanel 
-                onNext={handleNext}
-                userInput={userInput}
-                setUserInput={setUserInput}
-              />
+              <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <FileText className="w-6 h-6 text-blue-600" />
+                    Add Your Reference Scripts
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    Paste your high-performing scripts so AI can analyze their successful tactics
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {scripts.map((script, index) => (
+                    <ScriptInputPanel
+                      key={index}
+                      index={index}
+                      value={script}
+                      onChange={(value) => handleScriptChange(index, value)}
+                      onRemove={() => handleRemoveScript(index)}
+                      canRemove={scripts.length > 1}
+                    />
+                  ))}
+                  
+                  <div className="flex justify-between items-center pt-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleAddScript}
+                      className="border border-black"
+                    >
+                      Add Another Script
+                    </Button>
+                    
+                    <Button 
+                      onClick={handleNext}
+                      disabled={scripts.some(script => !script.trim())}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 border border-black"
+                    >
+                      Analyze Scripts
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             {currentStep === 1 && (
               <ViralFormatSelector 
-                onNext={handleNext}
-                onBack={handleBack}
-                userInput={userInput}
                 selectedFormat={selectedFormat}
-                setSelectedFormat={setSelectedFormat}
+                onFormatSelect={setSelectedFormat}
               />
             )}
 
             {currentStep === 2 && (
               <ScriptAnalyzer
-                userInput={userInput}
-                selectedFormat={selectedFormat}
-                onScriptGenerated={handleScriptGenerated}
+                analysis={analysis}
+                onGenerate={handleScriptGenerated}
+                currentStep={currentStep}
+                scripts={scripts}
                 onBack={handleBack}
                 onAnalysisComplete={handleAnalysisComplete}
-                analysis={analysis}
-                currentStep={currentStep}
               />
             )}
           </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -307,7 +306,7 @@ export default function TacticsLibrary() {
 
   const handleReturn = () => {
     const state = (location.state as any);
-    if (state?.currentStep && state?.analysis) {
+    if (state?.currentStep !== undefined && state?.analysis) {
       // Navigate back with state restoration
       navigate(originPath, { 
         state: { 
@@ -317,6 +316,14 @@ export default function TacticsLibrary() {
       });
     } else {
       navigate(originPath);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent, tacticName: string) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleTactic(tacticName);
     }
   };
 
@@ -355,7 +362,10 @@ export default function TacticsLibrary() {
               <Card key={tactic.name} className="shadow-lg">
                 <Collapsible open={isOpen} onOpenChange={() => toggleTactic(tactic.name)}>
                   <CollapsibleTrigger asChild>
-                    <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+                    <CardHeader 
+                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      onKeyDown={(e) => handleKeyDown(e, tactic.name)}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Icon className="w-6 h-6 text-blue-600" />
