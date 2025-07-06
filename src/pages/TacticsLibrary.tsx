@@ -289,6 +289,7 @@ const categoryColors = {
 export default function TacticsLibrary() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const focusTactic = searchParams.get('tactic');
   const [openTactics, setOpenTactics] = useState<string[]>(focusTactic ? [focusTactic] : []);
   
@@ -314,17 +315,19 @@ export default function TacticsLibrary() {
               const state = (location.state as any);
               if (state?.currentStep && state?.analysis) {
                 // Navigate back with state restoration
-                window.history.replaceState(
-                  { currentStep: state.currentStep, analysis: state.analysis }, 
-                  '', 
-                  originPath
-                );
+                navigate(originPath, { 
+                  state: { 
+                    currentStep: state.currentStep, 
+                    analysis: state.analysis 
+                  } 
+                });
+              } else {
+                navigate(originPath);
               }
-              window.location.href = originPath;
             }}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to PitchArchitect
+            Return
           </Button>
           
           <div className="text-center">
