@@ -17,21 +17,23 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
-            <Route path="/tactics" element={<AuthGuard><TacticsLibrary /></AuthGuard>} />
-            <Route path="/enhanced-tactics" element={<AuthGuard><Tactics /></AuthGuard>} />
-            <Route path="/saved-scripts" element={<AuthGuard><SavedScriptsPage /></AuthGuard>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+      <div className="dark"> {/* Apply dark theme globally */}
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+              <Route path="/tactics" element={<AuthGuard><TacticsLibrary /></AuthGuard>} />
+              <Route path="/enhanced-tactics" element={<AuthGuard><Tactics /></AuthGuard>} />
+              <Route path="/saved-scripts" element={<AuthGuard><SavedScriptsPage /></AuthGuard>} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );
