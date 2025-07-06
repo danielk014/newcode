@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -789,6 +790,19 @@ export default function TacticsLibrary() {
       if (matchingTactic) {
         console.log('Found matching tactic:', matchingTactic.name);
         setOpenTactics([matchingTactic.name]);
+        
+        // Scroll to the tactic after it's been opened and rendered
+        setTimeout(() => {
+          const tacticElement = tacticRefs.current[matchingTactic.name];
+          if (tacticElement) {
+            console.log('Scrolling to tactic:', matchingTactic.name);
+            tacticElement.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center',
+              inline: 'nearest'
+            });
+          }
+        }, 600); // Wait longer for the collapsible content to fully expand
       } else {
         console.log('No matching tactic found. Available tactics:', tacticData.map(t => t.name));
         console.log('Tried mapping for:', decodedTacticName);
@@ -807,16 +821,20 @@ export default function TacticsLibrary() {
 
     // Scroll to tactic after allowing time for opening animation to complete
     if (!isCurrentlyOpen) {
-      setTimeout(() => {
-        const tacticElement = tacticRefs.current[tacticName];
-        if (tacticElement) {
-          tacticElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'nearest'
-          });
-        }
-      }, 400); // Longer delay to allow collapsible animation to complete
+      // Use requestAnimationFrame to ensure DOM has updated, then add delay for animation
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const tacticElement = tacticRefs.current[tacticName];
+          if (tacticElement) {
+            console.log('Scrolling to clicked tactic:', tacticName);
+            tacticElement.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center',
+              inline: 'nearest'
+            });
+          }
+        }, 300); // Reduced delay since we're using requestAnimationFrame
+      });
     }
   };
 
