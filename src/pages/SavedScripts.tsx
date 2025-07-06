@@ -167,7 +167,13 @@ const SavedScriptsPage = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => window.history.back()}
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = '/';
+              }
+            }}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Script Generator
