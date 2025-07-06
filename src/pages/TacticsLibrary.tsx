@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -304,6 +305,21 @@ export default function TacticsLibrary() {
     );
   };
 
+  const handleReturn = () => {
+    const state = (location.state as any);
+    if (state?.currentStep && state?.analysis) {
+      // Navigate back with state restoration
+      navigate(originPath, { 
+        state: { 
+          restoreStep: state.currentStep, 
+          restoreAnalysis: state.analysis 
+        } 
+      });
+    } else {
+      navigate(originPath);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
@@ -311,20 +327,7 @@ export default function TacticsLibrary() {
           <Button 
             variant="outline" 
             className="mb-4"
-            onClick={() => {
-              const state = (location.state as any);
-              if (state?.currentStep && state?.analysis) {
-                // Navigate back with state restoration
-                navigate(originPath, { 
-                  state: { 
-                    currentStep: state.currentStep, 
-                    analysis: state.analysis 
-                  } 
-                });
-              } else {
-                navigate(originPath);
-              }
-            }}
+            onClick={handleReturn}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Return
