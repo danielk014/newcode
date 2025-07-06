@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ArrowLeft, Brain, Target, Heart, Crown, Clock, Users } from 'lucide-react';
+import { ChevronDown, ArrowLeft, Brain, Target, Heart, Crown, Clock, Users, MessageSquare } from 'lucide-react';
 import { Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 interface Tactic {
@@ -289,6 +289,164 @@ const tacticData: Tactic[] = [
       "Apply for my program if you're ready to take this seriously..."
     ],
     psychology: "Leverages the principle of reciprocity and the desire for exclusive access. Creates a sense of progression and community membership."
+  },
+  
+  // Additional Synthesized Tactics
+  {
+    name: "Climax First",
+    category: "Hook",
+    description: "Start with the most interesting moment or end result to grab immediate attention",
+    explanation: "This tactic immediately captures attention by presenting the most compelling outcome upfront, creating instant investment in the story or process that led to that result.",
+    whenToUse: "At the very beginning of content, especially for case studies, transformation stories, or dramatic reveals.",
+    examples: [
+      "This is the moment everything changed",
+      "Look at this result first - then I'll show you how I got here",
+      "Here's what happened after I made this one decision..."
+    ],
+    psychology: "Exploits the brain's reward prediction system by immediately showing the payoff, creating curiosity about the journey."
+  },
+  {
+    name: "Status Improvement",
+    category: "Emotional",
+    description: "Appeal to desires for social status and recognition",
+    explanation: "This tactic targets the fundamental human desire to improve social standing and gain recognition from peers, motivating action through status enhancement.",
+    whenToUse: "When targeting ambitious individuals, entrepreneurs, or anyone seeking professional advancement.",
+    examples: [
+      "Become the expert everyone turns to",
+      "Build your influence and command respect",
+      "Get the recognition you deserve in your field"
+    ],
+    psychology: "Targets status-seeking behavior rooted in evolutionary psychology and social hierarchy needs."
+  },
+  {
+    name: "Engagement Bait",
+    category: "Algorithm",
+    description: "Strategically request specific engagement actions to boost algorithm performance",
+    explanation: "Carefully crafted requests for specific viewer actions that signal engagement to platform algorithms while providing genuine value to the audience.",
+    whenToUse: "Throughout content and especially at the end to maximize algorithm visibility and reach.",
+    examples: [
+      "Comment your biggest takeaway below",
+      "Share this with someone who needs to see it",
+      "Save this for later - you'll thank me"
+    ],
+    psychology: "Leverages reciprocity and community participation while gaming platform algorithms."
+  },
+  {
+    name: "Watch Time Optimization",
+    category: "Algorithm",
+    description: "Structure content to maximize average view duration",
+    explanation: "Strategic content structuring that keeps viewers engaged longer, satisfying platform algorithms that reward higher watch time percentages.",
+    whenToUse: "Throughout content structure planning, especially for longer-form content.",
+    examples: [
+      "More on that in just a minute",
+      "Before I reveal this secret, you need to understand...",
+      "First, let me show you why this matters"
+    ],
+    psychology: "Uses anticipation loops and information sequencing to maintain engagement and prevent drop-off."
+  },
+  {
+    name: "Platform Collaboration",
+    category: "Algorithm",
+    description: "Create content that aligns with platform algorithm preferences",
+    explanation: "Tailoring content format, timing, and style to work with rather than against platform algorithms, maximizing organic reach and engagement.",
+    whenToUse: "During content planning and creation phases, adapting to current platform trends and algorithm changes.",
+    examples: [
+      "Incorporating trending audio or hashtags",
+      "Using platform-specific formatting and features",
+      "Timing content release for optimal algorithm performance"
+    ],
+    psychology: "Works with platform psychology and user behavior patterns rather than fighting against them."
+  },
+  {
+    name: "Soft-Sell Integration",
+    category: "Monetization",
+    description: "Naturally integrate paid offerings without being salesy",
+    explanation: "Seamlessly weaving promotional content into valuable information, making sales feel like natural recommendations rather than pushy advertising.",
+    whenToUse: "When transitioning from free value to paid offerings, maintaining trust while monetizing content.",
+    examples: [
+      "Like my student Sarah who used this exact method...",
+      "In my advanced course, I dive deeper into this strategy...",
+      "I created a free checklist to help you implement this"
+    ],
+    psychology: "Maintains trust and rapport while introducing commercial elements through social proof and value-first approaches."
+  },
+  {
+    name: "Success Story Leverage",
+    category: "Monetization",
+    description: "Use student/client success stories to demonstrate value and credibility",
+    explanation: "Strategic use of real success stories from clients or students to build credibility and demonstrate the effectiveness of methods or products being promoted.",
+    whenToUse: "Before making offers, when establishing credibility, or when overcoming objections about effectiveness.",
+    examples: [
+      "Sarah made $10k in her first month using this method",
+      "My student went from zero to six figures in 12 months",
+      "Here's what happened when Tom applied this strategy"
+    ],
+    psychology: "Combines social proof with aspirational modeling, making success feel achievable and real."
+  },
+  {
+    name: "Competition Format",
+    category: "Narrative",
+    description: "Use competition-based structures proven since ancient times",
+    explanation: "Leveraging humanity's deep fascination with competition and contests, creating engaging content around challenges, battles, or competitive scenarios.",
+    whenToUse: "For comparison content, challenge videos, or any situation where you can create a 'versus' dynamic.",
+    examples: [
+      "Who will win this ultimate challenge?",
+      "The battle between these two methods",
+      "I'm putting these strategies head-to-head"
+    ],
+    psychology: "Taps into primal competitive instincts and the human love of games and contests that dates back to ancient civilizations."
+  },
+  {
+    name: "Transformation Arc",
+    category: "Narrative",
+    description: "Show clear before/after journey that viewers can relate to",
+    explanation: "Present a complete transformation story with clear beginning, struggle, breakthrough, and end state that viewers can see themselves achieving.",
+    whenToUse: "For case studies, personal stories, or when demonstrating the potential outcomes of following your advice.",
+    examples: [
+      "From broke college student to millionaire entrepreneur",
+      "How I went from anxious introvert to confident speaker",
+      "The complete transformation from zero to hero"
+    ],
+    psychology: "Leverages the hero's journey narrative structure deeply embedded in human storytelling and psychology."
+  },
+  {
+    name: "Problem-Solution Bridge",
+    category: "Narrative",
+    description: "Create relatable problems then provide clear solutions",
+    explanation: "Systematically identify problems your audience faces, amplify their significance, then present your solution as the bridge to their desired outcome.",
+    whenToUse: "When introducing new concepts, selling products, or establishing your expertise in solving specific problems.",
+    examples: [
+      "Here's the problem everyone faces but nobody talks about",
+      "The solution is simpler than you think",
+      "This one thing fixes everything"
+    ],
+    psychology: "Uses problem-solution cognitive frameworks that mirror how humans naturally process challenges and seek resolution."
+  },
+  {
+    name: "Open Loops",
+    category: "Narrative",
+    description: "Start stories without immediate resolution to maintain attention",
+    explanation: "Creating narrative tension by beginning stories, making promises, or raising questions without immediate resolution, keeping viewers engaged until the loop is closed.",
+    whenToUse: "Throughout longer content to maintain retention, especially when transitioning between topics or taking breaks.",
+    examples: [
+      "I'll tell you how I discovered this secret in just a moment",
+      "More on that incredible result later",
+      "The shocking twist comes at the end of this story"
+    ],
+    psychology: "Exploits the Zeigarnik Effect - the brain's tendency to remember incomplete tasks better than completed ones."
+  },
+  {
+    name: "Direct Address",
+    category: "Engagement",
+    description: "Speak directly to viewer creating personal connection",
+    explanation: "Using direct, personal language that makes each viewer feel like you're speaking specifically to them, creating intimacy and personal investment in the content.",
+    whenToUse: "Throughout content to maintain connection, especially when giving advice or making important points.",
+    examples: [
+      "You've probably experienced this exact situation",
+      "Here's what you need to know right now",
+      "I'm talking directly to you if you've ever felt..."
+    ],
+    psychology: "Creates parasocial relationships and personal investment by breaking down the barrier between creator and viewer."
   }
 ];
 
@@ -299,7 +457,11 @@ const categoryIcons = {
   Authority: Crown,
   Social: Users,
   Scarcity: Clock,
-  Persuasion: Brain
+  Persuasion: Brain,
+  Algorithm: Target,
+  Monetization: Crown,
+  Narrative: MessageSquare,
+  Engagement: Users
 };
 
 const categoryColors = {
@@ -309,7 +471,11 @@ const categoryColors = {
   Authority: "bg-purple-100 text-purple-800",
   Social: "bg-orange-100 text-orange-800",
   Scarcity: "bg-yellow-100 text-yellow-800",
-  Persuasion: "bg-indigo-100 text-indigo-800"
+  Persuasion: "bg-indigo-100 text-indigo-800",
+  Algorithm: "bg-cyan-100 text-cyan-800",
+  Monetization: "bg-emerald-100 text-emerald-800",
+  Narrative: "bg-violet-100 text-violet-800",
+  Engagement: "bg-rose-100 text-rose-800"
 };
 
 export default function TacticsLibrary() {

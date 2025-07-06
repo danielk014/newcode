@@ -16,6 +16,8 @@ const Tactics = () => {
       case 'Engagement': return <Users className="w-5 h-5" />;
       case 'Emotional': return <Heart className="w-5 h-5" />;
       case 'Retention': return <Clock className="w-5 h-5" />;
+      case 'Algorithm': return <Target className="w-5 h-5" />;
+      case 'Monetization': return <Brain className="w-5 h-5" />;
       default: return <Target className="w-5 h-5" />;
     }
   };
@@ -28,6 +30,8 @@ const Tactics = () => {
       case 'Engagement': return 'bg-green-100 text-green-800';
       case 'Emotional': return 'bg-orange-100 text-orange-800';
       case 'Retention': return 'bg-indigo-100 text-indigo-800';
+      case 'Algorithm': return 'bg-cyan-100 text-cyan-800';
+      case 'Monetization': return 'bg-emerald-100 text-emerald-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };

@@ -229,6 +229,64 @@ export const psychologicalTactics: PsychologicalTactic[] = [
     effectiveness: 77,
     examples: ["I'm giving you this for free", "Here's a valuable tip before we continue"],
     timing: "Value delivery"
+  },
+  
+  // Additional Synthesized Tactics
+  {
+    name: "Controversy Creation",
+    category: "Hook",
+    description: "Present an opposing or unpopular viewpoint to generate strong reactions",
+    effectiveness: 87,
+    examples: ["Everyone tells you to follow your passion - that's terrible advice", "The fitness industry has been lying to you", "College is the biggest scam in America"],
+    timing: "Video openers"
+  },
+  {
+    name: "Bandwagon Effect",
+    category: "Persuasion",
+    description: "Show that a large group is already taking the desired action",
+    effectiveness: 81,
+    examples: ["Join 100,000+ entrepreneurs who've already transformed their business", "This method is going viral - everyone's talking about it", "Be part of the movement that's changing the industry"],
+    timing: "Call to action"
+  },
+  {
+    name: "Urgency Stacking",
+    category: "Persuasion",
+    description: "Layer multiple time-sensitive elements to maximize immediate action",
+    effectiveness: 84,
+    examples: ["Price goes up in 24 hours, only 50 spots left, and registration closes Friday", "Market conditions are changing fast, and my calendar is filling up this week", "This opportunity expires soon, and I can only help the first 100 people"],
+    timing: "Sales situations"
+  },
+  {
+    name: "Vulnerability Sharing",
+    category: "Emotional",
+    description: "Share personal struggles or failures to build trust and connection",
+    effectiveness: 79,
+    examples: ["I failed at this 7 times before I figured it out", "I was embarrassed to admit I was struggling with this", "Here's the mistake that cost me $50,000"],
+    timing: "Rapport building"
+  },
+  {
+    name: "Curiosity Gap Widening",
+    category: "Hook",
+    description: "Progressively reveal information while maintaining mystery about the core revelation",
+    effectiveness: 86,
+    examples: ["The third secret is the most powerful, but first you need to understand", "What happened next shocked even me, but let me set the stage", "This single word changed everything, and I'll reveal it in just a moment"],
+    timing: "Throughout content"
+  },
+  {
+    name: "Step-by-Step Blueprint",
+    category: "Retention",
+    description: "Presents actionable frameworks for predictable outcomes",
+    effectiveness: 83,
+    examples: ["Here's my exact 5-step framework that generated $100k", "Follow this blueprint and you'll see results in 30 days", "Step 1: Do this first, Step 2: Then this, Step 3: Finally this"],
+    timing: "Educational content"
+  },
+  {
+    name: "Call to Action",
+    category: "Monetization",
+    description: "Directs viewers to newsletters, software, or submission forms promising further secrets or access",
+    effectiveness: 76,
+    examples: ["Join my newsletter for the advanced strategies I can't share on YouTube", "Download my free checklist that breaks this down step-by-step", "Apply for my program if you're ready to take this seriously"],
+    timing: "End of videos"
   }
 ];
 
