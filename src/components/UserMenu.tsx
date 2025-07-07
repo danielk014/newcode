@@ -14,9 +14,9 @@ const UserMenu = () => {
   const displayName = user.username;
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="text-right hidden sm:block">
-        <p className="text-sm font-medium text-foreground">{displayName}</p>
+    <div className="flex items-center gap-2 sm:gap-4">
+      <div className="text-right">
+        <p className="text-xs sm:text-sm font-medium text-foreground">{displayName}</p>
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="w-3 h-3" />
           <span>{user.days_remaining} days left</span>
