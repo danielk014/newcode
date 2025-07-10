@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/AuthProvider';
-import { Loader2, Users, Calendar, Shield, Trash2, RefreshCw } from 'lucide-react';
+import { Loader2, Users, Calendar, Shield, Trash2, RefreshCw, LogOut } from 'lucide-react';
 
 interface TempUser {
   id: string;
@@ -23,6 +24,7 @@ const UsersList = () => {
   const [users, setUsers] = useState<TempUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [loggingOutId, setLoggingOutId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logout } = useAuth();
 
@@ -63,7 +65,7 @@ const UsersList = () => {
   };
 
   const logoutUser = async (userId: string) => {
-    // Check if the deleted user is currently logged in
+    // Check if the user to be logged out is currently logged in
     const storedUser = localStorage.getItem('temp_user');
     if (storedUser) {
       try {
@@ -78,6 +80,26 @@ const UsersList = () => {
       } catch (error) {
         // Continue even if parsing fails
       }
+    }
+  };
+
+  const handleLogoutUser = async (userId: string, username: string) => {
+    setLoggingOutId(userId);
+    try {
+      await logoutUser(userId);
+      
+      toast({
+        title: "User Logged Out",
+        description: `User ${username} has been logged out`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out user",
+        variant: "destructive"
+      });
+    } finally {
+      setLoggingOutId(null);
     }
   };
 
@@ -189,38 +211,53 @@ const UsersList = () => {
                       {formatDate(user.expires_at)}
                     </TableCell>
                     <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="destructive" 
-                            size="sm"
-                            disabled={deletingId === user.id}
-                          >
-                            {deletingId === user.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="w-4 h-4" />
-                            )}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete User</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete user "{user.username}"? This action cannot be undone and will log them out immediately.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteUser(user.id, user.username)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleLogoutUser(user.id, user.username)}
+                          disabled={loggingOutId === user.id}
+                        >
+                          {loggingOutId === user.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <LogOut className="w-4 h-4" />
+                          )}
+                        </Button>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              disabled={deletingId === user.id}
                             >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              {deletingId === user.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete User</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete user "{user.username}"? This action cannot be undone and will log them out immediately.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteUser(user.id, user.username)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
