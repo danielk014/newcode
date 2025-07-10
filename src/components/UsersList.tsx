@@ -71,10 +71,8 @@ const UsersList = () => {
           localStorage.removeItem('temp_user');
           localStorage.removeItem('is_admin');
           
-          // Force a page reload to update the auth state
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // Force a page reload to update the auth state immediately
+          window.location.reload();
         }
       } catch (error) {
         // Continue even if parsing fails
