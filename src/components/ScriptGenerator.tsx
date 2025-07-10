@@ -178,7 +178,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="script" className="hover:bg-green-500 hover:text-white transition-colors">Generated Script</TabsTrigger>
-              <TabsTrigger value="mapping" className="hover:bg-green-500 hover:text-white transition-colors">Tactic Mapping</TabsTrigger>
+              <TabsTrigger value="mapping" className="hover:bg-green-500 hover:text-white transition-colors">Synthesized Tactics</TabsTrigger>
               <TabsTrigger value="revisions" className="hover:bg-green-500 hover:text-white transition-colors">Improve Script</TabsTrigger>
               <TabsTrigger value="translate" className="hover:bg-green-500 hover:text-white transition-colors">Translate</TabsTrigger>
               <TabsTrigger value="versions" className="hover:bg-green-500 hover:text-white transition-colors">Versions</TabsTrigger>
@@ -230,22 +230,60 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Map className="w-5 h-5 text-blue-600" />
-                    Tactic-to-Script Mapping
+                    <Target className="w-5 h-5 text-blue-600" />
+                    Synthesized Tactics ({tactics.length} Found)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {tacticMap.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="secondary">{item.tactic}</Badge>
-                          <span className="text-sm text-gray-600">{item.location}</span>
+                  {tactics.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">
+                      No tactics detected in the generated script. Try analyzing the script or regenerating with more specific content.
+                    </p>
+                  ) : (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {tactics.map((tactic, index) => (
+                        <div key={index} className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h4 className="font-medium text-blue-700 mb-1">{tactic.name}</h4>
+                              <Badge variant="outline" className="text-xs">{tactic.category}</Badge>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            {tactic.description}
+                          </p>
+                          {tactic.examples && tactic.examples.length > 0 && (
+                            <div className="mt-3 p-2 bg-white/60 rounded text-xs text-gray-500">
+                              <strong>Example:</strong> {tactic.examples[0]}
+                            </div>
+                          )}
                         </div>
-                        <Badge variant="outline">{item.timestamp}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {tactics.length > 0 && (
+                    <div className="mt-6 pt-4 border-t">
+                      <h4 className="font-medium mb-3 text-gray-700">Key Insights:</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                          Most used category: {(() => {
+                            const categoryCount = tactics.reduce((acc, tactic) => {
+                              acc[tactic.category] = (acc[tactic.category] || 0) + 1;
+                              return acc;
+                            }, {} as Record<string, number>);
+                            const sortedCategories = Object.entries(categoryCount).sort((a, b) => Number(b[1]) - Number(a[1]));
+                            return sortedCategories[0]?.[0] || 'N/A';
+                          })()}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                          Script optimized for {tactics.length > 3 ? 'high' : tactics.length > 1 ? 'medium' : 'basic'} engagement
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
