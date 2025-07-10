@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/components/AuthProvider';
 import { Loader2, Users, Calendar, Shield, Trash2, RefreshCw } from 'lucide-react';
 
 interface TempUser {
@@ -23,6 +24,7 @@ const UsersList = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { logout } = useAuth();
 
   useEffect(() => {
     fetchUsers();
@@ -60,19 +62,18 @@ const UsersList = () => {
     }
   };
 
-  const logoutUser = (userId: string) => {
+  const logoutUser = async (userId: string) => {
     // Check if the deleted user is currently logged in
     const storedUser = localStorage.getItem('temp_user');
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         if (userData.id === userId) {
-          // Clear the user's session data
-          localStorage.removeItem('temp_user');
-          localStorage.removeItem('is_admin');
-          
-          // Force a page reload to update the auth state immediately
-          window.location.reload();
+          // Use the AuthProvider's logout method to properly clear auth state
+          await logout();
+          // Force a page reload to ensure complete state reset
+          window.location.href = '/auth';
+          return;
         }
       } catch (error) {
         // Continue even if parsing fails
@@ -91,7 +92,7 @@ const UsersList = () => {
       if (error) throw error;
 
       // Log out the user if they're currently signed in
-      logoutUser(userId);
+      await logoutUser(userId);
 
       toast({
         title: "User Deleted",
