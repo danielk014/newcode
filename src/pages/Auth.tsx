@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/components/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { Navigate } from 'react-router-dom';
-import { Loader2, User, Lock, Shield, Plus, Clock } from 'lucide-react';
+import { Loader2, User, Lock, Shield, Plus, Clock, Users } from 'lucide-react';
+import UsersList from '@/components/UsersList';
 
 const AuthPage = () => {
   const [username, setUsername] = useState('');
@@ -111,67 +112,85 @@ const AuthPage = () => {
   // Admin Panel View
   if (isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-              <Shield className="w-6 h-6" />
-              Admin Panel
-            </CardTitle>
-            <p className="text-gray-600">Create user accounts with 30-day access</p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={handleCreateUser} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="new-username">Username</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="new-username"
-                    type="text"
-                    placeholder="Enter username"
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+        <div className="max-w-6xl mx-auto space-y-6">
+          <Card>
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+                <Shield className="w-6 h-6" />
+                Admin Panel
+              </CardTitle>
+              <p className="text-gray-600">Create user accounts and manage existing users</p>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="create" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="create">Create User</TabsTrigger>
+                  <TabsTrigger value="users">View Users</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="create" className="space-y-4">
+                  <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="new-username">Username</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="new-username"
+                          type="text"
+                          placeholder="Enter username"
+                          value={newUsername}
+                          onChange={(e) => setNewUsername(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">Password</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input
+                          id="new-password"
+                          type="password"
+                          placeholder="Enter password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating User...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create User Account
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </TabsContent>
+                
+                <TabsContent value="users">
+                  <UsersList />
+                </TabsContent>
+              </Tabs>
+              
+              <div className="mt-6 pt-6 border-t">
+                <Button variant="outline" onClick={logout} className="w-full">
+                  <Lock className="mr-2 h-4 w-4" />
+                  Exit Admin Panel
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="new-password"
-                    type="password"
-                    placeholder="Enter password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating User...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create User Account
-                  </>
-                )}
-              </Button>
-            </form>
-            <Button variant="outline" onClick={logout} className="w-full">
-              <Lock className="mr-2 h-4 w-4" />
-              Exit Admin Panel
-            </Button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
