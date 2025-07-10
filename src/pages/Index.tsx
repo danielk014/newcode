@@ -667,18 +667,23 @@ Remember, this is a process, not an event. Each week builds on the previous one,
 
                 {/* Video Details */}
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="topic" className="text-xs sm:text-sm font-medium">Video Topic</Label>
-                      <Input
-                        id="topic"
-                        placeholder="e.g., How to make money online"
-                        value={scriptInput.topic}
-                        onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
-                        className="text-xs sm:text-sm"
-                        required
-                      />
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="topic" className="text-xs sm:text-sm font-medium text-foreground">
+                      Video Topic <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="topic"
+                      placeholder="e.g., How to make money online"
+                      value={scriptInput.topic}
+                      onChange={(e) => setScriptInput({...scriptInput, topic: e.target.value})}
+                      className={`text-xs sm:text-sm ${!scriptInput.topic.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
+                      required
+                    />
+                    {!scriptInput.topic.trim() && (
+                      <p className="text-xs text-red-500 mt-1">Topic is required to proceed</p>
+                    )}
+                  </div>
                     <div className="space-y-2">
                       <Label htmlFor="cta" className="text-xs sm:text-sm font-medium">Call to Action</Label>
                       <Input
