@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Users, Calendar, Shield } from 'lucide-react';
+import { Loader2, Users, Calendar, Shield, Trash2, RefreshCw } from 'lucide-react';
 
 interface TempUser {
   id: string;
@@ -20,6 +22,7 @@ interface TempUser {
 const UsersList = () => {
   const [users, setUsers] = useState<TempUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,6 +61,34 @@ const UsersList = () => {
     }
   };
 
+  const handleDeleteUser = async (userId: string, username: string) => {
+    setDeletingId(userId);
+    try {
+      const { error } = await supabase
+        .from('temp_users')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "User Deleted",
+        description: `User ${username} has been deleted successfully`
+      });
+
+      // Refresh the users list
+      await fetchUsers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete user",
+        variant: "destructive"
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -82,10 +113,16 @@ const UsersList = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="w-5 h-5" />
-          All Users ({users.length})
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            All Users ({users.length})
+          </CardTitle>
+          <Button variant="outline" size="sm" onClick={fetchUsers} disabled={loading}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {users.length === 0 ? (
@@ -101,6 +138,7 @@ const UsersList = () => {
                   <TableHead>Days Left</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Expires</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -126,6 +164,40 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(user.expires_at)}
+                    </TableCell>
+                    <TableCell>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            disabled={deletingId === user.id}
+                          >
+                            {deletingId === user.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete User</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete user "{user.username}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteUser(user.id, user.username)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))}
