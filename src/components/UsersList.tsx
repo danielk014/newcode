@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -61,6 +60,28 @@ const UsersList = () => {
     }
   };
 
+  const logoutUser = (userId: string) => {
+    // Check if the deleted user is currently logged in
+    const storedUser = localStorage.getItem('temp_user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData.id === userId) {
+          // Clear the user's session data
+          localStorage.removeItem('temp_user');
+          localStorage.removeItem('is_admin');
+          
+          // Force a page reload to update the auth state
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+      } catch (error) {
+        // Continue even if parsing fails
+      }
+    }
+  };
+
   const handleDeleteUser = async (userId: string, username: string) => {
     setDeletingId(userId);
     try {
@@ -71,9 +92,12 @@ const UsersList = () => {
 
       if (error) throw error;
 
+      // Log out the user if they're currently signed in
+      logoutUser(userId);
+
       toast({
         title: "User Deleted",
-        description: `User ${username} has been deleted successfully`
+        description: `User ${username} has been deleted and logged out`
       });
 
       // Refresh the users list
@@ -184,7 +208,7 @@ const UsersList = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete User</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete user "{user.username}"? This action cannot be undone.
+                              Are you sure you want to delete user "{user.username}"? This action cannot be undone and will log them out immediately.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
