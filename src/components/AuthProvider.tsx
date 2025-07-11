@@ -38,6 +38,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Session monitoring function
+  const checkSessionValidity = async (userData: TempUser) => {
+    try {
+      // Check if user was logged out by admin
+      const logoutEvents = JSON.parse(localStorage.getItem('user_logout_events') || '{}');
+      const userLogoutTime = logoutEvents[userData.id];
+      
+      if (userLogoutTime) {
+        const logoutTimestamp = new Date(userLogoutTime);
+        const sessionTimestamp = new Date(localStorage.getItem('session_timestamp') || '0');
+        
+        if (logoutTimestamp > sessionTimestamp) {
+          console.log('User was logged out by admin, clearing session');
+          logout();
+          return false;
+        }
+      }
+
+      // Verify the user is still active in the database
+      const { data, error } = await supabase
+        .from('temp_users')
+        .select('is_active, expires_at, password')
+        .eq('id', userData.id)
+        .single();
+
+      if (error || !data || !data.is_active || new Date(data.expires_at) <= new Date()) {
+        console.log('User is no longer active or expired, logging out');
+        logout();
+        return false;
+      }
+
+      // Check if password changed (indicating forced logout)
+      const storedPassword = localStorage.getItem('user_password');
+      if (storedPassword && storedPassword !== data.password) {
+        console.log('User password changed, logging out');
+        logout();
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Session validation error:', error);
+      logout();
+      return false;
+    }
+  };
+
   useEffect(() => {
     // Check for existing session in localStorage
     const storedUser = localStorage.getItem('temp_user');
@@ -45,27 +92,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
     if (storedUser) {
       const userData = JSON.parse(storedUser);
-      // Verify the user is still active in the database
-      supabase
-        .from('temp_users')
-        .select('is_active, expires_at')
-        .eq('id', userData.id)
-        .single()
-        .then(({ data, error }) => {
-          if (error || !data || !data.is_active || new Date(data.expires_at) <= new Date()) {
-            // User is no longer active or expired, log them out
-            logout();
-          } else {
-            setUser(userData);
-            setIsAuthenticated(true);
-          }
-        });
+      
+      // Set session timestamp for logout tracking
+      if (!localStorage.getItem('session_timestamp')) {
+        localStorage.setItem('session_timestamp', new Date().toISOString());
+      }
+      
+      checkSessionValidity(userData).then((isValid) => {
+        if (isValid) {
+          setUser(userData);
+          setIsAuthenticated(true);
+        }
+      });
     }
     
     if (storedAdmin === 'true') {
       setIsAdmin(true);
     }
-  }, []);
+
+    // Set up periodic session validation
+    const interval = setInterval(() => {
+      if (storedUser && !isAdmin) {
+        const userData = JSON.parse(storedUser);
+        checkSessionValidity(userData);
+      }
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   const login = async (username: string, password: string) => {
     try {
@@ -102,6 +156,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(tempUser);
       setIsAuthenticated(true);
       localStorage.setItem('temp_user', JSON.stringify(tempUser));
+      localStorage.setItem('user_password', data.password); // Store for session validation
+      localStorage.setItem('session_timestamp', new Date().toISOString());
 
       return { error: null };
     } catch (error) {
@@ -149,6 +205,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAdmin(false);
     localStorage.removeItem('temp_user');
     localStorage.removeItem('is_admin');
+    localStorage.removeItem('user_password');
+    localStorage.removeItem('session_timestamp');
   };
 
   return (

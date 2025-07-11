@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -66,22 +65,22 @@ const UsersList = () => {
 
   const logoutUser = async (userId: string) => {
     try {
-      // Deactivate the user to force logout across all sessions
+      // Set logout timestamp to force session invalidation
+      const logoutTimestamp = new Date().toISOString();
+      
       const { error } = await supabase
         .from('temp_users')
-        .update({ is_active: false })
+        .update({ 
+          password: `${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}` // Change password to invalidate sessions
+        })
         .eq('id', userId);
 
       if (error) throw error;
 
-      // Reactivate the user after a brief moment to maintain their account
-      // but ensure all active sessions are invalidated
-      setTimeout(async () => {
-        await supabase
-          .from('temp_users')
-          .update({ is_active: true })
-          .eq('id', userId);
-      }, 1000);
+      // Store the logout event in localStorage for session monitoring
+      const logoutEvents = JSON.parse(localStorage.getItem('user_logout_events') || '{}');
+      logoutEvents[userId] = logoutTimestamp;
+      localStorage.setItem('user_logout_events', JSON.stringify(logoutEvents));
 
       // Check if the user to be logged out is currently logged in in this session
       const storedUser = localStorage.getItem('temp_user');
@@ -111,8 +110,11 @@ const UsersList = () => {
       
       toast({
         title: "User Logged Out",
-        description: `User ${username} has been logged out`
+        description: `User ${username} has been logged out from all sessions`
       });
+      
+      // Refresh the users list to show updated data
+      await fetchUsers();
     } catch (error) {
       toast({
         title: "Error",
