@@ -65,21 +65,42 @@ const UsersList = () => {
   };
 
   const logoutUser = async (userId: string) => {
-    // Check if the user to be logged out is currently logged in
-    const storedUser = localStorage.getItem('temp_user');
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        if (userData.id === userId) {
-          // Use the AuthProvider's logout method to properly clear auth state
-          await logout();
-          // Force a page reload to ensure complete state reset
-          window.location.href = '/auth';
-          return;
+    try {
+      // Deactivate the user to force logout across all sessions
+      const { error } = await supabase
+        .from('temp_users')
+        .update({ is_active: false })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Reactivate the user after a brief moment to maintain their account
+      // but ensure all active sessions are invalidated
+      setTimeout(async () => {
+        await supabase
+          .from('temp_users')
+          .update({ is_active: true })
+          .eq('id', userId);
+      }, 1000);
+
+      // Check if the user to be logged out is currently logged in in this session
+      const storedUser = localStorage.getItem('temp_user');
+      if (storedUser) {
+        try {
+          const userData = JSON.parse(storedUser);
+          if (userData.id === userId) {
+            // Use the AuthProvider's logout method to properly clear auth state
+            await logout();
+            // Force a page reload to ensure complete state reset
+            window.location.href = '/auth';
+            return;
+          }
+        } catch (error) {
+          // Continue even if parsing fails
         }
-      } catch (error) {
-        // Continue even if parsing fails
       }
+    } catch (error) {
+      throw error;
     }
   };
 

@@ -45,8 +45,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
     if (storedUser) {
       const userData = JSON.parse(storedUser);
-      setUser(userData);
-      setIsAuthenticated(true);
+      // Verify the user is still active in the database
+      supabase
+        .from('temp_users')
+        .select('is_active, expires_at')
+        .eq('id', userData.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error || !data || !data.is_active || new Date(data.expires_at) <= new Date()) {
+            // User is no longer active or expired, log them out
+            logout();
+          } else {
+            setUser(userData);
+            setIsAuthenticated(true);
+          }
+        });
     }
     
     if (storedAdmin === 'true') {
