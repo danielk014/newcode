@@ -112,15 +112,21 @@ const AuthPage = () => {
   // Admin Panel View
   if (isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-                <Shield className="w-6 h-6" />
-                Admin Panel
+      <div className="min-h-screen p-4 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/50 to-primary/5"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,hsl(var(--primary)/0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,hsl(var(--secondary)/0.1),transparent_50%)]"></div>
+        
+        <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+          <Card className="glass border-primary/20">
+            <CardHeader className="text-center relative">
+              <CardTitle className="text-3xl font-bold flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <Shield className="w-8 h-8 text-primary glow-primary" />
+                Admin Neural Interface
               </CardTitle>
-              <p className="text-gray-600">Create user accounts and manage existing users</p>
+              <p className="text-muted-foreground text-lg">Advanced user management and control systems</p>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent blur-3xl"></div>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="create" className="w-full">
@@ -196,11 +202,23 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Script Generator Access</CardTitle>
-          <p className="text-gray-600">Login with your account or admin access</p>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/50 to-primary/10"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,hsl(var(--primary)/0.15),transparent_50%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,hsl(var(--secondary)/0.15),transparent_50%)]"></div>
+      
+      {/* Floating Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      
+      <Card className="w-full max-w-md glass border-primary/30 glow-primary relative z-10">
+        <CardHeader className="text-center relative">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            Neural Access Portal
+          </CardTitle>
+          <p className="text-muted-foreground text-lg">Secure authentication gateway</p>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent blur-2xl"></div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">

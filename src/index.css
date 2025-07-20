@@ -9,83 +9,117 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    /* Futuristic Color Palette */
+    --background: 220 17% 7%;
+    --foreground: 220 23% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card: 220 17% 10%;
+    --card-foreground: 220 23% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover: 220 17% 12%;
+    --popover-foreground: 220 23% 95%;
 
-    --primary: 250 100% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 271 81% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 271 91% 70%;
 
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: 197 71% 52%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 197 81% 66%;
 
-    --muted: 0 0% 100%;
-    --muted-foreground: 220 9% 46%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 142 86% 50%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 220 17% 15%;
+    --muted-foreground: 220 9% 70%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 0 0% 100%;
-    --ring: 250 100% 60%;
+    --border: 220 17% 20%;
+    --input: 220 17% 12%;
+    --ring: 271 81% 56%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 18%;
-    --sidebar-primary: 250 100% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 100%;
-    --sidebar-accent-foreground: 220 13% 18%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 250 100% 60%;
+    /* Futuristic Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+    --gradient-bg: linear-gradient(135deg, hsl(220 17% 7%), hsl(220 17% 12%));
+    --gradient-card: linear-gradient(135deg, hsl(220 17% 10% / 0.8), hsl(220 17% 15% / 0.8));
+    
+    /* Glows and Shadows */
+    --glow-primary: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    --glow-secondary: 0 0 40px hsl(var(--secondary-glow) / 0.4);
+    --glow-accent: 0 0 40px hsl(var(--accent-glow) / 0.4);
+    --shadow-elegant: 0 25px 50px -12px hsl(220 17% 4% / 0.8);
+    --shadow-card: 0 10px 30px -10px hsl(220 17% 4% / 0.6);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 220 17% 8%;
+    --sidebar-foreground: 220 23% 95%;
+    --sidebar-primary: 271 81% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 17% 15%;
+    --sidebar-accent-foreground: 220 23% 95%;
+    --sidebar-border: 220 17% 20%;
+    --sidebar-ring: 271 81% 56%;
   }
 
   .dark {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    /* Enhanced Dark Mode */
+    --background: 220 17% 5%;
+    --foreground: 220 23% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card: 220 17% 8%;
+    --card-foreground: 220 23% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover: 220 17% 10%;
+    --popover-foreground: 220 23% 98%;
 
-    --primary: 250 100% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 271 91% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 271 100% 80%;
 
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: 197 81% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 197 91% 75%;
 
-    --muted: 0 0% 100%;
-    --muted-foreground: 220 9% 46%;
+    --accent: 142 86% 45%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 142 96% 60%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 220 17% 12%;
+    --muted-foreground: 220 9% 75%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 94% 65%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 0 0% 100%;
-    --ring: 250 100% 60%;
+    --border: 220 17% 18%;
+    --input: 220 17% 10%;
+    --ring: 271 91% 65%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 18%;
-    --sidebar-primary: 250 100% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 100%;
-    --sidebar-accent-foreground: 220 13% 18%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 250 100% 60%;
+    --gradient-bg: linear-gradient(135deg, hsl(220 17% 5%), hsl(220 17% 10%));
+    --gradient-card: linear-gradient(135deg, hsl(220 17% 8% / 0.9), hsl(220 17% 12% / 0.9));
+    
+    --glow-primary: 0 0 50px hsl(var(--primary-glow) / 0.5);
+    --glow-secondary: 0 0 50px hsl(var(--secondary-glow) / 0.5);
+    --glow-accent: 0 0 50px hsl(var(--accent-glow) / 0.5);
+    --shadow-elegant: 0 25px 50px -12px hsl(220 17% 2% / 0.9);
+
+    --sidebar-background: 220 17% 6%;
+    --sidebar-foreground: 220 23% 98%;
+    --sidebar-primary: 271 91% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 17% 12%;
+    --sidebar-accent-foreground: 220 23% 98%;
+    --sidebar-border: 220 17% 18%;
+    --sidebar-ring: 271 91% 65%;
   }
 }
 
@@ -95,25 +129,61 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: var(--gradient-bg);
+    @apply text-foreground;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* Add black outlines to buttons */
-  button {
-    @apply border border-black;
+  /* Futuristic Glass Effect */
+  .glass {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.2);
+    box-shadow: var(--shadow-card);
   }
 
-  /* Add black outlines to input fields and textareas */
-  input, 
-  textarea {
-    @apply border border-black !important;
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
   }
 
-  /* Ensure placeholder text is visible */
-  input::placeholder,
-  textarea::placeholder {
-    @apply text-gray-600;
+  .glow-secondary {
+    box-shadow: var(--glow-secondary);
+  }
+
+  .glow-accent {
+    box-shadow: var(--glow-accent);
+  }
+
+  /* Smooth Transitions */
+  button, input, textarea, .card {
+    transition: var(--transition-smooth);
+  }
+
+  /* Enhanced Input Styling */
+  input, textarea {
+    background: hsl(var(--input) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.5);
+    backdrop-filter: blur(10px);
+    transition: var(--transition-smooth);
+  }
+
+  input:focus, textarea:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  input::placeholder, textarea::placeholder {
+    @apply text-muted-foreground;
+  }
+
+  /* Enhanced Card Styling */
+  .card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: var(--shadow-card);
   }
 }
 
