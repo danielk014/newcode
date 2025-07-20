@@ -122,15 +122,9 @@ export const FormatRecommendationTool: React.FC<{
   };
 
   const handleAnalyze = () => {
-    if (!videoIdea.topic.trim()) {
-      console.log('Topic is required for analysis');
-      return;
-    }
+    if (!videoIdea.topic.trim()) return;
     
-    console.log('Analyzing video idea:', videoIdea);
     const recs = analyzeVideoIdea(videoIdea);
-    console.log('Generated recommendations:', recs);
-    
     setRecommendations(recs);
     setShowRecommendations(true);
   };
@@ -145,13 +139,13 @@ export const FormatRecommendationTool: React.FC<{
 
   return (
     <div className="space-y-6">
-      <Card className="border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
+      <Card className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="w-6 h-6 text-primary" />
+            <Lightbulb className="w-6 h-6 text-blue-600" />
             Format Recommendation Tool
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-600">
             Tell us about your video idea and we'll recommend the best viral format for maximum impact
           </p>
         </CardHeader>
@@ -164,7 +158,6 @@ export const FormatRecommendationTool: React.FC<{
                 placeholder="e.g., most hated politician in america"
                 value={videoIdea.topic}
                 onChange={(e) => setVideoIdea({...videoIdea, topic: e.target.value})}
-                className="bg-input/80 border-border/50 focus:border-primary focus:ring-primary"
               />
             </div>
             <div className="space-y-2">
@@ -174,7 +167,6 @@ export const FormatRecommendationTool: React.FC<{
                 placeholder="e.g., investigative documentary, ranking format"
                 value={videoIdea.angle}
                 onChange={(e) => setVideoIdea({...videoIdea, angle: e.target.value})}
-                className="bg-input/80 border-border/50 focus:border-primary focus:ring-primary"
               />
             </div>
           </div>
@@ -186,7 +178,6 @@ export const FormatRecommendationTool: React.FC<{
               placeholder="e.g., educate viewers, go viral, build authority"
               value={videoIdea.goal}
               onChange={(e) => setVideoIdea({...videoIdea, goal: e.target.value})}
-              className="bg-input/80 border-border/50 focus:border-primary focus:ring-primary"
             />
           </div>
 
@@ -203,9 +194,9 @@ export const FormatRecommendationTool: React.FC<{
       </Card>
 
       {showRecommendations && recommendations.length > 0 && (
-        <Card className="border-primary/20 bg-card/80 backdrop-blur-sm">
+        <Card className="border-green-200 bg-green-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-primary">
+            <CardTitle className="flex items-center gap-2 text-green-700">
               <TrendingUp className="w-6 h-6" />
               Recommended Formats for Your Video
             </CardTitle>
@@ -215,13 +206,10 @@ export const FormatRecommendationTool: React.FC<{
               {recommendations.map((rec, index) => (
                 <Card 
                   key={index} 
-                  className={`cursor-pointer transition-all hover:shadow-lg hover:border-primary/40 ${
-                    selectedFormat === rec.format ? 'ring-2 ring-primary bg-primary/5 border-primary' : 'bg-card/50 border-border/50'
+                  className={`cursor-pointer transition-all hover:shadow-md ${
+                    selectedFormat === rec.format ? 'ring-2 ring-blue-500 bg-blue-50' : 'bg-white'
                   }`}
-                  onClick={() => {
-                    console.log('Selected format:', rec.format);
-                    onFormatSelect(rec.format);
-                  }}
+                  onClick={() => onFormatSelect(rec.format)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
@@ -233,7 +221,7 @@ export const FormatRecommendationTool: React.FC<{
                         <h3 className="font-semibold text-lg">{rec.format}</h3>
                       </div>
                       {index === 0 && (
-                        <Badge className="bg-primary/20 text-primary border-primary/30">
+                        <Badge className="bg-green-100 text-green-800">
                           Best Match
                         </Badge>
                       )}
@@ -241,26 +229,26 @@ export const FormatRecommendationTool: React.FC<{
                     
                     <div className="space-y-3 text-sm">
                       <div>
-                        <span className="font-medium text-primary">Why this works: </span>
-                        <span className="text-muted-foreground">{rec.reason}</span>
+                        <span className="font-medium text-blue-700">Why this works: </span>
+                        <span className="text-gray-700">{rec.reason}</span>
                       </div>
                       
                       <div>
-                        <span className="font-medium text-secondary">Example title: </span>
-                        <span className="italic text-muted-foreground">"{rec.example}"</span>
+                        <span className="font-medium text-purple-700">Example title: </span>
+                        <span className="italic text-gray-700">"{rec.example}"</span>
                       </div>
                       
                       <div>
-                        <span className="font-medium text-accent">Structure: </span>
-                        <span className="text-muted-foreground">{rec.structure}</span>
+                        <span className="font-medium text-green-700">Structure: </span>
+                        <span className="text-gray-600">{rec.structure}</span>
                       </div>
                       
-                      <div className="bg-accent/10 p-3 rounded-lg border-l-4 border-accent/40">
+                      <div className="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
                         <div className="flex items-start gap-2">
-                          <AlertCircle className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                          <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
                           <div>
-                            <span className="font-medium text-accent">Pro Tip: </span>
-                            <span className="text-muted-foreground">{rec.whyItWorks}</span>
+                            <span className="font-medium text-yellow-800">Pro Tip: </span>
+                            <span className="text-yellow-700">{rec.whyItWorks}</span>
                           </div>
                         </div>
                       </div>
@@ -271,8 +259,8 @@ export const FormatRecommendationTool: React.FC<{
             </div>
             
             {selectedFormat && (
-              <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <p className="text-sm text-primary">
+              <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                <p className="text-sm text-blue-800">
                   ✅ <strong>{selectedFormat}</strong> selected! This format will be used when generating your script.
                 </p>
               </div>

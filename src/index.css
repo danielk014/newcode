@@ -3,86 +3,89 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Futuristic Design System */
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
 @layer base {
   :root {
-    /* Core Colors (HSL) */
-    --background: 220 17% 7%;
-    --foreground: 220 23% 95%;
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
 
-    --card: 220 17% 10%;
-    --card-foreground: 220 23% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
 
-    --popover: 220 17% 12%;
-    --popover-foreground: 220 23% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
 
-    --primary: 271 81% 56%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 271 91% 70%;
+    --primary: 250 100% 60%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 197 71% 52%;
-    --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 197 81% 66%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 220 13% 18%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 142 86% 50%;
+    --muted: 0 0% 100%;
+    --muted-foreground: 220 9% 46%;
 
-    --muted: 220 17% 15%;
-    --muted-foreground: 220 9% 70%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 17% 20%;
-    --input: 220 17% 12%;
-    --ring: 271 81% 56%;
+    --border: 220 13% 91%;
+    --input: 0 0% 100%;
+    --ring: 250 100% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Sidebar */
-    --sidebar-background: 220 17% 8%;
-    --sidebar-foreground: 220 23% 95%;
-    --sidebar-primary: 271 81% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 17% 15%;
-    --sidebar-accent-foreground: 220 23% 95%;
-    --sidebar-border: 220 17% 20%;
-    --sidebar-ring: 271 81% 56%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 250 100% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: 220 13% 18%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 250 100% 60%;
   }
 
   .dark {
-    --background: 220 17% 5%;
-    --foreground: 220 23% 98%;
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
 
-    --card: 220 17% 8%;
-    --card-foreground: 220 23% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
 
-    --primary: 271 91% 65%;
-    --primary-glow: 271 100% 80%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
 
-    --secondary: 197 81% 60%;
-    --secondary-glow: 197 91% 75%;
+    --primary: 250 100% 60%;
+    --primary-foreground: 0 0% 98%;
 
-    --accent: 142 86% 45%;
-    --accent-glow: 142 96% 60%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 220 13% 18%;
 
-    --muted: 220 17% 12%;
-    --muted-foreground: 220 9% 75%;
+    --muted: 0 0% 100%;
+    --muted-foreground: 220 9% 46%;
 
-    --destructive: 0 94% 65%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 98%;
 
-    --border: 220 17% 18%;
-    --input: 220 17% 10%;
-    --ring: 271 91% 65%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --sidebar-background: 220 17% 6%;
-    --sidebar-foreground: 220 23% 98%;
-    --sidebar-primary: 271 91% 65%;
-    --sidebar-accent: 220 17% 12%;
-    --sidebar-accent-foreground: 220 23% 98%;
-    --sidebar-border: 220 17% 18%;
-    --sidebar-ring: 271 91% 65%;
+    --border: 220 13% 91%;
+    --input: 0 0% 100%;
+    --ring: 250 100% 60%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 250 100% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: 220 13% 18%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 250 100% 60%;
   }
 }
 
@@ -93,63 +96,24 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
     min-height: 100vh;
   }
 
-  /* Glass morphism */
-  .glass {
-    background: hsl(var(--card) / 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.3);
-    box-shadow: 0 10px 30px -10px hsl(220 17% 4% / 0.6);
+  /* Add black outlines to buttons */
+  button {
+    @apply border border-black;
   }
 
-  /* Glow effects */
-  .glow-primary {
-    box-shadow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+  /* Add black outlines to input fields and textareas */
+  input, 
+  textarea {
+    @apply border border-black !important;
   }
 
-  .glow-secondary {
-    box-shadow: 0 0 40px hsl(var(--secondary-glow) / 0.4);
-  }
-
-  .glow-accent {
-    box-shadow: 0 0 40px hsl(var(--accent-glow) / 0.4);
-  }
-
-  /* Animated background */
-  .animated-bg {
-    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--background) / 0.8));
-    background-size: 200% 200%;
-    animation: gradient 15s ease infinite;
-  }
-
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  /* Smooth transitions */
-  button, input, textarea, .card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Enhanced input styling */
-  input, textarea {
-    background: hsl(var(--input) / 0.8);
-    border: 1px solid hsl(var(--border) / 0.5);
-    backdrop-filter: blur(10px);
-  }
-
-  input:focus, textarea:focus {
-    border-color: hsl(var(--primary));
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
-  }
-
-  input::placeholder, textarea::placeholder {
-    @apply text-muted-foreground;
+  /* Ensure placeholder text is visible */
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-600;
   }
 }
 
@@ -157,4 +121,41 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
 }

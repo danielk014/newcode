@@ -162,11 +162,11 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     <div className="min-h-screen w-full bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <div className="space-y-6">
-          <Card className="shadow-xl border-border/20 bg-card/80 backdrop-blur-sm">
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2">
-                <CheckCircle className="w-6 h-6 text-emerald-500" />
-                <span className="text-xl font-semibold text-foreground">Your Script is Ready!</span>
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <span className="text-xl font-semibold">Your Script is Ready!</span>
               </div>
               {improvedVersions.length > 0 && (
                 <div className="flex items-center justify-center gap-2 mt-2">
@@ -227,33 +227,33 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="mapping" className="mt-6">
-              <Card className="bg-card/60 backdrop-blur-sm border-border/20">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Target className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5 text-blue-600" />
                     Synthesized Tactics ({tactics.length} Found)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {tactics.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
+                    <p className="text-center text-gray-500 py-8">
                       No tactics detected in the generated script. Try analyzing the script or regenerating with more specific content.
                     </p>
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
                       {tactics.map((tactic, index) => (
-                        <div key={index} className="p-4 border-border/20 rounded-lg bg-muted/20 backdrop-blur-sm">
+                        <div key={index} className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50">
                           <div className="flex items-start justify-between mb-3">
                             <div>
-                              <h4 className="font-medium text-primary mb-1">{tactic.name}</h4>
+                              <h4 className="font-medium text-blue-700 mb-1">{tactic.name}</h4>
                               <Badge variant="outline" className="text-xs">{tactic.category}</Badge>
                             </div>
                           </div>
-                          <p className="text-sm text-foreground leading-relaxed">
+                          <p className="text-sm text-gray-600 leading-relaxed">
                             {tactic.description}
                           </p>
                           {tactic.examples && tactic.examples.length > 0 && (
-                            <div className="mt-3 p-2 bg-card/60 rounded text-xs text-muted-foreground">
+                            <div className="mt-3 p-2 bg-white/60 rounded text-xs text-gray-500">
                               <strong>Example:</strong> {tactic.examples[0]}
                             </div>
                           )}
@@ -263,11 +263,11 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                   )}
                   
                   {tactics.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-border/20">
-                      <h4 className="font-medium mb-3 text-foreground">Key Insights:</h4>
+                    <div className="mt-6 pt-4 border-t">
+                      <h4 className="font-medium mb-3 text-gray-700">Key Insights:</h4>
                       <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                           Most used category: {(() => {
                             const categoryCount = tactics.reduce((acc, tactic) => {
                               acc[tactic.category] = (acc[tactic.category] || 0) + 1;
@@ -277,8 +277,8 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                             return sortedCategories[0]?.[0] || 'N/A';
                           })()}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
                           Script optimized for {tactics.length > 3 ? 'high' : tactics.length > 1 ? 'medium' : 'basic'} engagement
                         </div>
                       </div>
@@ -303,23 +303,23 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="versions" className="mt-6">
-              <Card className="bg-card/60 backdrop-blur-sm border-border/20">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <FileText className="w-5 h-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-purple-600" />
                     Script Versions & Improvements
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {improvedVersions.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
+                    <p className="text-center text-gray-500 py-8">
                       No improvements applied yet. Use the "Improve Script" tab to enhance your script.
                     </p>
                   ) : (
                     <div className="space-y-4">
-                      <div className="p-4 border-border/20 rounded-lg bg-muted/20">
+                      <div className="p-4 border rounded-lg bg-blue-50">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-foreground">Original Version</h4>
+                          <h4 className="font-medium">Original Version</h4>
                           <Button
                             size="sm"
                             variant="outline"
@@ -332,15 +332,15 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                             Load
                           </Button>
                         </div>
-                        <p className="text-sm text-muted-foreground">The initial generated script</p>
+                        <p className="text-sm text-gray-600">The initial generated script</p>
                       </div>
                       
                       {improvedVersions.map((version, index) => (
-                        <div key={index} className="p-4 border-border/20 rounded-lg bg-card/40">
+                        <div key={index} className="p-4 border rounded-lg">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <h4 className="font-medium text-foreground">{version.improvement} Applied</h4>
-                              <p className="text-xs text-muted-foreground">
+                              <h4 className="font-medium">{version.improvement} Applied</h4>
+                              <p className="text-xs text-gray-500">
                                 {version.timestamp.toLocaleString()}
                               </p>
                             </div>
@@ -360,7 +360,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                               Version {improvedVersions.length - index}
                             </Badge>
                           </div>
-                          <div className="text-xs text-muted-foreground bg-muted/20 p-2 rounded">
+                          <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
                             <strong>Changes:</strong> {version.changesSummary.substring(0, 100)}...
                           </div>
                         </div>
@@ -372,10 +372,10 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="export" className="mt-6">
-              <Card className="bg-card/60 backdrop-blur-sm border-border/20">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <FileText className="w-5 h-5 text-emerald-500" />
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-green-600" />
                     Export & Share Options
                   </CardTitle>
                 </CardHeader>

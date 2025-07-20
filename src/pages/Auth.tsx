@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/components/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { Navigate } from 'react-router-dom';
-import { Loader2, User, Lock, Shield, Plus } from 'lucide-react';
+import { Loader2, User, Lock, Shield, Plus, Clock, Users } from 'lucide-react';
 import UsersList from '@/components/UsersList';
 
 const AuthPage = () => {
@@ -18,7 +17,7 @@ const AuthPage = () => {
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, adminLogin, logout, isAuthenticated, isAdmin, createUser } = useAuth();
+  const { login, adminLogin, logout, isAuthenticated, isAdmin, createUser, user } = useAuth();
   const { toast } = useToast();
 
   // Redirect if already authenticated (but not admin)
@@ -113,15 +112,15 @@ const AuthPage = () => {
   // Admin Panel View
   if (isAdmin) {
     return (
-      <div className="min-h-screen p-4 animated-bg">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="glass">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+        <div className="max-w-6xl mx-auto space-y-6">
+          <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2 text-primary">
+              <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
                 <Shield className="w-6 h-6" />
                 Admin Panel
               </CardTitle>
-              <p className="text-muted-foreground">User management and control systems</p>
+              <p className="text-gray-600">Create user accounts and manage existing users</p>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="create" className="w-full">
@@ -135,7 +134,7 @@ const AuthPage = () => {
                     <div className="space-y-2">
                       <Label htmlFor="new-username">Username</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input
                           id="new-username"
                           type="text"
@@ -150,7 +149,7 @@ const AuthPage = () => {
                     <div className="space-y-2">
                       <Label htmlFor="new-password">Password</Label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input
                           id="new-password"
                           type="password"
@@ -197,13 +196,11 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 animated-bg">
-      <Card className="w-full max-w-md glass">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">
-            Neural Access Portal
-          </CardTitle>
-          <p className="text-muted-foreground">Secure authentication gateway</p>
+          <CardTitle className="text-2xl font-bold">Script Generator Access</CardTitle>
+          <p className="text-gray-600">Login with your account or admin access</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
@@ -217,7 +214,7 @@ const AuthPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="username"
                       type="text"
@@ -232,7 +229,7 @@ const AuthPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="password"
                       type="password"
@@ -265,7 +262,7 @@ const AuthPage = () => {
                 <div className="space-y-2">
                   <Label htmlFor="admin-code">Admin Code</Label>
                   <div className="relative">
-                    <Shield className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Shield className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="admin-code"
                       type="password"
