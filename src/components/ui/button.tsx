@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -5,26 +6,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 relative overflow-hidden",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-primary to-primary-glow text-primary-foreground hover:shadow-[0_0_30px_hsl(var(--primary-glow)/0.5)] hover:scale-[1.02] border border-primary/20",
+        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive:
-          "bg-gradient-to-r from-destructive to-red-400 text-destructive-foreground hover:shadow-[0_0_30px_hsl(var(--destructive)/0.5)] hover:scale-[1.02] border border-destructive/20",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-border/50 bg-background/50 backdrop-blur-sm hover:bg-accent/20 hover:text-accent-foreground hover:border-accent/50 hover:shadow-[0_0_20px_hsl(var(--accent)/0.3)]",
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-gradient-to-r from-secondary to-secondary-glow text-secondary-foreground hover:shadow-[0_0_30px_hsl(var(--secondary-glow)/0.5)] hover:scale-[1.02] border border-secondary/20",
-        ghost: "hover:bg-accent/20 hover:text-accent-foreground hover:shadow-[0_0_15px_hsl(var(--accent)/0.2)]",
-        link: "text-primary underline-offset-4 hover:underline hover:text-primary-glow",
-        premium: "bg-gradient-to-r from-accent to-accent-glow text-accent-foreground hover:shadow-[0_0_30px_hsl(var(--accent-glow)/0.5)] hover:scale-[1.02] border border-accent/20",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-11 px-6 py-2",
-        sm: "h-9 rounded-md px-4",
-        lg: "h-13 rounded-lg px-10 text-base",
-        icon: "h-11 w-11",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {
