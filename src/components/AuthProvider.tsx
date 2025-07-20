@@ -112,8 +112,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Set up periodic session validation
     const interval = setInterval(() => {
-      if (storedUser && !isAdmin) {
-        const userData = JSON.parse(storedUser);
+      const currentStoredUser = localStorage.getItem('temp_user');
+      const currentIsAdmin = localStorage.getItem('is_admin') === 'true';
+      
+      if (currentStoredUser && !currentIsAdmin) {
+        const userData = JSON.parse(currentStoredUser);
         checkSessionValidity(userData);
       }
     }, 30000); // Check every 30 seconds
