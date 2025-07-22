@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
 import TacticsLibrary from './pages/TacticsLibrary';
+import EnhancedTacticsLibrary from './pages/EnhancedTacticsLibrary';
 import SavedScripts from './pages/SavedScripts';
 import Auth from './pages/Auth';
 import NotFound from './pages/NotFound';
@@ -11,6 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/tactics" element={<TacticsLibrary />} />
+        <Route path="/enhanced-tactics" element={<EnhancedTacticsLibrary />} />
         <Route path="/saved" element={<SavedScripts />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<NotFound />} />
