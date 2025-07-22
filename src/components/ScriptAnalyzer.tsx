@@ -7,26 +7,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Brain, Zap, Target, BarChart3, ArrowRight } from 'lucide-react';
 import { ClickableTactic } from './ClickableTactic';
+import { ContentStyleSelector } from './ContentStyleSelector';
 import { useLocation } from 'react-router-dom';
+import { ScriptAnalysis } from '@/types/script';
 
 interface ScriptAnalyzerProps {
-  analysis: any;
-  onGenerate: () => void;
+  analysis: ScriptAnalysis;
+  onGenerate: (style: string) => void;
   currentStep?: number;
+  videoFormat?: any;
+  generatedScript?: string;
+  scriptInput?: any;
 }
 
-export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep }) => {
+export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGenerate, currentStep, videoFormat, generatedScript, scriptInput }) => {
   const [activeTab, setActiveTab] = useState('analysis');
+  const [selectedStyle, setSelectedStyle] = useState('educational');
   const location = useLocation();
 
   const getTacticColor = (tactic: string) => {
     const colors = [
-      'bg-blue-100 text-blue-800',
-      'bg-green-100 text-green-800',
-      'bg-purple-100 text-purple-800',
-      'bg-orange-100 text-orange-800',
-      'bg-pink-100 text-pink-800',
-      'bg-indigo-100 text-indigo-800'
+      'bg-primary/20 text-primary',
+      'bg-accent/20 text-accent',
+      'bg-purple-500/20 text-purple-400',
+      'bg-orange-500/20 text-orange-400',
+      'bg-pink-500/20 text-pink-400',
+      'bg-indigo-500/20 text-indigo-400'
     ];
     return colors[tactic.length % colors.length];
   };
@@ -41,7 +47,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
   };
 
   const handleGenerateScript = () => {
-    onGenerate();
+    onGenerate(selectedStyle);
   };
 
   const getButtonText = () => {
@@ -53,9 +59,9 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
 
   const getButtonColor = () => {
     if (activeTab === 'generate') {
-      return 'bg-green-600 hover:bg-green-700';
+      return 'btn-futuristic text-white';
     }
-    return 'bg-blue-600 hover:bg-blue-700';
+    return 'btn-futuristic text-white';
   };
 
   const getButtonClickHandler = () => {
@@ -67,45 +73,45 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+      <Card className="glass-effect border-border/50 shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
-            <Brain className="w-6 h-6 text-blue-600" />
+            <Brain className="w-6 h-6 text-primary" />
             Deep Script Analysis Complete
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex w-full gap-2 bg-muted p-2">
-              <TabsTrigger value="analysis" className="flex-1 border border-black">Analysis</TabsTrigger>
-              <TabsTrigger value="synthesis" className="flex-1 border border-black">Synthesis</TabsTrigger>
-              <TabsTrigger value="generate" className="flex-1 border border-black">Generate</TabsTrigger>
+            <TabsList className="flex w-full gap-2 glass-effect p-2">
+              <TabsTrigger value="analysis" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">Analysis</TabsTrigger>
+              <TabsTrigger value="synthesis" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">Synthesis</TabsTrigger>
+              <TabsTrigger value="generate" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">Generate</TabsTrigger>
             </TabsList>
 
             <TabsContent value="analysis" className="mt-6">
               <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
                 {analysis.scriptAnalyses.map((scriptAnalysis: any, index: number) => (
-                  <Card key={index} className="border-l-4 border-l-blue-500 h-fit">
+                  <Card key={index} className="glass-effect border-l-4 border-l-primary h-fit">
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5 text-blue-600" />
+                        <BarChart3 className="w-5 h-5 text-primary" />
                         Reference Script #{index + 1}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         {/* Basic Stats */}
-                        <div className="grid grid-cols-3 gap-4 p-3 bg-gray-50 rounded-lg">
+                        <div className="grid grid-cols-3 gap-4 p-3 bg-muted/20 rounded-lg">
                           <div className="text-center">
-                            <div className="text-sm text-gray-600">Word Count</div>
+                            <div className="text-sm text-muted-foreground">Word Count</div>
                             <div className="font-bold text-lg">{scriptAnalysis.wordCount}</div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-gray-600">Duration</div>
+                            <div className="text-sm text-muted-foreground">Duration</div>
                             <div className="font-bold text-lg">{scriptAnalysis.estimatedDuration}</div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-gray-600">Tactics</div>
+                            <div className="text-sm text-muted-foreground">Tactics</div>
                             <div className="font-bold text-lg">{scriptAnalysis.tactics.length}</div>
                           </div>
                         </div>
@@ -113,23 +119,23 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         {/* Script Structure Analysis */}
                         {scriptAnalysis.structure && (
                           <div className="space-y-3">
-                            <h4 className="font-medium text-gray-800">Script Structure:</h4>
+                            <h4 className="font-medium text-foreground">Script Structure:</h4>
                             <div className="space-y-2">
-                              <div className="p-2 bg-blue-50 rounded border-l-2 border-blue-400">
-                                <div className="text-xs font-medium text-blue-800">HOOK</div>
-                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.hook}</div>
+                              <div className="p-2 bg-blue-500/10 rounded border-l-2 border-blue-400">
+                                <div className="text-xs font-medium text-blue-400">HOOK</div>
+                                <div className="text-sm text-muted-foreground">{scriptAnalysis.structure.hook}</div>
                               </div>
-                              <div className="p-2 bg-red-50 rounded border-l-2 border-red-400">
-                                <div className="text-xs font-medium text-red-800">PROBLEM</div>
-                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.problem}</div>
+                              <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-400">
+                                <div className="text-xs font-medium text-red-400">PROBLEM</div>
+                                <div className="text-sm text-muted-foreground">{scriptAnalysis.structure.problem}</div>
                               </div>
-                              <div className="p-2 bg-green-50 rounded border-l-2 border-green-400">
-                                <div className="text-xs font-medium text-green-800">SOLUTION</div>
-                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.solution}</div>
+                              <div className="p-2 bg-green-500/10 rounded border-l-2 border-green-400">
+                                <div className="text-xs font-medium text-green-400">SOLUTION</div>
+                                <div className="text-sm text-muted-foreground">{scriptAnalysis.structure.solution}</div>
                               </div>
-                              <div className="p-2 bg-purple-50 rounded border-l-2 border-purple-400">
-                                <div className="text-xs font-medium text-purple-800">CALL TO ACTION</div>
-                                <div className="text-sm text-gray-700">{scriptAnalysis.structure.cta}</div>
+                              <div className="p-2 bg-purple-500/10 rounded border-l-2 border-purple-400">
+                                <div className="text-xs font-medium text-purple-400">CALL TO ACTION</div>
+                                <div className="text-sm text-muted-foreground">{scriptAnalysis.structure.cta}</div>
                               </div>
                             </div>
                           </div>
@@ -137,7 +143,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
 
                         {/* Tactics with Strength and Timing */}
                         <div className="space-y-3">
-                          <h4 className="font-medium text-gray-800">Detected Tactics:</h4>
+                          <h4 className="font-medium text-foreground">Detected Tactics:</h4>
                           <div className="grid gap-3">
                             {scriptAnalysis.tactics
                               .sort((a: any, b: any) => (b.strength || 0) - (a.strength || 0))
@@ -172,15 +178,15 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         {/* Hero's Journey Elements */}
                         {scriptAnalysis.heroJourneyElements && scriptAnalysis.heroJourneyElements.length > 0 && (
                           <div className="space-y-3">
-                            <h4 className="font-medium text-gray-800">Hero's Journey Elements:</h4>
+                            <h4 className="font-medium text-foreground">Hero's Journey Elements:</h4>
                             <div className="space-y-2">
                               {scriptAnalysis.heroJourneyElements.map((element: any, elemIndex: number) => (
-                                <div key={elemIndex} className="p-2 border rounded bg-yellow-50">
+                                <div key={elemIndex} className="p-2 border rounded bg-yellow-500/10 border-yellow-500/30">
                                   <div className="flex items-center justify-between mb-1">
-                                    <span className="text-sm font-medium text-yellow-800">{element.stage}</span>
-                                    <span className="text-xs text-yellow-600">{element.timestamp}</span>
+                                    <span className="text-sm font-medium text-yellow-400">{element.stage}</span>
+                                    <span className="text-xs text-yellow-500">{element.timestamp}</span>
                                   </div>
-                                  <p className="text-xs text-gray-600">{element.description}</p>
+                                  <p className="text-xs text-muted-foreground">{element.description}</p>
                                 </div>
                               ))}
                             </div>
@@ -190,10 +196,10 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                         {/* Emotional Tone */}
                         {scriptAnalysis.emotionalTone && scriptAnalysis.emotionalTone.length > 0 && (
                           <div className="space-y-2">
-                            <h4 className="font-medium text-gray-800">Emotional Tone:</h4>
+                            <h4 className="font-medium text-foreground">Emotional Tone:</h4>
                             <div className="flex flex-wrap gap-1">
                               {scriptAnalysis.emotionalTone.map((tone: string, toneIndex: number) => (
-                                <Badge key={toneIndex} variant="outline" className="text-xs bg-pink-50 text-pink-700 border-pink-200">
+                                <Badge key={toneIndex} variant="outline" className="text-xs bg-pink-500/10 text-pink-400 border-pink-500/30">
                                   {tone}
                                 </Badge>
                               ))}
@@ -227,7 +233,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
             </TabsContent>
 
             <TabsContent value="synthesis" className="mt-6">
-              <Card>
+              <Card className="glass-effect border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-purple-600" />
@@ -237,18 +243,21 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
                     {analysis.synthesizedTactics.map((tactic: any, index: number) => (
-                      <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                      <div key={index} className="p-4 border rounded-lg bg-muted/20">
                         <div className="flex items-center justify-between mb-2">
                           <ClickableTactic 
                             name={tactic.name} 
                             currentStep={currentStep} 
                             analysis={analysis}
+                            generatedScript={generatedScript}
+                            scriptInput={scriptInput}
+                            videoFormat={videoFormat}
                           >
                             <span className="font-medium">{tactic.name}</span>
                           </ClickableTactic>
                           <Badge variant="outline">{tactic.category}</Badge>
                         </div>
-                        <p className="text-sm text-gray-600">{tactic.description}</p>
+                        <p className="text-sm text-muted-foreground">{tactic.description}</p>
                       </div>
                     ))}
                   </div>
@@ -257,7 +266,7 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                       <h4 className="font-medium mb-3">Key Insights:</h4>
                       <ul className="space-y-2">
                         {analysis.insights.map((insight: string, index: number) => (
-                          <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                          <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
                             <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
                             {insight}
                           </li>
@@ -279,11 +288,20 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
               </div>
             </TabsContent>
 
-            <TabsContent value="generate" className="mt-6">
-              <Card>
+            <TabsContent value="generate" className="mt-6 space-y-6">
+              {/* Content Style Selector */}
+              <ContentStyleSelector
+                detectedStyles={analysis.detectedStyles || []}
+                selectedStyle={selectedStyle}
+                onStyleSelect={setSelectedStyle}
+                format={videoFormat?.format || 'long'}
+              />
+              
+              {/* Generate Card */}
+              <Card className="glass-effect border-border/50">
                 <CardHeader className="text-center">
                   <CardTitle className="flex items-center justify-center gap-2">
-                    <Zap className="w-6 h-6 text-yellow-600" />
+                    <Zap className="w-6 h-6 text-primary" />
                     Ready to Generate Your Script
                   </CardTitle>
                 </CardHeader>
@@ -291,20 +309,20 @@ export const ScriptAnalyzer: React.FC<ScriptAnalyzerProps> = ({ analysis, onGene
                   <div className="mb-6">
                     <div className="grid grid-cols-2 gap-6 max-w-md mx-auto mb-6">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{analysis.synthesizedTactics.length}</div>
-                        <div className="text-sm text-gray-600">Tactics Ready</div>
+                        <div className="text-2xl font-bold text-primary">{analysis.synthesizedTactics.length}</div>
+                        <div className="text-sm text-muted-foreground">Tactics Ready</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">4</div>
-                        <div className="text-sm text-gray-600">Sections Planned</div>
+                        <div className="text-2xl font-bold text-accent">4</div>
+                        <div className="text-sm text-muted-foreground">Sections Planned</div>
                       </div>
                     </div>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-muted-foreground mb-6">
                       Your script will incorporate the most effective tactics from your reference scripts, 
                       structured for maximum engagement and conversion.
                     </p>
                   </div>
-                  <Button onClick={handleGenerateScript} size="lg" className="px-8 bg-accent hover:bg-accent/90 text-accent-foreground border">
+                  <Button onClick={handleGenerateScript} size="lg" className="btn-futuristic text-white">
                     <Zap className="w-5 h-5 mr-2" />
                     Generate Script
                     <ArrowRight className="w-5 h-5 ml-2" />

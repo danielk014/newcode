@@ -1,7 +1,7 @@
 
 export interface PsychologicalTactic {
   name: string;
-  category: 'Hook' | 'Narrative' | 'Persuasion' | 'Engagement' | 'Emotional' | 'Retention' | 'Monetization' | 'Algorithm' | 'Authority';
+  category: 'Hook' | 'Narrative' | 'Persuasion' | 'Engagement' | 'Emotional' | 'Retention' | 'Monetization' | 'Algorithm' | 'Authority' | 'Cognitive' | 'Social' | 'Fear' | 'Desire' | 'Trust' | 'Urgency';
   description: string;
   effectiveness: number;
   examples: string[];
@@ -441,6 +441,526 @@ export const psychologicalTactics: PsychologicalTactic[] = [
     effectiveness: 73,
     examples: ["With everything happening in the news", "This recent event proves my point", "While everyone's focused on [current event], here's what really matters"],
     timing: "Content opening"
+  },
+  
+  // Advanced Cognitive Tactics
+  {
+    name: "Anchoring Bias",
+    category: "Cognitive",
+    description: "Set a high initial reference point to make subsequent offers seem reasonable",
+    effectiveness: 86,
+    examples: ["This normally costs $10,000, but today only $97", "Most people spend years learning this", "The full consultation is $500, but this video gives you everything"],
+    timing: "Price introduction"
+  },
+  {
+    name: "Confirmation Bias",
+    category: "Cognitive",
+    description: "Confirm what people already believe to build trust and agreement",
+    effectiveness: 83,
+    examples: ["You already know this is true", "Your gut feeling is right", "What you suspected all along"],
+    timing: "Throughout content"
+  },
+  {
+    name: "Cognitive Dissonance",
+    category: "Cognitive",
+    description: "Create tension between current beliefs and new information",
+    effectiveness: 81,
+    examples: ["If you believe X, then why do you still Y?", "This contradicts everything we've been taught", "The uncomfortable truth is"],
+    timing: "Problem presentation"
+  },
+  {
+    name: "Availability Heuristic",
+    category: "Cognitive",
+    description: "Use recent, memorable examples to influence perception",
+    effectiveness: 78,
+    examples: ["Just last week, my client", "You've probably seen this happen", "Remember when everyone was talking about"],
+    timing: "Example sharing"
+  },
+  {
+    name: "Framing Effect",
+    category: "Cognitive",
+    description: "Present information in a way that influences decision-making",
+    effectiveness: 85,
+    examples: ["90% success rate vs 10% failure rate", "Save money vs avoid losing money", "Gain an advantage vs prevent disadvantage"],
+    timing: "Benefit presentation"
+  },
+  
+  // Social Psychology Tactics
+  {
+    name: "Social Validation",
+    category: "Social",
+    description: "Show that others are doing what you want viewers to do",
+    effectiveness: 89,
+    examples: ["Over 10,000 people have already", "The comments are full of success stories", "Everyone in my community is seeing results"],
+    timing: "Throughout content"
+  },
+  {
+    name: "Tribal Identity",
+    category: "Social",
+    description: "Create in-group vs out-group mentality",
+    effectiveness: 87,
+    examples: ["People like us understand", "We're the ones who get it", "While others are doing X, we do Y"],
+    timing: "Community building"
+  },
+  {
+    name: "Social Proof Pyramid",
+    category: "Social",
+    description: "Layer multiple types of social proof for maximum impact",
+    effectiveness: 92,
+    examples: ["Expert endorsement + user testimonials + popularity numbers", "Celebrity mention + media coverage + peer reviews"],
+    timing: "Credibility section"
+  },
+  {
+    name: "Bandwagon Effect",
+    category: "Social",
+    description: "Show momentum and trending behavior",
+    effectiveness: 80,
+    examples: ["Everyone's switching to this method", "This is becoming the new standard", "Don't get left behind"],
+    timing: "Urgency creation"
+  },
+  {
+    name: "Authority Transfer",
+    category: "Social",
+    description: "Borrow credibility from respected figures or institutions",
+    effectiveness: 84,
+    examples: ["As seen on [major publication]", "Used by Fortune 500 companies", "Recommended by leading experts"],
+    timing: "Credibility establishment"
+  },
+  
+  // Fear-Based Tactics
+  {
+    name: "Loss Aversion",
+    category: "Fear",
+    description: "Emphasize what people will lose by not acting",
+    effectiveness: 91,
+    examples: ["You're losing money every day you wait", "While you hesitate, others are getting ahead", "The cost of inaction is too high"],
+    timing: "Urgency and action"
+  },
+  {
+    name: "Fear of Missing Out (FOMO)",
+    category: "Fear",
+    description: "Create anxiety about missing opportunities",
+    effectiveness: 88,
+    examples: ["Limited spots available", "This offer expires soon", "Others are already ahead"],
+    timing: "Call to action"
+  },
+  {
+    name: "Regret Amplification",
+    category: "Fear",
+    description: "Paint vivid pictures of future regret",
+    effectiveness: 85,
+    examples: ["Imagine looking back in 5 years", "Don't let this be your biggest regret", "How will you feel if you don't try?"],
+    timing: "Decision point"
+  },
+  {
+    name: "Consequence Magnification",
+    category: "Fear",
+    description: "Amplify the negative outcomes of current behavior",
+    effectiveness: 82,
+    examples: ["This small problem will become huge", "Every day you wait makes it worse", "The domino effect has already started"],
+    timing: "Problem agitation"
+  },
+  {
+    name: "Status Threat",
+    category: "Fear",
+    description: "Threaten the viewer's social standing or identity",
+    effectiveness: 79,
+    examples: ["Don't be the person who", "While successful people do X, failures do Y", "This separates winners from losers"],
+    timing: "Motivation building"
+  },
+  
+  // Desire Enhancement Tactics
+  {
+    name: "Future Pacing",
+    category: "Desire",
+    description: "Help audience visualize their desired future state",
+    effectiveness: 90,
+    examples: ["Imagine waking up tomorrow with", "Picture yourself in 6 months", "Fast forward to when you've achieved"],
+    timing: "Benefit visualization"
+  },
+  {
+    name: "Pleasure Principle",
+    category: "Desire",
+    description: "Focus on immediate gratification and pleasure",
+    effectiveness: 83,
+    examples: ["Feel amazing instantly", "Immediate satisfaction", "Enjoy the process from day one"],
+    timing: "Benefit presentation"
+  },
+  {
+    name: "Identity Aspiration",
+    category: "Desire",
+    description: "Help viewers see themselves as their ideal identity",
+    effectiveness: 87,
+    examples: ["Become the person who", "Join the ranks of", "Transform into someone who"],
+    timing: "Transformation promise"
+  },
+  {
+    name: "Desire Stacking",
+    category: "Desire",
+    description: "Layer multiple desirable outcomes together",
+    effectiveness: 85,
+    examples: ["Not only will you get X, but also Y and Z", "Plus, as a bonus", "And here's what else happens"],
+    timing: "Value building"
+  },
+  {
+    name: "Contrast Principle",
+    category: "Desire",
+    description: "Show the gap between current and desired state",
+    effectiveness: 81,
+    examples: ["From struggling to thriving", "Instead of barely surviving, you'll be", "Replace anxiety with confidence"],
+    timing: "Transformation showcase"
+  },
+  
+  // Trust Building Tactics
+  {
+    name: "Vulnerability Disclosure",
+    category: "Trust",
+    description: "Share personal struggles and failures to build connection",
+    effectiveness: 89,
+    examples: ["I'll be honest with you", "Here's my embarrassing truth", "I failed miserably at first"],
+    timing: "Relationship building"
+  },
+  {
+    name: "Transparency Technique",
+    category: "Trust",
+    description: "Openly share processes, costs, and behind-the-scenes information",
+    effectiveness: 86,
+    examples: ["Here's exactly what it costs me", "Let me show you the real numbers", "I'm going to be completely transparent"],
+    timing: "Throughout content"
+  },
+  {
+    name: "Consistency Commitment",
+    category: "Trust",
+    description: "Demonstrate consistent behavior and values over time",
+    effectiveness: 84,
+    examples: ["I've been saying this for years", "My track record speaks for itself", "I always practice what I preach"],
+    timing: "Credibility section"
+  },
+  {
+    name: "Third-Party Validation",
+    category: "Trust",
+    description: "Use external sources to validate claims",
+    effectiveness: 88,
+    examples: ["Independent studies show", "Third-party verification confirms", "External audits prove"],
+    timing: "Proof presentation"
+  },
+  {
+    name: "Reciprocity Building",
+    category: "Trust",
+    description: "Give valuable content first to create obligation",
+    effectiveness: 87,
+    examples: ["Here's a free strategy that's worth $1000", "I'm giving you this because", "No strings attached, just value"],
+    timing: "Value delivery"
+  },
+  
+  // Urgency and Scarcity Tactics
+  {
+    name: "Time Scarcity",
+    category: "Urgency",
+    description: "Create pressure through limited time offers",
+    effectiveness: 85,
+    examples: ["Only until midnight tonight", "The next 24 hours only", "While this video is still up"],
+    timing: "Call to action"
+  },
+  {
+    name: "Quantity Scarcity",
+    category: "Urgency",
+    description: "Limit availability to create urgency",
+    effectiveness: 83,
+    examples: ["Only 100 spots available", "Limited edition release", "First 50 people only"],
+    timing: "Offer presentation"
+  },
+  {
+    name: "Opportunity Scarcity",
+    category: "Urgency",
+    description: "Present unique, non-recurring opportunities",
+    effectiveness: 87,
+    examples: ["This won't come around again", "One-time opportunity", "Never been offered before"],
+    timing: "Exclusivity emphasis"
+  },
+  {
+    name: "Momentum Urgency",
+    category: "Urgency",
+    description: "Show rapidly changing circumstances requiring immediate action",
+    effectiveness: 82,
+    examples: ["Prices are rising every day", "Competition is catching on", "The window is closing fast"],
+    timing: "Environmental pressure"
+  },
+  {
+    name: "Decision Fatigue",
+    category: "Urgency",
+    description: "Make the decision easy by eliminating options and complexity",
+    effectiveness: 80,
+    examples: ["Don't overthink it", "Just say yes", "One simple decision changes everything"],
+    timing: "Decision simplification"
+  },
+  
+  // Advanced Persuasion Tactics
+  {
+    name: "Trojan Horse Method",
+    category: "Persuasion",
+    description: "Hide the main message inside seemingly unrelated content",
+    effectiveness: 88,
+    examples: ["Let me tell you a story about", "Here's something interesting that happened", "While we're talking about X, did you know"],
+    timing: "Indirect persuasion"
+  },
+  {
+    name: "False Dilemma",
+    category: "Persuasion",
+    description: "Present only two options when more exist to guide choice",
+    effectiveness: 79,
+    examples: ["You can either continue struggling or", "The choice is simple: success or failure", "Do this or stay stuck forever"],
+    timing: "Decision framing"
+  },
+  {
+    name: "Assumption Close",
+    category: "Persuasion",
+    description: "Assume the person has already decided to act",
+    effectiveness: 84,
+    examples: ["When you start using this", "After you've implemented", "Once you're seeing results"],
+    timing: "Action assumption"
+  },
+  {
+    name: "Presupposition Framework",
+    category: "Persuasion",
+    description: "Embed assumptions within statements",
+    effectiveness: 86,
+    examples: ["How quickly do you want to see results?", "Which benefit excites you most?", "When you succeed with this"],
+    timing: "Question structuring"
+  },
+  {
+    name: "Reframe Technique",
+    category: "Persuasion",
+    description: "Change the context or meaning of objections",
+    effectiveness: 83,
+    examples: ["That's not an expense, it's an investment", "You're not buying a product, you're buying a transformation", "This isn't about money, it's about your future"],
+    timing: "Objection handling"
+  },
+  
+  // Additional Advanced Psychological Tactics
+  {
+    name: "Commitment Consistency",
+    category: "Persuasion",
+    description: "Get small commitments that lead to larger ones",
+    effectiveness: 88,
+    examples: ["Are you serious about changing your life?", "Would you agree that success requires action?", "Can you commit to watching this entire video?"],
+    timing: "Progressive commitment"
+  },
+  {
+    name: "Sunk Cost Fallacy",
+    category: "Cognitive",
+    description: "Reference past investments to encourage continued engagement",
+    effectiveness: 82,
+    examples: ["You've already invested time learning this", "Don't waste everything you've already put in", "You've come this far, don't stop now"],
+    timing: "Mid-content retention"
+  },
+  {
+    name: "Paradox of Choice",
+    category: "Cognitive",
+    description: "Reduce decision paralysis by limiting options",
+    effectiveness: 85,
+    examples: ["Just two simple options", "Keep it simple: yes or no", "One decision changes everything"],
+    timing: "Decision simplification"
+  },
+  {
+    name: "Peak-End Rule",
+    category: "Emotional",
+    description: "Create memorable peaks and strong endings",
+    effectiveness: 87,
+    examples: ["Here's the most important part", "This is the breakthrough moment", "Remember this one thing above all"],
+    timing: "Peak moments and conclusion"
+  },
+  {
+    name: "Social Comparison",
+    category: "Social",
+    description: "Compare viewer to others to motivate action",
+    effectiveness: 84,
+    examples: ["While others procrastinate, you can act", "Successful people do this, unsuccessful people don't", "Be in the 1% who actually take action"],
+    timing: "Motivation building"
+  },
+  {
+    name: "Endowment Effect",
+    category: "Cognitive",
+    description: "Make people feel they already own something",
+    effectiveness: 83,
+    examples: ["This is yours if you want it", "You already have access to this power", "Claim your spot"],
+    timing: "Ownership creation"
+  },
+  {
+    name: "Hyperbolic Discounting",
+    category: "Cognitive",
+    description: "Emphasize immediate benefits over long-term costs",
+    effectiveness: 81,
+    examples: ["Start seeing results today", "Immediate impact", "Feel the difference right now"],
+    timing: "Immediate benefit emphasis"
+  },
+  {
+    name: "Dunning-Kruger Exploitation",
+    category: "Cognitive",
+    description: "Appeal to people's overconfidence in their abilities",
+    effectiveness: 79,
+    examples: ["You already know this works", "Trust your instincts on this", "Your experience tells you this is right"],
+    timing: "Confidence building"
+  },
+  {
+    name: "Halo Effect",
+    category: "Cognitive",
+    description: "Transfer positive impression from one area to another",
+    effectiveness: 86,
+    examples: ["Since you're smart enough to be here", "Successful people like you understand", "You clearly have good judgment"],
+    timing: "Credibility transfer"
+  },
+  {
+    name: "Decoy Effect",
+    category: "Persuasion",
+    description: "Present inferior option to make main offer look better",
+    effectiveness: 88,
+    examples: ["Option A is $1000, Option B is $500, but Option C is only $297", "Most people choose the expensive route, but there's a smarter way"],
+    timing: "Option comparison"
+  },
+  {
+    name: "Mere Exposure Effect",
+    category: "Trust",
+    description: "Build familiarity through repetition",
+    effectiveness: 75,
+    examples: ["As I mentioned earlier", "Like I always say", "Remember what we talked about"],
+    timing: "Throughout content"
+  },
+  {
+    name: "Priming Effect",
+    category: "Cognitive",
+    description: "Use specific words to influence subsequent thinking",
+    effectiveness: 82,
+    examples: ["Think success, be successful", "Winner's mindset", "Champion behavior"],
+    timing: "Mindset preparation"
+  },
+  {
+    name: "Reciprocal Liking",
+    category: "Social",
+    description: "Express liking for audience to gain reciprocal affection",
+    effectiveness: 80,
+    examples: ["I really like people like you", "You're exactly the type of person I love working with", "People like you get it"],
+    timing: "Relationship building"
+  },
+  {
+    name: "Ingroup Bias",
+    category: "Social",
+    description: "Create exclusive group identity",
+    effectiveness: 87,
+    examples: ["We're the elite few", "Inner circle exclusive", "Not everyone qualifies for this"],
+    timing: "Exclusivity creation"
+  },
+  {
+    name: "Survivorship Bias",
+    category: "Cognitive",
+    description: "Focus only on success stories",
+    effectiveness: 78,
+    examples: ["Everyone who tried this succeeded", "100% of my students who implemented this saw results", "Every single person who did this got outcomes"],
+    timing: "Success showcase"
+  },
+  {
+    name: "Contrast Effect",
+    category: "Cognitive",
+    description: "Make options seem better by comparison to worse alternatives",
+    effectiveness: 85,
+    examples: ["Unlike other methods that take years", "While competitors charge thousands", "Most gurus complicate this, but"],
+    timing: "Competitive comparison"
+  },
+  {
+    name: "Authority Gradient",
+    category: "Authority",
+    description: "Build authority progressively through the content",
+    effectiveness: 89,
+    examples: ["In my 20 years of experience", "After helping 10,000+ people", "The research I conducted shows"],
+    timing: "Credibility building"
+  },
+  {
+    name: "Curiosity Gap",
+    category: "Hook",
+    description: "Create knowledge gaps that demand to be filled",
+    effectiveness: 94,
+    examples: ["There's something I haven't told you yet", "The secret ingredient is", "What nobody talks about is"],
+    timing: "Hook and retention"
+  },
+  {
+    name: "Stakes Amplification",
+    category: "Fear",
+    description: "Increase perceived consequences of inaction",
+    effectiveness: 86,
+    examples: ["Your future depends on this", "This moment determines everything", "One decision changes your entire trajectory"],
+    timing: "Decision pressure"
+  },
+  {
+    name: "Temporal Reframing",
+    category: "Persuasion",
+    description: "Change time perspective on costs and benefits",
+    effectiveness: 83,
+    examples: ["Just $1 per day", "Less than coffee costs", "5 minutes that saves you 5 years"],
+    timing: "Value justification"
+  },
+  {
+    name: "Binary Thinking",
+    category: "Persuasion",
+    description: "Reduce complex decisions to simple either/or choices",
+    effectiveness: 81,
+    examples: ["You're either growing or dying", "Success or excuses", "All in or all out"],
+    timing: "Decision framing"
+  },
+  {
+    name: "Status Quo Bias",
+    category: "Fear",
+    description: "Highlight the dangers of staying the same",
+    effectiveness: 84,
+    examples: ["Staying where you are is actually moving backward", "The status quo is killing your dreams", "Same actions = same results"],
+    timing: "Change motivation"
+  },
+  {
+    name: "Attribution Error",
+    category: "Cognitive",
+    description: "Attribute failures to external factors, success to the system",
+    effectiveness: 80,
+    examples: ["It's not your fault you haven't succeeded yet", "The system was designed to keep you down", "You just needed the right information"],
+    timing: "Blame shifting"
+  },
+  {
+    name: "Ikea Effect",
+    category: "Engagement",
+    description: "Make people invest effort to increase value perception",
+    effectiveness: 82,
+    examples: ["Take notes while watching this", "Do this exercise with me", "Pause and think about your answer"],
+    timing: "Active participation"
+  },
+  {
+    name: "Affect Heuristic",
+    category: "Emotional",
+    description: "Use emotional state to influence decision-making",
+    effectiveness: 85,
+    examples: ["How does that make you feel?", "Imagine the relief", "Feel the excitement of possibility"],
+    timing: "Emotional engagement"
+  },
+  {
+    name: "Availability Cascade",
+    category: "Social",
+    description: "Create perception that idea is gaining momentum",
+    effectiveness: 83,
+    examples: ["More and more people are realizing", "The movement is growing", "It's becoming impossible to ignore"],
+    timing: "Momentum building"
+  },
+  {
+    name: "Ambiguity Aversion",
+    category: "Trust",
+    description: "Provide clear, specific information to reduce uncertainty",
+    effectiveness: 78,
+    examples: ["Here's exactly what you'll get", "Step-by-step process", "Clear roadmap to success"],
+    timing: "Uncertainty reduction"
+  },
+  {
+    name: "Focusing Illusion",
+    category: "Desire",
+    description: "Make one benefit seem overwhelmingly important",
+    effectiveness: 84,
+    examples: ["This one thing changes everything", "Focus on this single factor", "If you get nothing else from this, remember"],
+    timing: "Priority setting"
   }
 ];
 

@@ -32,7 +32,11 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Create a .env file from the example and add your configuration
+cp .env.example .env
+# Edit .env with your Supabase credentials and admin code
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 

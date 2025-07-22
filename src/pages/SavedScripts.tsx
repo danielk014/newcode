@@ -149,13 +149,13 @@ const SavedScriptsPage = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-8">
+      <div className="min-h-screen bg-background p-8">
         <div className="max-w-4xl mx-auto">
-          <Card>
+          <Card className="glass-effect border-border/50">
             <CardContent className="p-12 text-center">
-              <FileText className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-6" />
               <h2 className="text-2xl font-bold mb-4">Authentication Required</h2>
-              <p className="text-gray-600 mb-6">Please log in to view and manage your saved scripts</p>
+              <p className="text-muted-foreground mb-6">Please log in to view and manage your saved scripts</p>
               <Link to="/">
                 <Button>Go Back to Home</Button>
               </Link>
@@ -167,7 +167,7 @@ const SavedScriptsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-8">
+    <div className="min-h-screen w-full gradient-bg-subtle p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -181,17 +181,17 @@ const SavedScriptsPage = () => {
           </Button>
           <div>
             <h1 className="text-3xl font-bold">My Saved Scripts</h1>
-            <p className="text-gray-600">Manage your script library</p>
+            <p className="text-muted-foreground">Manage your script library</p>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Save New Script Section */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="glass-effect border-border/50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Save className="w-5 h-5 text-blue-600" />
+                  <Save className="w-5 h-5 text-primary" />
                   Save New Script
                 </CardTitle>
               </CardHeader>
@@ -224,10 +224,10 @@ const SavedScriptsPage = () => {
 
           {/* Saved Scripts List */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="glass-effect border-border/50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-600" />
+                  <FileText className="w-5 h-5 text-primary" />
                   Your Scripts ({savedScripts.length})
                 </CardTitle>
               </CardHeader>
@@ -235,7 +235,7 @@ const SavedScriptsPage = () => {
                 {loading ? (
                   <div className="text-center py-8">Loading scripts...</div>
                 ) : savedScripts.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
+                  <div className="text-center py-12 text-muted-foreground">
                     <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <h3 className="text-lg font-medium mb-2">No saved scripts yet</h3>
                     <p>Save your first script using the form on the left</p>
@@ -243,7 +243,7 @@ const SavedScriptsPage = () => {
                 ) : (
                   <div className="space-y-4 max-h-96 overflow-y-auto">
                     {savedScripts.map((script) => (
-                      <Card key={script.id} className="border border-gray-200">
+                      <Card key={script.id} className="border border-border bg-card/50">
                         <CardContent className="p-4">
                           <div className="space-y-3">
                             <div className="flex items-start justify-between">

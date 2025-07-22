@@ -81,6 +81,13 @@ export const ScriptTranslator: React.FC<ScriptTranslatorProps> = ({
       }
 
       const translated = data.translatedText;
+      
+      // Check word count limit
+      const validation = validateWordCount(translated);
+      if (!validation.isValid) {
+        throw new Error(`Translated script exceeds word limit: ${validation.errorMessage} Consider using a shorter script for translation.`);
+      }
+      
       setTranslatedScript(translated);
       
       // Save translation as a version automatically

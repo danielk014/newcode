@@ -19,11 +19,19 @@ export interface ScriptSection {
   wordCount: number;
 }
 
-export const analyzeScript = (script: string): ScriptAnalysis => {
+export const analyzeScript = (
+  script: string, 
+  onProgress?: (step: string, progress: number) => void
+): ScriptAnalysis => {
+  onProgress?.('parsing', 0);
+  
   const words = script.trim().split(/\s+/).length;
   const estimatedDuration = Math.round(words / 140); // 140 words per minute average
 
+  onProgress?.('parsing', 25);
+
   // Detect psychological tactics by scanning for keywords and patterns
+  onProgress?.('analyzing-tactics', 30);
   const detectedTactics = psychologicalTactics.filter(tactic => {
     return tactic.examples.some(example => {
       const keywords = example.toLowerCase().split(' ').filter(word => word.length > 3);
@@ -31,14 +39,23 @@ export const analyzeScript = (script: string): ScriptAnalysis => {
     });
   });
 
+  onProgress?.('analyzing-tactics', 60);
+
   // Analyze script structure by detecting common patterns
+  onProgress?.('detecting-structure', 65);
   const structure = detectScriptStructure(script);
+  
+  onProgress?.('detecting-structure', 80);
   
   // Extract key phrases (repeated words/phrases that might be hooks)
   const keyPhrases = extractKeyPhrases(script);
   
+  onProgress?.('detecting-structure', 90);
+  
   // Analyze emotional tone
   const emotionalTone = analyzeEmotionalTone(script);
+
+  onProgress?.('detecting-structure', 100);
 
   return {
     tactics: detectedTactics,
@@ -183,17 +200,24 @@ const analyzeEmotionalTone = (script: string): string[] => {
   return detectedTones;
 };
 
-export const synthesizeAnalyses = (analyses: ScriptAnalysis[]): {
+export const synthesizeAnalyses = (
+  analyses: ScriptAnalysis[],
+  onProgress?: (step: string, progress: number) => void
+): {
   commonTactics: PsychologicalTactic[];
   averageStructure: ScriptSection[];
   insights: string[];
 } => {
+  onProgress?.('synthesizing', 0);
+
   // Find tactics that appear in multiple scripts
   const allTactics = analyses.flatMap(analysis => analysis.tactics);
   const tacticCounts = allTactics.reduce((acc, tactic) => {
     acc[tactic.name] = (acc[tactic.name] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+  
+  onProgress?.('synthesizing', 25);
   
   // Get tactics that appear in at least 50% of scripts
   const threshold = Math.ceil(analyses.length / 2);
@@ -202,11 +226,17 @@ export const synthesizeAnalyses = (analyses: ScriptAnalysis[]): {
     tacticCounts[tactic.name] >= threshold
   );
   
+  onProgress?.('synthesizing', 50);
+  
   // Create averaged structure
   const averageStructure = createAverageStructure(analyses);
   
+  onProgress?.('synthesizing', 75);
+  
   // Generate insights
   const insights = generateInsights(analyses, tacticCounts);
+  
+  onProgress?.('synthesizing', 100);
   
   return {
     commonTactics,

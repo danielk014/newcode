@@ -6,7 +6,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages, Home, Target } from 'lucide-react';
+import { CheckCircle, Copy, Download, RefreshCw, Lightbulb, Map, FileText, ArrowLeft, Eye, Save, Languages, Home, Target, AlertCircle } from 'lucide-react';
+// Simple word count functions
+const getWordCount = (text: string): number => {
+  return text.split(/\s+/).filter(word => word.length > 0).length;
+};
+
+const getWordCountStatus = (text: string) => {
+  const count = getWordCount(text);
+  return {
+    count,
+    displayText: `${count.toLocaleString()} words`,
+    badgeVariant: 'outline',
+    badgeClassName: ''
+  };
+};
 import { TacticMapper } from './TacticMapper';
 import { ScriptImprovement } from './ScriptImprovement';
 import { ScriptTranslator } from './ScriptTranslator';
@@ -72,23 +86,61 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
       return;
     }
 
+    const wordCount = editedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
+    
+    if (wordCount === 0) {
+      toast({
+        title: "Empty Script",
+        description: "Cannot save an empty script",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (wordCount > 30000) {
+      toast({
+        title: "Script Too Long",
+        description: `Your script has ${wordCount} words. Please reduce it to 30,000 words or less before saving.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
-      const wordCount = editedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
-      
       // Use the user ID from the custom auth system
       if (!user?.id) {
         throw new Error('No valid user found');
+      }
+      
+      // Check for duplicate titles
+      const { data: existingScripts, error: checkError } = await supabase
+        .from('saved_scripts')
+        .select('title')
+        .eq('user_id', user.id)
+        .eq('title', saveTitle.trim());
+
+      if (checkError) {
+        console.error('Error checking for duplicates:', checkError);
+        throw checkError;
+      }
+
+      let finalTitle = saveTitle.trim();
+      if (existingScripts && existingScripts.length > 0) {
+        const timestamp = new Date().toLocaleDateString();
+        finalTitle = `${saveTitle.trim()} (${timestamp})`;
       }
       
       const { error } = await supabase
         .from('saved_scripts')
         .insert({
           user_id: user.id,
-          title: saveTitle.trim(),
+          title: finalTitle,
           content: editedScript.trim(),
           word_count: wordCount,
-          language: 'en'
+          language: 'en',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
 
       if (error) {
@@ -97,15 +149,16 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
       }
 
       toast({
-        title: "Script Saved!",
-        description: "Your script has been saved successfully"
+        title: "Script Saved Successfully!",
+        description: `"${finalTitle}" has been saved with ${wordCount} words`
       });
       setSaveTitle('');
     } catch (error) {
       console.error('Error saving script:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Save Failed",
-        description: "Could not save script. Please try again.",
+        description: `Could not save script: ${errorMessage}. Please try again.`,
         variant: "destructive"
       });
     } finally {
@@ -162,10 +215,10 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
     <div className="min-h-screen w-full bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <div className="space-y-6">
-          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="shadow-xl border-0 glass-effect">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+                <CheckCircle className="w-6 h-6 text-accent" />
                 <span className="text-xl font-semibold">Your Script is Ready!</span>
               </div>
               {improvedVersions.length > 0 && (
@@ -176,13 +229,13 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </CardHeader>
             <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="script" className="hover:bg-green-500 hover:text-white transition-colors">Generated Script</TabsTrigger>
-              <TabsTrigger value="mapping" className="hover:bg-green-500 hover:text-white transition-colors">Synthesized Tactics</TabsTrigger>
-              <TabsTrigger value="revisions" className="hover:bg-green-500 hover:text-white transition-colors">Improve Script</TabsTrigger>
-              <TabsTrigger value="translate" className="hover:bg-green-500 hover:text-white transition-colors">Translate</TabsTrigger>
-              <TabsTrigger value="versions" className="hover:bg-green-500 hover:text-white transition-colors">Versions</TabsTrigger>
-              <TabsTrigger value="export" className="hover:bg-green-500 hover:text-white transition-colors">Export & Share</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-6 glass-effect">
+              <TabsTrigger value="script" className="data-[state=active]:bg-primary data-[state=active]:text-white">Generated Script</TabsTrigger>
+              <TabsTrigger value="mapping" className="data-[state=active]:bg-primary data-[state=active]:text-white">Synthesized Tactics</TabsTrigger>
+              <TabsTrigger value="revisions" className="data-[state=active]:bg-primary data-[state=active]:text-white">Improve Script</TabsTrigger>
+              <TabsTrigger value="translate" className="data-[state=active]:bg-primary data-[state=active]:text-white">Translate</TabsTrigger>
+              <TabsTrigger value="versions" className="data-[state=active]:bg-primary data-[state=active]:text-white">Versions</TabsTrigger>
+              <TabsTrigger value="export" className="data-[state=active]:bg-primary data-[state=active]:text-white">Export & Share</TabsTrigger>
             </TabsList>
 
             <TabsContent value="script" className="mt-6">
@@ -190,33 +243,59 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Your Generated Script</h3>
                   <div className="flex gap-2">
-                    <Badge variant="outline">~{Math.round(editedScript.split(' ').length)} words</Badge>
-                    <Badge variant="outline">~{Math.round(editedScript.split(' ').length / 140)} minutes</Badge>
+                    <Badge variant={getWordCountStatus(editedScript).badgeVariant as any} className={getWordCountStatus(editedScript).badgeClassName}>
+                      {getWordCountStatus(editedScript).displayText}
+                    </Badge>
+                    <Badge variant="outline">~{Math.round(getWordCountStatus(editedScript).count / 140)} minutes</Badge>
                   </div>
                 </div>
-                <Textarea
-                  value={editedScript}
-                  onChange={(e) => setEditedScript(e.target.value)}
-                  className="min-h-[500px] font-mono text-sm"
-                />
+                <div className="space-y-2">
+                  <Textarea
+                    value={editedScript}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      // Always allow editing but provide warnings
+                      setEditedScript(newValue);
+                    }}
+                    className="min-h-[500px] font-mono text-sm"
+                    placeholder="Your generated script will appear here..."
+                  />
+                </div>
                 <div className="flex gap-2 flex-wrap">
                   <Button onClick={copyToClipboard} variant="outline">
                     <Copy className="w-4 h-4 mr-2" />
                     {copied ? 'Copied!' : 'Copy Script'}
                   </Button>
-                  <Button onClick={downloadScript} variant="outline">
+                  <Button 
+                    onClick={downloadScript} 
+                    variant="outline"
+                    disabled={editedScript.trim().length === 0}
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     Download
                   </Button>
+                  <Button onClick={() => navigate('/')} variant="outline">
+                    <Home className="w-4 h-4 mr-2" />
+                    Back to Home
+                  </Button>
                   {user && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Input
                         placeholder="Enter title to save..."
                         value={saveTitle}
                         onChange={(e) => setSaveTitle(e.target.value)}
-                        className="w-48"
+                        className="w-48 min-w-[200px]"
+                        maxLength={100}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && saveTitle.trim() && !isSaving) {
+                            saveScript();
+                          }
+                        }}
                       />
-                      <Button onClick={saveScript} disabled={isSaving || !saveTitle.trim()}>
+                      <Button 
+                        onClick={saveScript} 
+                        disabled={isSaving || !saveTitle.trim()}
+                      >
                         <Save className="w-4 h-4 mr-2" />
                         {isSaving ? 'Saving...' : 'Save Script'}
                       </Button>
@@ -227,29 +306,29 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="mapping" className="mt-6">
-              <Card>
+              <Card className="glass-effect border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-blue-600" />
-                    Synthesized Tactics ({tactics.length} Found)
+                    <Target className="w-5 h-5 text-primary" />
+                    Synthesized Tactics ({tactics?.length || 0} Found)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {tactics.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8">
+                  {!tactics || tactics.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
                       No tactics detected in the generated script. Try analyzing the script or regenerating with more specific content.
                     </p>
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
-                      {tactics.map((tactic, index) => (
-                        <div key={index} className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-purple-50">
+                      {tactics?.map((tactic, index) => (
+                        <div key={index} className="p-4 border border-border rounded-lg bg-muted/20">
                           <div className="flex items-start justify-between mb-3">
                             <div>
-                              <h4 className="font-medium text-blue-700 mb-1">{tactic.name}</h4>
+                              <h4 className="font-medium text-primary mb-1">{tactic.name}</h4>
                               <Badge variant="outline" className="text-xs">{tactic.category}</Badge>
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-sm text-muted-foreground leading-relaxed">
                             {tactic.description}
                           </p>
                           {tactic.examples && tactic.examples.length > 0 && (
@@ -303,7 +382,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
             </TabsContent>
 
             <TabsContent value="versions" className="mt-6">
-              <Card>
+              <Card className="glass-effect border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="w-5 h-5 text-purple-600" />
@@ -312,14 +391,14 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                 </CardHeader>
                 <CardContent>
                   {improvedVersions.length === 0 ? (
-                    <p className="text-center text-gray-500 py-8">
+                    <p className="text-center text-muted-foreground py-8">
                       No improvements applied yet. Use the "Improve Script" tab to enhance your script.
                     </p>
                   ) : (
                     <div className="space-y-4">
-                      <div className="p-4 border rounded-lg bg-blue-50">
+                      <div className="p-4 border border-border rounded-lg bg-muted/20">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">Original Version</h4>
+                          <h4 className="font-medium text-foreground">Original Version</h4>
                           <Button
                             size="sm"
                             variant="outline"
@@ -332,15 +411,15 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                             Load
                           </Button>
                         </div>
-                        <p className="text-sm text-gray-600">The initial generated script</p>
+                        <p className="text-sm text-muted-foreground">The initial generated script</p>
                       </div>
                       
                       {improvedVersions.map((version, index) => (
-                        <div key={index} className="p-4 border rounded-lg">
+                        <div key={index} className="p-4 border border-border rounded-lg bg-card">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <h4 className="font-medium">{version.improvement} Applied</h4>
-                              <p className="text-xs text-gray-500">
+                              <h4 className="font-medium text-foreground">{version.improvement} Applied</h4>
+                              <p className="text-xs text-muted-foreground">
                                 {version.timestamp.toLocaleString()}
                               </p>
                             </div>
@@ -360,7 +439,7 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                               Version {improvedVersions.length - index}
                             </Badge>
                           </div>
-                          <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                          <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded">
                             <strong>Changes:</strong> {version.changesSummary.substring(0, 100)}...
                           </div>
                         </div>
@@ -396,10 +475,14 @@ export const ScriptGenerator: React.FC<ScriptGeneratorProps> = ({ script, tactic
                       </div>
                     </Button>
                   </div>
-                  <div className="mt-6 pt-6 border-t">
+                  <div className="mt-6 pt-6 border-t space-y-3">
                     <Button onClick={onRestart} variant="outline" className="w-full">
                       <RefreshCw className="w-4 h-4 mr-2" />
                       Create Another Script
+                    </Button>
+                    <Button onClick={() => navigate('/')} variant="outline" className="w-full">
+                      <Home className="w-4 h-4 mr-2" />
+                      Back to Home
                     </Button>
                   </div>
                 </CardContent>

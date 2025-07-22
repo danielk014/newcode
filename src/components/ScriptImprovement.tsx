@@ -107,6 +107,12 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
       }
 
       if (data.success) {
+        // Check word count limit
+        const validation = validateWordCount(data.improvedScript);
+        if (!validation.isValid) {
+          throw new Error(`Improved script exceeds word limit: ${validation.errorMessage}`);
+        }
+
         const changesSummary = extractChangesSummary(data.improvedScript, improvement.title);
         const preview = extractPreview(data.improvedScript);
         
@@ -121,6 +127,16 @@ export const ScriptImprovement: React.FC<ScriptImprovementProps> = ({
     } catch (error) {
       console.error('Error improving script:', error);
       const improvedScript = applyBasicImprovement(originalScript, improvement);
+      
+      // Check word count limit for fallback improvement
+      const validation = validateWordCount(improvedScript);
+      if (!validation.isValid) {
+        alert(`Cannot apply improvement: ${validation.errorMessage} Please try a different improvement or reduce your script length first.`);
+        setIsImproving(false);
+        setCurrentImprovement('');
+        return;
+      }
+      
       const changesSummary = `Applied ${improvement.title}: ${improvement.description}`;
       
       setLastImprovement({

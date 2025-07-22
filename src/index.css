@@ -1,91 +1,80 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Futuristic Design System with Dark Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    /* Dark theme by default */
+    --background: 220 40% 8%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card: 220 30% 12%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover: 220 40% 8%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 250 100% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 200 100% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: 220 30% 16%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 100%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 220 20% 20%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 180 100% 40%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 0 0% 100%;
-    --ring: 250 100% 60%;
+    --border: 220 20% 18%;
+    --input: 220 25% 18%;
+    --ring: 200 100% 45%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 18%;
-    --sidebar-primary: 250 100% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 100%;
-    --sidebar-accent-foreground: 220 13% 18%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 250 100% 60%;
+    /* Custom gradient colors - professional blue/teal */
+    --gradient-1: 200 100% 45%;
+    --gradient-2: 180 100% 40%;
+    --gradient-3: 190 90% 50%;
+
+    /* Glass effect - more subtle */
+    --glass-background: 220 30% 12% / 0.7;
+    --glass-border: 220 20% 25% / 0.5;
   }
 
-  .dark {
+  .light {
     --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 250 100% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 263 90% 51%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 100%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 142 71% 45%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 280 100% 70%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 0 0% 100%;
-    --ring: 250 100% 60%;
-
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 18%;
-    --sidebar-primary: 250 100% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 100%;
-    --sidebar-accent-foreground: 220 13% 18%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 250 100% 60%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 263 90% 51%;
   }
 }
 
@@ -97,65 +86,252 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Add black outlines to buttons */
+  /* Remove harsh black borders */
   button {
-    @apply border border-black;
+    @apply border-0;
   }
 
-  /* Add black outlines to input fields and textareas */
   input, 
   textarea {
-    @apply border border-black !important;
+    @apply border-0 text-foreground bg-input !important;
   }
 
-  /* Ensure placeholder text is visible */
+  /* Better placeholder styling */
   input::placeholder,
   textarea::placeholder {
-    @apply text-gray-600;
+    @apply text-muted-foreground/60;
   }
+  
+  /* Ensure proper text color in all input states */
+  input:focus,
+  textarea:focus {
+    @apply text-foreground bg-input;
+  }
+  
+  /* Autofill styles */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    -webkit-box-shadow: 0 0 0px 1000px hsl(var(--input)) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+/* Futuristic Components */
+@layer components {
+  /* Gradient backgrounds */
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--gradient-1)) 0%, hsl(var(--gradient-2)) 50%, hsl(var(--gradient-3)) 100%);
+  }
+
+  .gradient-bg-subtle {
+    background: linear-gradient(135deg, 
+      hsl(var(--background)) 0%, 
+      hsl(217 33% 14%) 100%);
+  }
+
+  /* Glassmorphism effect */
+  .glass-effect {
+    background: hsl(var(--glass-background));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--glass-border));
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--gradient-1)), hsl(var(--gradient-2)), hsl(var(--gradient-3)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow effects - more subtle */
+  .glow-sm {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+  }
+
+  .glow-md {
+    box-shadow: 0 0 25px hsl(var(--primary) / 0.25);
+  }
+
+  .glow-lg {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.3);
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, hsl(var(--gradient-1)), hsl(var(--gradient-2)), hsl(var(--gradient-3)));
+    border-radius: var(--radius);
+    z-index: -1;
+    opacity: 0.75;
+    transition: opacity 0.3s;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+
+  /* Modern button styles */
+  .btn-futuristic {
+    @apply relative overflow-hidden transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    box-shadow: 0 2px 10px hsl(var(--primary) / 0.2);
+  }
+
+  .btn-futuristic:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-futuristic::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      hsl(var(--primary) / 0.3),
+      transparent
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s;
+    opacity: 0;
+  }
+
+  .btn-futuristic:hover::after {
+    animation: shine 0.6s ease-in-out;
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(45deg);
+      opacity: 0;
+    }
+  }
+
+  /* Input field styling */
+  .input-futuristic {
+    @apply bg-card backdrop-blur-sm text-foreground;
+    border: 1px solid hsl(var(--border) / 0.5);
+    transition: all 0.3s;
+  }
+
+  .input-futuristic:focus {
+    @apply outline-none bg-card;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+  
+  /* Ensure text is visible in inputs */
+  .input-futuristic::placeholder {
+    @apply text-muted-foreground/50;
+  }
+
+  /* Card hover effects */
+  .card-futuristic {
+    @apply glass-effect;
+    transition: all 0.3s;
+  }
+
+  .card-futuristic:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px hsl(var(--primary) / 0.2);
+  }
+}
+
+/* Animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
 }
 
 #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Calendar, Hash, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -81,11 +82,11 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
   }
 
   return (
-    <Card>
+    <Card className="glass-effect border-border/50">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="w-5 h-5 text-primary" />
             Recent Scripts
           </div>
           <Link 
@@ -102,9 +103,21 @@ export const SavedScripts: React.FC<SavedScriptsProps> = ({
       <CardContent className="space-y-4">
         <div className="space-y-3 max-h-96 overflow-y-auto">
           {loading ? (
-            <div className="text-center py-4">Loading scripts...</div>
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-4 border rounded-lg space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              ))}
+            </div>
           ) : savedScripts.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>No saved scripts yet</p>
               <Link 

@@ -1,6 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { ADMIN_CONFIG, SESSION } from '@/config/constants';
+import logger from '@/utils/logger';
 
 interface TempUser {
   id: string;
@@ -37,6 +39,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<TempUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
 
   // Session monitoring function
   const checkSessionValidity = async (userData: TempUser) => {
@@ -50,10 +53,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const sessionTimestamp = new Date(localStorage.getItem('session_timestamp') || '0');
         
         if (logoutTimestamp > sessionTimestamp) {
-          console.log('User was logged out by admin, clearing session');
+          logger.log('User was logged out by admin, clearing session');
           logout();
           return false;
         }
+      }
+
+      // Skip database checks for demo user in development
+      if (import.meta.env.DEV && userData.id === 'demo-user-id') {
+        return true;
       }
 
       // Verify the user is still active in the database
@@ -64,22 +72,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .single();
 
       if (error || !data || !data.is_active || new Date(data.expires_at) <= new Date()) {
-        console.log('User is no longer active or expired, logging out');
+        logger.log('User is no longer active or expired, logging out');
         logout();
         return false;
       }
 
       // Check if password changed (indicating forced logout)
-      const storedPassword = localStorage.getItem('user_password');
-      if (storedPassword && storedPassword !== data.password) {
-        console.log('User password changed, logging out');
+      const storedPasswordHash = localStorage.getItem('user_password');
+      const currentPasswordHash = btoa(data.password);
+      if (storedPasswordHash && storedPasswordHash !== currentPasswordHash) {
+        logger.log('User password changed, logging out');
         logout();
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Session validation error:', error);
+      logger.error('Session validation error:', error);
       logout();
       return false;
     }
@@ -98,34 +107,70 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem('session_timestamp', new Date().toISOString());
       }
       
-      checkSessionValidity(userData).then((isValid) => {
-        if (isValid) {
-          setUser(userData);
-          setIsAuthenticated(true);
-        }
-      });
+      // In development, trust the stored session for demo user
+      if (import.meta.env.DEV && userData.id === 'demo-user-id') {
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        checkSessionValidity(userData)
+          .then((isValid) => {
+            if (isValid) {
+              setUser(userData);
+              setIsAuthenticated(true);
+            }
+          })
+          .catch((error) => {
+            logger.error('Session validation error:', error);
+            logout();
+          });
+      }
     }
     
     if (storedAdmin === 'true') {
       setIsAdmin(true);
     }
 
-    // Set up periodic session validation
-    const interval = setInterval(() => {
-      const currentStoredUser = localStorage.getItem('temp_user');
-      const currentIsAdmin = localStorage.getItem('is_admin') === 'true';
-      
-      if (currentStoredUser && !currentIsAdmin) {
-        const userData = JSON.parse(currentStoredUser);
-        checkSessionValidity(userData);
-      }
-    }, 30000); // Check every 30 seconds
+    // Set up periodic session validation (disabled in development for demo mode)
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (!import.meta.env.DEV) {
+      interval = setInterval(() => {
+        const currentStoredUser = localStorage.getItem('temp_user');
+        const currentIsAdmin = localStorage.getItem('is_admin') === 'true';
+        
+        if (currentStoredUser && !currentIsAdmin) {
+          const userData = JSON.parse(currentStoredUser);
+          checkSessionValidity(userData);
+        }
+      }, 60000); // Check every 60 seconds in production
+    }
 
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isAdmin]);
 
   const login = async (username: string, password: string) => {
     try {
+      // Development mode bypass for VPN/offline scenarios
+      if (import.meta.env.DEV && username === 'demo' && password === 'demo123') {
+        const demoUser: TempUser = {
+          id: 'demo-user-id',
+          username: 'demo',
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+          days_remaining: 30
+        };
+        
+        setUser(demoUser);
+        setIsAuthenticated(true);
+        localStorage.setItem('temp_user', JSON.stringify(demoUser));
+        localStorage.setItem('session_timestamp', new Date().toISOString());
+        
+        logger.log("Demo mode activated for offline development");
+        
+        return { error: null };
+      }
+
       // Query temp_users table
       const { data, error } = await supabase
         .from('temp_users')
@@ -159,20 +204,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(tempUser);
       setIsAuthenticated(true);
       localStorage.setItem('temp_user', JSON.stringify(tempUser));
-      localStorage.setItem('user_password', data.password); // Store for session validation
+      // Store password hash instead of plain password for better security
+      const passwordHash = btoa(data.password); // Simple encoding, use bcrypt in production
+      localStorage.setItem('user_password', passwordHash);
       localStorage.setItem('session_timestamp', new Date().toISOString());
 
       return { error: null };
     } catch (error) {
-      return { error: { message: 'Login failed' } };
+      logger.error('Login error:', error);
+      
+      // If network error and in development, suggest demo mode
+      if (import.meta.env.DEV) {
+        return { error: { message: 'Network error. Try demo account: username "demo", password "demo123"' } };
+      }
+      
+      return { error: { message: 'Login failed - check your connection' } };
     }
   };
 
   const adminLogin = async (code: string) => {
-    // Secret admin code
-    if (code === 'SCRIPT_ADMIN_2024') {
+    // Use admin code from config
+    if (code === ADMIN_CONFIG.CODE) {
       setIsAdmin(true);
-      localStorage.setItem('is_admin', 'true');
+      localStorage.setItem(SESSION.STORAGE_KEYS.IS_ADMIN, 'true');
       return { error: null };
     }
     return { error: { message: 'Invalid admin code' } };

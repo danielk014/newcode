@@ -22,17 +22,17 @@ export const TacticMapper: React.FC<TacticMapperProps> = ({ tactics, scriptSecti
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="glass-effect border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-blue-600" />
+            <Target className="w-5 h-5 text-primary" />
             Tactic Distribution
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(tacticCategories).map(([category, categoryTactics]) => (
-              <div key={category} className="p-4 border rounded-lg">
+              <div key={category} className="p-4 border border-border rounded-lg bg-muted/20">
                 <div className="flex justify-between items-center mb-3">
                   <h4 className="font-medium">{category}</h4>
                   <Badge variant="secondary">{categoryTactics.length}</Badge>
@@ -40,8 +40,8 @@ export const TacticMapper: React.FC<TacticMapperProps> = ({ tactics, scriptSecti
                 <Progress value={Math.random() * 100} className="h-2 mb-3" />
                 <div className="space-y-1">
                   {categoryTactics.slice(0, 3).map((tactic, index) => (
-                    <div key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <div key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
                       {tactic}
                     </div>
                   ))}

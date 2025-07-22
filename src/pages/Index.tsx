@@ -23,9 +23,12 @@ import { psychologicalTactics } from '@/utils/tacticAnalyzer';
 import { supabase } from '@/integrations/supabase/client';
 import UserMenu from '@/components/UserMenu';
 import { ViralFormatSelector } from '@/components/ViralFormatSelector';
+import { SimplifiedFormatSelector } from '@/components/SimplifiedFormatSelector';
+import { ContentStyleSelector } from '@/components/ContentStyleSelector';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'react-router-dom';
+import logger from '@/utils/logger';
 
 interface ScriptInput {
   scripts: string[];
@@ -44,7 +47,14 @@ const Index = () => {
     targetLength: 1400,
     callToAction: ''
   });
-  const [selectedFormat, setSelectedFormat] = useState<string>('Copy Reference Script Format'); // Set default format
+  const [selectedFormat, setSelectedFormat] = useState<string>('Copy Reference Script Format'); // Legacy format
+  const [videoFormat, setVideoFormat] = useState({
+    format: 'long' as const,
+    platform: 'YouTube',
+    targetWordCount: 1400,
+    estimatedDuration: '10 minutes'
+  });
+  const [contentStyle, setContentStyle] = useState('educational');
   const [analysis, setAnalysis] = useState<any>(null);
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -56,9 +66,22 @@ const Index = () => {
   // Handle state restoration when returning from TacticsLibrary
   useEffect(() => {
     const navigationState = location.state as any;
-    if (navigationState?.preserveState && navigationState?.currentStep !== undefined && navigationState?.analysis) {
-      setCurrentStep(navigationState.currentStep);
-      setAnalysis(navigationState.analysis);
+    if (navigationState?.preserveState) {
+      if (navigationState?.currentStep !== undefined) {
+        setCurrentStep(navigationState.currentStep);
+      }
+      if (navigationState?.analysis) {
+        setAnalysis(navigationState.analysis);
+      }
+      if (navigationState?.generatedScript) {
+        setGeneratedScript(navigationState.generatedScript);
+      }
+      if (navigationState?.scriptInput) {
+        setScriptInput(navigationState.scriptInput);
+      }
+      if (navigationState?.videoFormat) {
+        setVideoFormat(navigationState.videoFormat);
+      }
       
       // Clear the navigation state to prevent re-triggering
       window.history.replaceState({}, '', location.pathname);
@@ -75,11 +98,11 @@ const Index = () => {
   const progressTracking = useProgressTracking({
     steps: generationSteps,
     onComplete: () => {
-      console.log('Script generation completed!');
+      logger.log('Script generation completed!');
       setCurrentStep(3);
     },
     onError: (error) => {
-      console.error('Progress tracking error:', error);
+      logger.error('Progress tracking error:', error);
     }
   });
 
@@ -180,16 +203,19 @@ const Index = () => {
     setIsAnalyzing(true);
     
     try {
-      console.log('Starting deep script analysis with Claude AI...');
-      console.log('Scripts to analyze:', filledScripts.length);
-      console.log('Topic:', scriptInput.topic);
+      logger.log('Starting deep script analysis with Claude AI...');
+      logger.log('Scripts to analyze:', filledScripts.length);
+      logger.log('Topic:', scriptInput.topic);
       
       const { data, error } = await supabase.functions.invoke('analyze-scripts', {
-        body: { scripts: filledScripts }
+        body: { 
+          scripts: filledScripts,
+          videoFormat: videoFormat
+        }
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
+        logger.error('Supabase function error:', error);
         throw new Error(error.message || 'Failed to analyze scripts');
       }
 
@@ -210,7 +236,7 @@ const Index = () => {
       setCurrentStep(1);
       
     } catch (error) {
-      console.error('Analysis error:', error);
+      logger.error('Analysis error:', error);
       setIsAnalyzing(false);
       toast({
         title: "Analysis Failed",
@@ -220,15 +246,18 @@ const Index = () => {
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (style?: string) => {
+    if (style) {
+      setContentStyle(style);
+    }
     // Enhanced validation with detailed logging
-    console.log('Generate button clicked');
-    console.log('Current topic:', scriptInput.topic);
-    console.log('Topic length:', scriptInput.topic?.length || 0);
-    console.log('Topic trimmed:', scriptInput.topic?.trim());
+    logger.log('Generate button clicked');
+    logger.log('Current topic:', scriptInput.topic);
+    logger.log('Topic length:', scriptInput.topic?.length || 0);
+    logger.log('Topic trimmed:', scriptInput.topic?.trim());
     
     if (!scriptInput.topic || !scriptInput.topic.trim()) {
-      console.error('Topic validation failed - topic is empty or whitespace only');
+      logger.error('Topic validation failed - topic is empty or whitespace only');
       toast({
         title: "Topic Required",
         description: "Please enter a video topic before generating the script.",
@@ -239,7 +268,7 @@ const Index = () => {
 
     const filledScripts = scriptInput.scripts.filter(s => s.trim());
     if (filledScripts.length < 2) {
-      console.error('Scripts validation failed - not enough scripts');
+      logger.error('Scripts validation failed - not enough scripts');
       toast({
         title: "Scripts Required",
         description: "Please provide at least 2 reference scripts.",
@@ -248,7 +277,8 @@ const Index = () => {
       return;
     }
 
-    console.log('Validation passed, proceeding with generation');
+
+    logger.log('Validation passed, proceeding with generation');
     setCurrentStep(2);
     setIsGenerating(true);
     progressTracking.reset();
@@ -262,20 +292,25 @@ const Index = () => {
       // Start generating step
       progressTracking.simulateProgress('generating', 30000);
       
-      console.log('Generating viral script with optimized performance...');
-      console.log('Topic:', scriptInput.topic);
-      console.log('Scripts count:', scriptInput.scripts.filter(s => s.trim()).length);
+      logger.log('Generating viral script with optimized performance...');
+      logger.log('Topic:', scriptInput.topic);
+      logger.log('Scripts count:', scriptInput.scripts.filter(s => s.trim()).length);
       
       const { data, error } = await supabase.functions.invoke('generate-script', {
         body: {
           topic: scriptInput.topic.trim(),
           description: scriptInput.description.trim(),
-          targetAudience: 'YouTube viewers interested in ' + scriptInput.topic.trim(),
-          videoLength: Math.round(scriptInput.targetLength / 140),
+          targetAudience: videoFormat.platform === 'youtube' ? 'YouTube viewers interested in ' + scriptInput.topic.trim() : 
+                          videoFormat.platform === 'tiktok' ? 'TikTok users interested in ' + scriptInput.topic.trim() :
+                          'Social media users interested in ' + scriptInput.topic.trim(),
+          analysis: analysis,
           scripts: scriptInput.scripts.filter(s => s.trim()),
           callToAction: scriptInput.callToAction.trim(),
-          format: selectedFormat,
-          targetWordCount: scriptInput.targetLength
+          videoFormat: {
+            ...videoFormat,
+            style: contentStyle
+          },
+          targetWordCount: videoFormat.targetWordCount
         }
       });
 
@@ -283,7 +318,7 @@ const Index = () => {
       progressTracking.completeStep('generating');
       
       if (error) {
-        console.error('Supabase function error:', error);
+        logger.error('Supabase function error:', error);
         throw new Error(error.message || 'Failed to generate script');
       }
 
@@ -300,19 +335,22 @@ const Index = () => {
       progressTracking.simulateProgress('finalizing', 500);
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      console.log('Viral script generated successfully');
+      logger.log('Viral script generated successfully');
       setGeneratedScript(data.script);
+      
+      // Log word count for debugging
+      const actualWordCount = data.wordCount || targetWordCount;
+      logger.log(`Generated script: ${actualWordCount} words`);
       
       progressTracking.completeStep('finalizing');
       
     } catch (error) {
-      console.error('Error generating script:', error);
+      logger.error('Error generating script:', error);
       
       progressTracking.errorStep('generating', error.message);
       
       // Generate a fallback script
-      const targetWords = scriptInput.targetLength;
-      const mockScript = generateFallbackScript(scriptInput.topic, scriptInput.callToAction, targetWords);
+      const mockScript = generateFallbackScript(scriptInput.topic, scriptInput.callToAction, videoFormat);
       setGeneratedScript(mockScript);
       setCurrentStep(3);
       
@@ -327,10 +365,31 @@ const Index = () => {
     }
   };
 
-  const generateFallbackScript = (topic: string, cta: string, targetWords: number): string => {
-    // Generate a comprehensive script that meets the minimum word count requirement
-    const baseScript = `**VIRAL HOOK (0-3s)**
-"Stop scrolling! What I'm about to reveal about ${topic.toLowerCase()} will completely transform your understanding and results forever. But first, let me show you why 97% of people fail at this."
+  const generateFallbackScript = (topic: string, cta: string, format: typeof videoFormat): string => {
+    const isShortForm = format.format === 'short';
+    const targetWords = format.targetWordCount;
+    
+    if (isShortForm) {
+      // Short-form script
+      return `What if I told you that ${topic.toLowerCase()} is completely different from what you've been taught?
+
+In the next 30 seconds, I'm going to show you the exact method that changed everything for me.
+
+First, forget everything you think you know. The traditional approach doesn't work because it ignores this one crucial element.
+
+Here's what actually works: [demonstrates quick technique or insight]
+
+The key is understanding that ${topic.toLowerCase()} isn't about complexity - it's about this simple principle that 99% of people miss.
+
+Try this today: [specific action step]
+
+${cta || 'Follow for more game-changing insights like this.'}
+
+Trust me, once you see this in action, you'll never go back to the old way.`;
+    }
+    
+    // Long-form script generation continues as before
+    const baseScript = `What I'm about to reveal about ${topic.toLowerCase()} will completely transform your understanding and results forever. But first, let me show you why 97% of people fail at this."
 
 **PROMISE & SETUP (3-15s)**
 "By the end of this video, you'll have the exact step-by-step blueprint that took my student from complete beginner to achieving incredible results in just 30 days. But here's the thing - everything you've been told about ${topic.toLowerCase()} is probably wrong, and I'm going to prove it to you right now."
@@ -496,7 +555,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen w-full gradient-bg-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <header className="py-6 sm:py-8 mb-3">
@@ -592,7 +651,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
         {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           {currentStep === 0 && (
-            <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+            <Card className="glass-effect border-border/50 shadow-2xl">
               <CardHeader className="text-center pb-4 px-6">
                 <CardTitle className="text-xl flex items-center justify-center gap-2 mb-2">
                   <FileText className="w-5 h-5 text-primary" />
@@ -707,7 +766,7 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 hidden">
                     <Label htmlFor="length" className="text-xs sm:text-sm font-medium">Minimum Amount of Words</Label>
                     <Input
                       id="length"
@@ -720,11 +779,27 @@ Remember, this is a process, not an event. Each week builds on the previous one,
                   </div>
                 </div>
 
+                <Separator />
+
+                {/* Simplified Format Selector */}
+                <div className="space-y-2">
+                  <SimplifiedFormatSelector
+                    selectedFormat={videoFormat}
+                    onFormatChange={(format) => {
+                      setVideoFormat(format);
+                      setScriptInput({
+                        ...scriptInput,
+                        targetLength: format.targetWordCount
+                      });
+                    }}
+                  />
+                </div>
+
                 <div className="flex justify-center pt-4 sm:pt-6">
                   <Button 
                     onClick={handleAnalyze}
                     disabled={scriptInput.scripts.filter(s => s.trim()).length < 2 || !scriptInput.topic || isAnalyzing}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base relative overflow-hidden"
+                    className="w-full sm:w-auto btn-futuristic text-white"
                     size="lg"
                   >
                     {isAnalyzing ? (
@@ -754,6 +829,9 @@ Remember, this is a process, not an event. Each week builds on the previous one,
               analysis={analysis} 
               onGenerate={handleGenerate}
               currentStep={currentStep}
+              videoFormat={videoFormat}
+              generatedScript={generatedScript}
+              scriptInput={scriptInput}
             />
           )}
 

@@ -91,8 +91,6 @@ serve(async (req) => {
     const duration = videoFormat?.duration || (isShortForm ? '30-60 seconds' : '8-10 minutes');
     const style = videoFormat?.style || 'Educational';
 
-    // Validate word count limits
-
     // Build comprehensive system prompt based on format
     const systemPrompt = `You are an expert ${platform} script writer specializing in ${isShortForm ? 'viral short-form' : 'long-form'} content.
 
@@ -100,14 +98,7 @@ CRITICAL FORMAT REQUIREMENTS:
 - Platform: ${platform}
 - Format: ${isShortForm ? 'SHORT-FORM' : 'LONG-FORM'} (${duration})
 - Style: ${style}
-- Target: EXACTLY ${targetWordCount} words (THIS IS MANDATORY - DO NOT EXCEED OR FALL SHORT)
-
-WORD COUNT ENFORCEMENT RULES:
-1. You MUST count words as you write
-2. Stop writing when you reach exactly ${targetWordCount} words
-3. If you exceed the limit, trim the content to fit exactly
-4. Quality over quantity - better to have ${targetWordCount} perfect words than more imperfect ones
-5. End sentences naturally within the word limit
+- Target: EXACTLY ${targetWordCount} words
 
 ${isShortForm ? `
 SHORT-FORM SPECIFIC RULES:
@@ -199,86 +190,23 @@ ${description ? `Additional Context: ${description}` : ''}`;
 - Strong end screen CTA setup`;
     }
 
-    userPrompt += `\n\nIMPORTANT: Write the complete ${targetWordCount}-word script now. Count every word and stop at exactly ${targetWordCount} words. Do not exceed this limit under any circumstances.`;
-
-    // Add specific word count instructions based on target
-    if (targetWordCount <= 100) {
-      userPrompt += `\n\nFor ${targetWordCount} words: Keep it ultra-concise. Every word must drive impact. No filler.`;
-    } else if (targetWordCount <= 500) {
-      userPrompt += `\n\nFor ${targetWordCount} words: Focus on one core message. Hook, core point, CTA.`;
-    } else if (targetWordCount <= 1500) {
-      userPrompt += `\n\nFor ${targetWordCount} words: Standard structure with hook, problem, solution, CTA.`;
-    } else {
-      userPrompt += `\n\nFor ${targetWordCount} words: Comprehensive structure with detailed examples and multiple engagement points.`;
-    }
+    userPrompt += `\n\nWrite the complete ${targetWordCount}-word script now:`;
 
     console.log(`Generating enhanced ${isShortForm ? 'short' : 'long'}-form script for ${platform}`);
 
     const generatedScript = await callOpenAIAPI(userPrompt, systemPrompt);
+    const finalWordCount = generatedScript.trim().split(/\s+/).filter(word => word.length > 0).length;
+    console.log(`Generated script: ${finalWordCount} words (target: ${targetWordCount})`);
+
+    // Post-process to ensure platform fit
     let processedScript = generatedScript;
     
     // Remove any accidental stage directions
     processedScript = processedScript.replace(/\[.*?\]/g, '');
     processedScript = processedScript.replace(/\(.*?\)/g, '');
-    processedScript = processedScript.trim();
     
-    let finalWordCount = processedScript.split(/\s+/).filter(word => word.length > 0).length;
-    console.log(`Initial generated script: ${finalWordCount} words (target: ${targetWordCount})`);
-
-    // STRICT WORD COUNT ENFORCEMENT
-    if (finalWordCount !== targetWordCount) {
-      console.log(`Adjusting word count from ${finalWordCount} to ${targetWordCount}`);
-      
-      if (finalWordCount > targetWordCount) {
-        // Truncate to exact word count while preserving sentence structure
-        const words = processedScript.split(/\s+/);
-        let truncatedWords = words.slice(0, targetWordCount);
-        
-        // Try to end on a complete sentence
-        let truncatedText = truncatedWords.join(' ');
-        const lastSentenceEnd = Math.max(
-          truncatedText.lastIndexOf('.'),
-          truncatedText.lastIndexOf('!'),
-          truncatedText.lastIndexOf('?')
-        );
-        
-        if (lastSentenceEnd > truncatedText.length * 0.8) {
-          // If we can end on a sentence within 80% of target, do it
-          processedScript = truncatedText.substring(0, lastSentenceEnd + 1);
-        } else {
-          // Otherwise, just truncate at word limit
-          processedScript = truncatedText;
-        }
-        
-      } else if (finalWordCount < targetWordCount) {
-        // For short scripts, try to add a compelling CTA or closing
-        const wordsNeeded = targetWordCount - finalWordCount;
-        
-        if (wordsNeeded <= 20) {
-          // Add a short, impactful ending
-          const endings = [
-            "Don't wait. Start today.",
-            "Your journey begins now.",
-            "Take action immediately.",
-            "Transform your life today.",
-            "Make it happen now."
-          ];
-          
-          // Find ending that fits word count
-          const appropriateEnding = endings.find(ending => 
-            ending.split(/\s+/).length <= wordsNeeded
-          );
-          
-          if (appropriateEnding) {
-            processedScript += ' ' + appropriateEnding;
-          }
-        }
-      }
-      
-      // Final word count check
-      finalWordCount = processedScript.split(/\s+/).filter(word => word.length > 0).length;
-      console.log(`Final adjusted script: ${finalWordCount} words`);
-    }
+    // Ensure proper formatting
+    processedScript = processedScript.trim();
 
     return new Response(
       JSON.stringify({ 
