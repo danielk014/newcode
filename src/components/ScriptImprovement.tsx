@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Lightbulb, Loader2, CheckCircle, ArrowRight, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { psychologicalTactics } from '@/utils/tacticAnalyzer';
+import { validateWordCount } from '@/utils/validateWordCount';
 
 interface ScriptImprovementProps {
   originalScript: string;

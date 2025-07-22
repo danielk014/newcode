@@ -339,7 +339,7 @@ const Index = () => {
       setGeneratedScript(data.script);
       
       // Log word count for debugging
-      const actualWordCount = data.wordCount || targetWordCount;
+      const actualWordCount = data.wordCount || videoFormat.targetWordCount;
       logger.log(`Generated script: ${actualWordCount} words`);
       
       progressTracking.completeStep('finalizing');

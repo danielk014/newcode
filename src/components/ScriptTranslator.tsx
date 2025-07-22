@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Languages, Loader2, Copy, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { validateWordCount } from '@/utils/validateWordCount';
 
 interface ScriptTranslatorProps {
   originalScript: string;

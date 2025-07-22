@@ -95,14 +95,26 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   };
 
   const extractPDFText = async (file: File): Promise<string> => {
-    // Simple PDF text extraction - in a real app you'd use pdf-parse or similar
-    // For now, we'll return a placeholder that suggests manual copying
-    return `PDF file uploaded: ${file.name}\n\nPlease copy and paste the text content manually for now. Full PDF text extraction will be available in a future update.`;
+    try {
+      // PDF parsing in browser environment is complex and requires specific libraries
+      // For now, we'll provide a clear message to users
+      return `PDF file uploaded: ${file.name}\n\nAutomatic PDF text extraction is not available in the browser. Please copy and paste the text content from your PDF file.`;
+    } catch (error) {
+      console.error('Error extracting PDF text:', error);
+      return `Error reading PDF: ${file.name}. Please copy and paste the text content manually.`;
+    }
   };
 
   const extractDocText = async (file: File): Promise<string> => {
-    // Simple DOC text extraction - in a real app you'd use mammoth.js or similar
-    return `Document uploaded: ${file.name}\n\nPlease copy and paste the text content manually for now. Full document text extraction will be available in a future update.`;
+    try {
+      const mammoth = await import('mammoth');
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      return result.value;
+    } catch (error) {
+      console.error('Error extracting DOC text:', error);
+      return `Error reading document: ${file.name}. Please copy and paste the text content manually.`;
+    }
   };
 
   const removeFile = (index: number) => {

@@ -1,5 +1,14 @@
 import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+import AppWithErrorBoundary from './AppWithErrorBoundary.tsx'
 import './index.css'
 
-createRoot(document.getElementById("root")!).render(<App />);
+console.log('Main.tsx is loading...');
+const rootElement = document.getElementById("root");
+console.log('Root element:', rootElement);
+
+if (rootElement) {
+  createRoot(rootElement).render(<AppWithErrorBoundary />);
+  console.log('App rendered successfully');
+} else {
+  console.error('Root element not found!');
+}
